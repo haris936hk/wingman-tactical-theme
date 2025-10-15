@@ -1,0 +1,305 @@
+{
+  "design_philosophy": {
+    "style": "Military/tactical e-commerce with patriotic themes",
+    "approach": "Bold, masculine, service-oriented with strong visual hierarchy",
+    "target_audience": "Military personnel, veterans, aviation enthusiasts, tactical gear buyers",
+    "primary_purpose": "E-commerce with emphasis on custom aviation gear and merchandise"
+  },
+  "layout": {
+    "structure": "Single-page scroll with distinct sections",
+    "width": "Full-width with contained content areas",
+    "grid": "Multi-column grid for product displays (4 columns typical)",
+    "spacing": "Generous padding between sections, tight spacing within product cards"
+  },
+  "header": {
+    "position": "Fixed top",
+    "height": "~80px",
+    "background": "Dark (black/charcoal)",
+    "components": [
+      {
+        "element": "logo",
+        "position": "Left",
+        "style": "Winged emblem with 'WINGMAN TACTICAL' text"
+      },
+      {
+        "element": "search_bar",
+        "position": "Center",
+        "width": "~400px",
+        "placeholder": "Search all products"
+      },
+      {
+        "element": "user_actions",
+        "position": "Right",
+        "items": ["LOGIN/REGISTER", "Cart with count badge"]
+      }
+    ],
+    "navigation": {
+      "position": "Below header",
+      "items": ["FLIGHT SUITS", "FLIGHT JACKETS", "FLIGHT BAGS", "AVIATION SHOES", "PATCHES", "CUSTOM PRODUCTS"],
+      "style": "Horizontal menu, white text on dark background"
+    }
+  },
+  "hero_section": {
+    "layout": "Split - 50% text, 50% image",
+    "background": "Dark gradient",
+    "text_side": {
+      "headline": {
+        "text": "YOUR GEAR/MERCHANDISE IS FAILING? BOOK YOUR CUSTOM AVIATION GEAR & MERCH",
+        "size": "~48px",
+        "weight": "Bold",
+        "color": "White",
+        "transform": "Uppercase"
+      },
+      "body_text": {
+        "size": "~16px",
+        "color": "Light gray/white",
+        "line_height": "1.6"
+      },
+      "cta_button": {
+        "text": "GET A QUOTE",
+        "background": "Red (#D32F2F or similar)",
+        "color": "White",
+        "size": "Medium-large",
+        "shape": "Rounded rectangle"
+      }
+    },
+    "image_side": {
+      "type": "Lifestyle photo",
+      "content": "Pilot/military personnel in gear",
+      "treatment": "Full bleed, slightly darkened overlay"
+    }
+  },
+  "stats_section": {
+    "background": "Tan/beige with world map graphic",
+    "layout": "Centered content with decorative world map",
+    "heading": {
+      "text": "CLIENTS SERVED ACROSS THE WORLD",
+      "position": "Top right of map"
+    },
+    "stats": {
+      "layout": "3-column grid",
+      "style": "Icon + number + label",
+      "items": [
+        {
+          "icon": "Airplane",
+          "value": "0",
+          "label": "Number Squadrons & Pils Flown"
+        },
+        {
+          "icon": "Stars",
+          "value": "0",
+          "label": "5 star reviews"
+        },
+        {
+          "icon": "Gear",
+          "value": "0",
+          "label": "Custom orders"
+        }
+      ]
+    }
+  },
+  "featured_products_section": {
+    "heading": "EXPLORE OUR ACROSS THE WORLD SERVED CLIENTS",
+    "layout": "4-column grid",
+    "card_style": {
+      "background": "White",
+      "border": "1px solid light gray",
+      "shadow": "Subtle",
+      "hover": "Lift effect"
+    },
+    "product_card": {
+      "image": {
+        "aspect_ratio": "4:3",
+        "object_fit": "Cover"
+      },
+      "icons": {
+        "position": "Top corners overlay on image",
+        "style": "Circular badges",
+        "items": ["Wishlist heart", "Country flags", "Category icons"]
+      },
+      "title": {
+        "size": "~14px",
+        "weight": "Semibold",
+        "align": "Center"
+      },
+      "description": {
+        "size": "~12px",
+        "color": "Gray",
+        "lines": "3-4 lines max"
+      }
+    }
+  },
+  "product_grid_sections": {
+    "sections": [
+      "Wingman Featured",
+      "Discounts & Offers",
+      "Custom Products"
+    ],
+    "heading_style": {
+      "size": "~32px",
+      "weight": "Bold",
+      "align": "Center",
+      "margin_bottom": "40px"
+    },
+    "grid": "4 columns on desktop",
+    "product_card": {
+      "badge": {
+        "position": "Top left",
+        "text": "SALE",
+        "background": "Red",
+        "color": "White",
+        "shape": "Small rectangle"
+      },
+      "image_container": {
+        "background": "Light gray",
+        "padding": "20px"
+      },
+      "price": {
+        "size": "~18px",
+        "weight": "Bold",
+        "color": "Red for sale items"
+      },
+      "button": {
+        "text": "Add to cart",
+        "background": "Red",
+        "color": "White",
+        "width": "100%"
+      }
+    }
+  },
+  "about_sell_section": {
+    "layout": "2-column split with images",
+    "cards": [
+      {
+        "title": "ABOUT US",
+        "image": "Dramatic pilot photo",
+        "text_style": "White text on dark overlay"
+      },
+      {
+        "title": "SELL WITH US",
+        "image": "Action/aviation photo",
+        "text_style": "White text on dark overlay"
+      }
+    ],
+    "image_treatment": "Full bleed with gradient overlay",
+    "text_overlay": {
+      "position": "Bottom",
+      "padding": "40px"
+    }
+  },
+  "cta_section": {
+    "background": "Black",
+    "layout": "Centered content",
+    "heading": {
+      "text": "GET A QUOTE FOR YOUR CUSTOM GEAR NOW!",
+      "size": "~36px",
+      "color": "White",
+      "weight": "Bold"
+    },
+    "button": {
+      "text": "GET A QUOTE",
+      "background": "Red",
+      "size": "Large"
+    }
+  },
+  "footer": {
+    "background": "Black",
+    "color": "White/gray",
+    "layout": "4-column grid",
+    "sections": [
+      {
+        "title": "RECENT POSTS",
+        "type": "Links list"
+      },
+      {
+        "title": "SOCIAL NETWORKS",
+        "type": "Social links",
+        "items": ["Instagram", "Facebook", "Youtube", "LinkedIn"]
+      },
+      {
+        "title": "PRIVACY AND POLICY",
+        "type": "Legal links"
+      }
+    ],
+    "logo": {
+      "position": "Left column",
+      "style": "Light version"
+    },
+    "payment_icons": {
+      "position": "Bottom right",
+      "items": ["Visa", "Mastercard", "Amex", "PayPal", "etc"]
+    },
+    "copyright": {
+      "position": "Bottom left",
+      "size": "~12px",
+      "color": "Gray"
+    }
+  },
+  "color_palette": {
+    "primary": "#D32F2F (Red - CTA buttons, sale badges, accents)",
+    "secondary": "#1A1A1A (Dark charcoal/black - headers, footer)",
+    "background": "#FFFFFF (White - main content)",
+    "accent_bg": "#E5D4B8 (Tan/beige - stats section)",
+    "text_primary": "#212121 (Dark gray/black)",
+    "text_secondary": "#757575 (Medium gray)",
+    "text_light": "#FFFFFF (White on dark backgrounds)",
+    "borders": "#E0E0E0 (Light gray)"
+  },
+  "typography": {
+    "headings": {
+      "font_family": "Sans-serif (likely Arial, Roboto, or similar)",
+      "weight": "Bold (700)",
+      "transform": "Uppercase for main headings",
+      "h1": "48px",
+      "h2": "36px",
+      "h3": "24px"
+    },
+    "body": {
+      "font_family": "Sans-serif",
+      "size": "16px",
+      "line_height": "1.6",
+      "weight": "Regular (400)"
+    },
+    "buttons": {
+      "transform": "Uppercase",
+      "weight": "Bold",
+      "letter_spacing": "0.5px"
+    }
+  },
+  "interactive_elements": {
+    "buttons": {
+      "primary": {
+        "background": "Red",
+        "hover": "Darker red",
+        "border_radius": "4px",
+        "padding": "12px 32px"
+      },
+      "add_to_cart": {
+        "style": "Full width on product cards",
+        "icon": "Shopping cart icon"
+      }
+    },
+    "cards": {
+      "hover_effect": "Subtle lift (transform: translateY(-4px))",
+      "transition": "0.3s ease"
+    },
+    "wishlist": {
+      "icon": "Heart outline",
+      "position": "Top right of product images",
+      "style": "Circular badge"
+    }
+  },
+  "responsive_breakpoints": {
+    "desktop": ">1200px (4-column grid)",
+    "tablet": "768px-1199px (2-3 column grid)",
+    "mobile": "<767px (1-2 column grid, stacked hero)"
+  },
+  "key_ui_patterns": {
+    "iconography": "Military/aviation themed (wings, planes, stars)",
+    "badges": "Flag badges for international clients",
+    "sale_indicators": "Red 'SALE' badges",
+    "social_proof": "Stats counter, reviews display",
+    "categorization": "Clear product type labels",
+    "trust_signals": "Payment icons, client count, world map"
+  }
+}
