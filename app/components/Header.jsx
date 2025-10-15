@@ -21,9 +21,13 @@ export function Header({header, isLoggedIn, cart, publicStoreDomain}) {
                 prefetch="intent"
                 to="/"
                 end
-                className="text-white font-bold text-xl uppercase tracking-wide hover:text-gray-300 transition-colors"
+                className="block"
               >
-                {shop.name}
+                <img
+                  src="/logo.png"
+                  alt="Wingman Tactical"
+                  className="h-12 w-auto hover:opacity-90 transition-opacity"
+                />
               </NavLink>
             </div>
 
