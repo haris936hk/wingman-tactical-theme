@@ -284,3 +284,4 @@ const {data} = await context.customerAccount.query(CUSTOMER_QUERY);
 - `graphql` + `graphql-tag` - GraphQL utilities
 - `tailwindcss` v4 - Styling framework
 - `isbot` - Bot detection for SSR optimization
+- do not build the servers or run the servers.

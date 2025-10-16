@@ -79,33 +79,71 @@ export default function Homepage() {
 /* Wingman Tactical Hero Section */
 function HeroSection() {
   return (
-    <section className="relative bg-gradient-to-r from-[#1a1a1a] to-[#2a2a2a] py-20 lg:py-32">
+    <section className="relative bg-gradient-to-r from-[#1a1a1a] to-[#2a2a2a] pt-[156px] pb-20 lg:pb-32">
       <div className="max-w-[1400px] mx-auto px-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           {/* Text Side */}
-          <div className="text-white">
-            <h1 className="text-4xl lg:text-5xl xl:text-6xl font-bold uppercase leading-tight mb-6">
+          <div className="text-white text-center">
+            <h1 className="text-xl lg:text-2xl xl:text-3xl font-bold uppercase leading-tight mb-6">
               YOUR GEAR/MERCHANDISE IS FAILING? BOOK YOUR CUSTOM AVIATION GEAR & MERCH
             </h1>
-            <p className="text-lg text-gray-300 mb-8 leading-relaxed">
-              Premium tactical aviation gear designed for professionals. Custom solutions tailored to your squadron's needs.
+            <p className="text-sm lg:text-base text-gray-300 mb-6 leading-relaxed">
+              Every day you're hauling your fragile helmet around in that cheap, off-the-shelf bag is another day you risk dents, scratches—and a flight-ending failure. Walking into pre-flight briefs with generic, baggy flight suits and lousy patches sends the wrong message: you don't care. Stop risking thousands in equipment damage and your professional reputation.
             </p>
-            <Link
-              to="/pages/quote"
-              className="inline-block bg-[#d32f2f] hover:bg-[#b71c1c] text-white font-bold uppercase tracking-wide px-8 py-4 rounded transition-colors"
-            >
-              GET A QUOTE
-            </Link>
+            <p className="text-sm lg:text-base text-gray-300 mb-6 leading-relaxed">
+              Get a Quote today for precision-engineered helmet bags, sleek flight suits, and custom patches today & prove you're serious about the need for speed!
+            </p>
+            <div className="flex justify-center">
+              <Link
+                to="/pages/quote"
+                className="relative inline-block px-8 py-4 font-bold uppercase tracking-wide text-white overflow-hidden rounded-lg backdrop-blur-md bg-gradient-to-r from-[#d32f2f] via-gray-600 to-[#d32f2f] bg-[length:200%_100%] animate-[gradient_3s_linear_infinite] shadow-lg hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 border border-white/20"
+              >
+                GET A QUOTE
+              </Link>
+            </div>
           </div>
 
-          {/* Image Side */}
-          <div className="relative h-[400px] lg:h-[500px] rounded-lg overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10" />
-            <img
-              src="https://cdn.shopify.com/s/files/1/0000/0000/files/pilot-gear.jpg"
-              alt="Aviation Gear"
-              className="w-full h-full object-cover"
-            />
+          {/* Video Side */}
+          <div className="relative h-[400px] lg:h-[500px]">
+            {/* SVG animated border */}
+            <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{zIndex: 10}}>
+              <rect
+                x="2"
+                y="2"
+                width="calc(100% - 4px)"
+                height="calc(100% - 4px)"
+                rx="8"
+                fill="none"
+                stroke="url(#borderGradient)"
+                strokeWidth="3"
+                strokeDasharray="50 150"
+                style={{
+                  animation: 'border-spin 4s linear infinite'
+                }}
+              />
+              <defs>
+                <linearGradient id="borderGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="#d32f2f" />
+                  <stop offset="50%" stopColor="#ffffff" />
+                  <stop offset="100%" stopColor="#d32f2f" />
+                </linearGradient>
+              </defs>
+            </svg>
+
+            {/* Video container */}
+            <div className="relative h-full rounded-lg overflow-hidden shadow-2xl border-2 border-gray-800">
+              <video
+                className="w-full h-full object-cover"
+                autoPlay
+                muted
+                loop
+                playsInline
+                controls
+              >
+                <source src="/videos/hero-video.mp4" type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+            </div>
           </div>
         </div>
       </div>

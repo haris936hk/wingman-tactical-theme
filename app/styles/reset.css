@@ -1,4 +1,10 @@
-body {
+/*
+ * Reset.css - Commented out to use Tailwind CSS Preflight instead
+ * Tailwind's Preflight provides browser normalization and sensible defaults
+ * All component styling should be done using Tailwind utility classes
+ */
+
+/* body {
   font-family:
     system-ui,
     -apple-system,
@@ -78,7 +84,7 @@ body {
 }
 
 body > main {
-  margin: 0 1rem 1rem 1rem;
+  margin: 0;
 }
 
 section {
@@ -135,4 +141,4 @@ code {
   border-radius: 4px;
   font-family: monospace;
   padding: 0.25rem;
-}
+} */

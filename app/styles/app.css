@@ -164,6 +164,24 @@ button.reset:hover:not(:has(> *)) {
 * Header styles are now handled by Tailwind CSS classes in Header.jsx
 */
 
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
+}
+
+@keyframes border-spin {
+  0% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: -200;
+  }
+}
+
 /*
 * --------------------------------------------------
 * components/Footer
