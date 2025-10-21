@@ -3,6 +3,8 @@ import {Suspense} from 'react';
 import {Image} from '@shopify/hydrogen';
 import {ProductItem} from '~/components/ProductItem';
 import GridGlobe from '~/components/GridGlobe';
+import {CountUpStat} from '~/components/CountUpStat';
+import {ClientCarousel} from '~/components/ClientCarousel';
 
 /**
  * @type {Route.MetaFunction}
@@ -67,8 +69,7 @@ export default function Homepage() {
     <div className="home">
       <HeroSection />
       <SplitContentSection />
-      <StatsSection />
-      <FeaturedProducts products={data.recommendedProducts} />
+      <ClientShowcaseSection />
       <WingmanFeaturedSection products={data.recommendedProducts} />
       <DiscountsSection products={data.recommendedProducts} />
       <CustomProductsSection products={data.recommendedProducts} />
@@ -192,26 +193,57 @@ function SplitContentSection() {
             </div>
           </div>
 
-          {/* Right Side - Text Content */}
-          <div className="text-white">
-            <h2 className="text-3xl lg:text-4xl font-bold uppercase mb-6">
-              SERVING TACTICAL PROFESSIONALS WORLDWIDE
+          {/* Right Side - Stats Content */}
+          <div>
+            <h2
+              className="text-2xl lg:text-3xl font-bold uppercase mb-12 text-center text-white"
+              style={{
+                textShadow: '0 0 10px rgba(211, 47, 47, 0.8), 0 0 20px rgba(211, 47, 47, 0.6), 0 0 30px rgba(211, 47, 47, 0.4)'
+              }}
+            >
+              CLIENTS SERVED ACROSS THE WORLD
             </h2>
-            <p className="text-base lg:text-lg text-gray-300 mb-6 leading-relaxed">
-              From elite military squadrons to law enforcement units across the globe, Wingman Tactical has become the trusted name in custom aviation gear and tactical equipment.
-            </p>
-            <p className="text-base lg:text-lg text-gray-300 mb-6 leading-relaxed">
-              Our precision-engineered products have supported missions in over 50 countries, delivering unmatched quality and reliability where it matters most.
-            </p>
-            <div className="grid grid-cols-2 gap-4 mt-8">
-              <div className="bg-gray-800/50 p-4 rounded-lg border border-gray-700">
-                <div className="text-3xl font-bold text-[#d32f2f] mb-2">50+</div>
-                <p className="text-sm uppercase text-gray-400">Countries Served</p>
-              </div>
-              <div className="bg-gray-800/50 p-4 rounded-lg border border-gray-700">
-                <div className="text-3xl font-bold text-[#d32f2f] mb-2">500+</div>
-                <p className="text-sm uppercase text-gray-400">Active Squadrons</p>
-              </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {/* Aviation Organisations Stat */}
+              <CountUpStat
+                icon={
+                  <svg className="w-16 h-16" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/>
+                  </svg>
+                }
+                target={19}
+                label="Aviation Organisations & Air Forces"
+                duration={2500}
+              />
+
+              {/* 5 Star Reviews Stat */}
+              <CountUpStat
+                icon={
+                  <div className="flex gap-1">
+                    {[...Array(5)].map((_, i) => (
+                      <svg key={i} className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                      </svg>
+                    ))}
+                  </div>
+                }
+                target={100}
+                label="5 star reviews"
+                duration={2500}
+              />
+
+              {/* Aviation Gear Products Stat */}
+              <CountUpStat
+                icon={
+                  <svg className="w-16 h-16" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/>
+                  </svg>
+                }
+                target={30}
+                label="Aviation gear products"
+                duration={2500}
+              />
             </div>
           </div>
         </div>
@@ -220,62 +252,16 @@ function SplitContentSection() {
   );
 }
 
-/* Stats Section with World Map */
-function StatsSection() {
-  return (
-    <section className="bg-[#e5d4b8] py-16 relative overflow-hidden">
-      <div className="max-w-[1400px] mx-auto px-6 relative z-10">
-        <h2 className="text-3xl font-bold uppercase text-center mb-12 text-[#1a1a1a]">
-          CLIENTS SERVED ACROSS THE WORLD
-        </h2>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-          {/* Stat 1 */}
-          <div className="flex flex-col items-center">
-            <div className="text-6xl mb-4">✈️</div>
-            <div className="text-4xl font-bold text-[#d32f2f] mb-2">500+</div>
-            <p className="text-lg font-semibold uppercase">Squadrons & Pilots Flown</p>
-          </div>
-
-          {/* Stat 2 */}
-          <div className="flex flex-col items-center">
-            <div className="text-6xl mb-4">⭐</div>
-            <div className="text-4xl font-bold text-[#d32f2f] mb-2">1,000+</div>
-            <p className="text-lg font-semibold uppercase">5 Star Reviews</p>
-          </div>
-
-          {/* Stat 3 */}
-          <div className="flex flex-col items-center">
-            <div className="text-6xl mb-4">⚙️</div>
-            <div className="text-4xl font-bold text-[#d32f2f] mb-2">2,500+</div>
-            <p className="text-lg font-semibold uppercase">Custom Orders</p>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* Featured Products Section */
-function FeaturedProducts({products}) {
+/* Client Showcase Section */
+function ClientShowcaseSection() {
   return (
     <section className="py-16 bg-white">
       <div className="max-w-[1400px] mx-auto px-6">
-        <h2 className="text-3xl lg:text-4xl font-bold uppercase text-center mb-12">
+        <h2 className="text-3xl lg:text-4xl font-bold uppercase text-center mb-12 text-[#1a1a1a]">
           EXPLORE OUR ACROSS THE WORLD SERVED CLIENTS
         </h2>
 
-        <Suspense fallback={<div className="text-center">Loading...</div>}>
-          <Await resolve={products}>
-            {(response) => (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {response?.products.nodes.map((product) => (
-                  <ProductItem key={product.id} product={product} />
-                ))}
-              </div>
-            )}
-          </Await>
-        </Suspense>
+        <ClientCarousel />
       </div>
     </section>
   );

@@ -8,7 +8,9 @@
       "Bash(npm install:*)",
       "Bash(npm uninstall:*)",
       "Bash(npm run lint:*)",
-      "Bash(npm run lint)"
+      "Bash(npm run lint)",
+      "Bash(curl:*)",
+      "Bash(node -e:*)"
     ],
     "deny": [],
     "ask": []
