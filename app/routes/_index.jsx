@@ -2,6 +2,7 @@ import {Await, useLoaderData, Link} from 'react-router';
 import {Suspense} from 'react';
 import {Image} from '@shopify/hydrogen';
 import {ProductItem} from '~/components/ProductItem';
+import GridGlobe from '~/components/GridGlobe';
 
 /**
  * @type {Route.MetaFunction}
@@ -65,6 +66,7 @@ export default function Homepage() {
   return (
     <div className="home">
       <HeroSection />
+      <SplitContentSection />
       <StatsSection />
       <FeaturedProducts products={data.recommendedProducts} />
       <WingmanFeaturedSection products={data.recommendedProducts} />
@@ -143,6 +145,73 @@ function HeroSection() {
                 <source src="/videos/hero-video.mp4" type="video/mp4" />
                 Your browser does not support the video tag.
               </video>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* Split Content Section - Two Column Layout */
+function SplitContentSection() {
+  return (
+    <section className="relative bg-gradient-to-r from-[#2a2a2a] to-[#1a1a1a] py-20 lg:py-32">
+      <div className="max-w-[1400px] mx-auto px-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          {/* Left Side - Globe */}
+          <div className="relative h-[400px] lg:h-[500px]">
+            {/* SVG animated border */}
+            <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{zIndex: 10}}>
+              <rect
+                x="2"
+                y="2"
+                width="calc(100% - 4px)"
+                height="calc(100% - 4px)"
+                rx="8"
+                fill="none"
+                stroke="url(#splitBorderGradient)"
+                strokeWidth="3"
+                strokeDasharray="50 150"
+                style={{
+                  animation: 'border-spin 4s linear infinite'
+                }}
+              />
+              <defs>
+                <linearGradient id="splitBorderGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="#d32f2f" />
+                  <stop offset="50%" stopColor="#ffffff" />
+                  <stop offset="100%" stopColor="#d32f2f" />
+                </linearGradient>
+              </defs>
+            </svg>
+
+            {/* Globe container */}
+            <div className="relative h-full rounded-lg overflow-hidden shadow-2xl border-2 border-gray-800 bg-black">
+              <GridGlobe />
+            </div>
+          </div>
+
+          {/* Right Side - Text Content */}
+          <div className="text-white">
+            <h2 className="text-3xl lg:text-4xl font-bold uppercase mb-6">
+              SERVING TACTICAL PROFESSIONALS WORLDWIDE
+            </h2>
+            <p className="text-base lg:text-lg text-gray-300 mb-6 leading-relaxed">
+              From elite military squadrons to law enforcement units across the globe, Wingman Tactical has become the trusted name in custom aviation gear and tactical equipment.
+            </p>
+            <p className="text-base lg:text-lg text-gray-300 mb-6 leading-relaxed">
+              Our precision-engineered products have supported missions in over 50 countries, delivering unmatched quality and reliability where it matters most.
+            </p>
+            <div className="grid grid-cols-2 gap-4 mt-8">
+              <div className="bg-gray-800/50 p-4 rounded-lg border border-gray-700">
+                <div className="text-3xl font-bold text-[#d32f2f] mb-2">50+</div>
+                <p className="text-sm uppercase text-gray-400">Countries Served</p>
+              </div>
+              <div className="bg-gray-800/50 p-4 rounded-lg border border-gray-700">
+                <div className="text-3xl font-bold text-[#d32f2f] mb-2">500+</div>
+                <p className="text-sm uppercase text-gray-400">Active Squadrons</p>
+              </div>
             </div>
           </div>
         </div>

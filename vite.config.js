@@ -18,6 +18,10 @@ export default defineConfig({
     // withtout inlining assets as base64:
     assetsInlineLimit: 0,
   },
+  optimizeDeps: {
+    exclude: ['three', 'three-globe'],
+    include: ['@react-three/fiber', '@react-three/drei', 'frame-ticker'],
+  },
   ssr: {
     optimizeDeps: {
       /**
@@ -31,7 +35,9 @@ export default defineConfig({
        * @see https://vitejs.dev/config/dep-optimization-options
        */
       include: ['set-cookie-parser', 'cookie', 'react-router'],
+      exclude: ['three', 'three-globe', 'three-conic-polygon-geometry'],
     },
+    noExternal: [],
   },
   server: {
     allowedHosts: ['.tryhydrogen.dev'],
