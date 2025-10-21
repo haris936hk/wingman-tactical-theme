@@ -1,10 +1,12 @@
 import {Await, useLoaderData, Link} from 'react-router';
-import {Suspense} from 'react';
+import {Suspense, lazy} from 'react';
 import {Image} from '@shopify/hydrogen';
 import {ProductItem} from '~/components/ProductItem';
-import GridGlobe from '~/components/GridGlobe';
 import {CountUpStat} from '~/components/CountUpStat';
 import {ClientCarousel} from '~/components/ClientCarousel';
+
+// Client-only lazy load for GridGlobe to prevent server bundle bloat
+const GridGlobe = lazy(() => import('~/components/GridGlobe'));
 
 /**
  * @type {Route.MetaFunction}
@@ -189,7 +191,15 @@ function SplitContentSection() {
 
             {/* Globe container */}
             <div className="relative h-full rounded-lg overflow-hidden shadow-2xl border-2 border-gray-800 bg-black">
-              <GridGlobe />
+              <Suspense fallback={
+                <div className="flex items-center justify-center w-full h-full">
+                  <div className="text-white text-center">
+                    <div className="animate-pulse">Loading Globe...</div>
+                  </div>
+                </div>
+              }>
+                <GridGlobe />
+              </Suspense>
             </div>
           </div>
 

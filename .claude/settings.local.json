@@ -10,7 +10,9 @@
       "Bash(npm run lint:*)",
       "Bash(npm run lint)",
       "Bash(curl:*)",
-      "Bash(node -e:*)"
+      "Bash(node -e:*)",
+      "Bash(sort:*)",
+      "Bash(timeout 15 npm run dev:*)"
     ],
     "deny": [],
     "ask": []

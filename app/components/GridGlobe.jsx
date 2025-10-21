@@ -2,18 +2,17 @@ import {useEffect, useState, useRef} from 'react';
 
 const GridGlobe = () => {
   const [World, setWorld] = useState(null);
-  const [isClient, setIsClient] = useState(false);
   const [shouldLoad, setShouldLoad] = useState(false);
   const containerRef = useRef(null);
 
-  // Set client-side flag
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-
   // Intersection Observer - only load when scrolled into view
   useEffect(() => {
-    if (!isClient) return;
+    // Only run on client side
+    if (typeof window === 'undefined' || !('IntersectionObserver' in window)) {
+      // If no IntersectionObserver, load immediately (fallback for SSR/old browsers)
+      setShouldLoad(true);
+      return;
+    }
 
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -35,7 +34,7 @@ const GridGlobe = () => {
     return () => {
       observer.disconnect();
     };
-  }, [isClient]);
+  }, []);
 
   // Dynamically import Globe component only when shouldLoad is true
   useEffect(() => {
@@ -438,7 +437,7 @@ const GridGlobe = () => {
     },
   ];
 
-  if (!isClient || !World) {
+  if (!World) {
     return (
       <div ref={containerRef} className="flex items-center justify-center w-full h-full">
         <div className="text-white text-center">

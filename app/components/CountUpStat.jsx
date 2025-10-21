@@ -14,6 +14,9 @@ export function CountUpStat({icon, target, label, duration = 2000}) {
   const elementRef = useRef(null);
 
   useEffect(() => {
+    // Only run on client side
+    if (typeof window === 'undefined' || !('IntersectionObserver' in window)) return;
+
     const observer = new IntersectionObserver(
       (entries) => {
         const [entry] = entries;

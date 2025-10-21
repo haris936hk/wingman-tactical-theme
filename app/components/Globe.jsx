@@ -3,7 +3,6 @@ import {Color, Scene, Fog, PerspectiveCamera, Vector3} from 'three';
 import ThreeGlobe from 'three-globe';
 import {useThree, Canvas, extend} from '@react-three/fiber';
 import {OrbitControls} from '@react-three/drei';
-import countries from '../globe.json';
 
 extend({ThreeGlobe});
 
@@ -13,8 +12,21 @@ const cameraZ = 300;
 
 export function Globe({globeConfig, data}) {
   const [globeData, setGlobeData] = useState(null);
+  const [countries, setCountries] = useState(null);
 
   const globeRef = useRef(null);
+
+  // Load countries data from public folder (client-only, not bundled)
+  useEffect(() => {
+    fetch('/data/globe.json')
+      .then((response) => response.json())
+      .then((data) => {
+        setCountries(data);
+      })
+      .catch((error) => {
+        console.error('Failed to load countries data:', error);
+      });
+  }, []);
 
   const defaultProps = {
     pointSize: 1,
@@ -87,7 +99,7 @@ export function Globe({globeConfig, data}) {
   };
 
   useEffect(() => {
-    if (globeRef.current && globeData) {
+    if (globeRef.current && globeData && countries) {
       globeRef.current
         .hexPolygonsData(countries.features)
         .hexPolygonResolution(3)
@@ -101,7 +113,7 @@ export function Globe({globeConfig, data}) {
       startAnimation();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [globeData]);
+  }, [globeData, countries]);
 
   const startAnimation = () => {
     if (!globeRef.current || !globeData) return;

@@ -18,9 +18,6 @@ export default defineConfig({
     // withtout inlining assets as base64:
     assetsInlineLimit: 0,
   },
-  optimizeDeps: {
-    include: ['@react-three/fiber', '@react-three/drei', 'frame-ticker', 'three', 'three-globe', 'yaot'],
-  },
   ssr: {
     optimizeDeps: {
       /**
@@ -35,7 +32,9 @@ export default defineConfig({
        */
       include: ['set-cookie-parser', 'cookie', 'react-router'],
     },
-    noExternal: ['three', 'three-globe', 'yaot'],
+    // Exclude browser-only 3D libraries from server bundle
+    external: ['three', 'three-globe', '@react-three/fiber', '@react-three/drei', 'yaot', 'suspend-react'],
+    noExternal: [],
   },
   server: {
     allowedHosts: ['.tryhydrogen.dev'],

@@ -51,6 +51,9 @@ export function ClientCarousel() {
 
   // Handle responsive slides
   useEffect(() => {
+    // Only run on client side
+    if (typeof window === 'undefined') return;
+
     const handleResize = () => {
       if (window.innerWidth < 640) {
         setSlidesToShow(1);
