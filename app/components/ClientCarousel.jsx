@@ -101,50 +101,50 @@ export function ClientCarousel() {
               className="flex-shrink-0 px-3"
               style={{width: `${100 / slidesToShow}%`}}
             >
-              <div className="group bg-white rounded-xl overflow-hidden h-full flex flex-col transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl shadow-md relative">
-                {/* Animated border effect */}
-                <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{
-                  background: 'linear-gradient(45deg, #d32f2f, transparent, #d32f2f)',
-                  padding: '2px',
-                  zIndex: -1,
-                }}>
+              <div className="group bg-white rounded-xl overflow-hidden h-full flex flex-col shadow-md relative will-change-transform transition-[transform,box-shadow] duration-300 ease-out hover:-translate-y-2 hover:shadow-2xl">
+                {/* Optimized border effect - only opacity changes */}
+                <div
+                  className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none -z-10"
+                  style={{
+                    background: 'linear-gradient(45deg, #d32f2f 0%, transparent 50%, #d32f2f 100%)',
+                    padding: '2px',
+                  }}
+                >
                   <div className="w-full h-full bg-white rounded-xl" />
                 </div>
 
                 {/* Image */}
                 <div className="relative h-64 bg-gray-200 overflow-hidden">
-                  {/* Gradient overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10" />
+                  {/* Simplified gradient overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10" />
 
                   <img
                     src={client.image}
                     alt={client.title}
-                    className="w-full h-full object-cover transform transition-transform duration-700 group-hover:scale-110"
+                    className="w-full h-full object-cover"
                     onError={(e) => {
                       e.target.src =
                         'https://via.placeholder.com/400x300?text=' +
                         encodeURIComponent(client.title);
                     }}
                   />
-
-                  {/* Shimmer effect on hover */}
-                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                    <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-                  </div>
                 </div>
 
                 {/* Content */}
                 <div className="p-6 text-center flex-1 flex flex-col bg-gradient-to-b from-white to-gray-50 relative">
-                  {/* Decorative line */}
-                  <div className="w-16 h-1 bg-gradient-to-r from-transparent via-[#d32f2f] to-transparent mx-auto mb-4 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
+                  {/* Simplified decorative line */}
+                  <div className="w-16 h-1 bg-gradient-to-r from-transparent via-[#d32f2f] to-transparent mx-auto mb-4 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-out" />
 
-                  <h3 className="text-2xl font-bold uppercase mb-4 text-[#1a1a1a] transform transition-all duration-300 group-hover:text-[#d32f2f]" style={{
-                    textShadow: '0 2px 4px rgba(0,0,0,0.05)'
-                  }}>
+                  <h3
+                    className="text-2xl font-bold uppercase mb-4 text-[#1a1a1a] transition-colors duration-300 ease-out group-hover:text-[#d32f2f]"
+                    style={{
+                      textShadow: '0 2px 4px rgba(0,0,0,0.05)'
+                    }}
+                  >
                     {client.title}
                   </h3>
 
-                  <p className="text-gray-700 leading-relaxed transition-colors duration-300 group-hover:text-gray-900">
+                  <p className="text-gray-700 leading-relaxed transition-colors duration-300 ease-out group-hover:text-gray-900">
                     {client.description}
                   </p>
                 </div>

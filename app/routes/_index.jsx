@@ -4,6 +4,7 @@ import {Image} from '@shopify/hydrogen';
 import {ProductItem} from '~/components/ProductItem';
 import {CountUpStat} from '~/components/CountUpStat';
 import {ClientCarousel} from '~/components/ClientCarousel';
+import {ProductCarousel} from '~/components/ProductCarousel';
 
 // Client-only lazy load for GridGlobe to prevent server bundle bloat
 const GridGlobe = lazy(() => import('~/components/GridGlobe'));
@@ -59,8 +60,17 @@ function loadDeferredData({context}) {
       return null;
     });
 
+  const discountedProducts = context.storefront
+    .query(DISCOUNTED_PRODUCTS_QUERY)
+    .catch((error) => {
+      // Log query errors, but don't throw them so the page can still render
+      console.error(error);
+      return null;
+    });
+
   return {
     recommendedProducts,
+    discountedProducts,
   };
 }
 
@@ -73,7 +83,7 @@ export default function Homepage() {
       <SplitContentSection />
       <ClientShowcaseSection />
       <WingmanFeaturedSection products={data.recommendedProducts} />
-      <DiscountsSection products={data.recommendedProducts} />
+      <DiscountsSection products={data.discountedProducts} />
       <CustomProductsSection products={data.recommendedProducts} />
       <AboutSellSection />
       <CTASection />
@@ -289,11 +299,7 @@ function WingmanFeaturedSection({products}) {
         <Suspense fallback={<div className="text-center">Loading...</div>}>
           <Await resolve={products}>
             {(response) => (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {response?.products.nodes.map((product) => (
-                  <ProductItem key={product.id} product={product} />
-                ))}
-              </div>
+              <ProductCarousel products={response?.products.nodes || []} />
             )}
           </Await>
         </Suspense>
@@ -314,11 +320,7 @@ function DiscountsSection({products}) {
         <Suspense fallback={<div className="text-center">Loading...</div>}>
           <Await resolve={products}>
             {(response) => (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {response?.products.nodes.map((product) => (
-                  <ProductItem key={product.id} product={product} />
-                ))}
-              </div>
+              <ProductCarousel products={response?.products.nodes || []} showSaleBadge={true} />
             )}
           </Await>
         </Suspense>
@@ -368,7 +370,7 @@ function AboutSellSection() {
             />
             <div className="absolute bottom-0 left-0 right-0 p-8 z-20">
               <h3 className="text-4xl font-bold uppercase text-white mb-4">ABOUT US</h3>
-              <p className="text-white text-lg">Learn about our commitment to quality and service</p>
+              <p className="text-white text-lg">We are your online wingman, dedicated to providing quality Aviation gear and merchandise. Join our formation to get access to the best OEM manufacturing services with the lowest MOQs and maximum customization.</p>
             </div>
           </Link>
 
@@ -382,7 +384,7 @@ function AboutSellSection() {
             />
             <div className="absolute bottom-0 left-0 right-0 p-8 z-20">
               <h3 className="text-4xl font-bold uppercase text-white mb-4">SELL WITH US</h3>
-              <p className="text-white text-lg">Partner with Wingman Tactical</p>
+              <p className="text-white text-lg">Want to create your own private label brand? Do you have a great product within our niche and don&apos;t know how to sell? Let&apos;s join hands and we will help you with everything we have got to make you earn passive income while you can leave the product supply chain till delivery hustles on us.</p>
             </div>
           </Link>
         </div>
@@ -457,6 +459,45 @@ const RECOMMENDED_PRODUCTS_QUERY = `#graphql
     products(first: 4, sortKey: UPDATED_AT, reverse: true) {
       nodes {
         ...RecommendedProduct
+      }
+    }
+  }
+`;
+
+const DISCOUNTED_PRODUCTS_QUERY = `#graphql
+  fragment DiscountedProduct on Product {
+    id
+    title
+    handle
+    priceRange {
+      minVariantPrice {
+        amount
+        currencyCode
+      }
+      maxVariantPrice {
+        amount
+        currencyCode
+      }
+    }
+    compareAtPriceRange {
+      minVariantPrice {
+        amount
+        currencyCode
+      }
+    }
+    featuredImage {
+      id
+      url
+      altText
+      width
+      height
+    }
+  }
+  query DiscountedProducts ($country: CountryCode, $language: LanguageCode)
+    @inContext(country: $country, language: $language) {
+    products(first: 8, sortKey: UPDATED_AT, reverse: true) {
+      nodes {
+        ...DiscountedProduct
       }
     }
   }

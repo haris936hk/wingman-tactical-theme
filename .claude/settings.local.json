@@ -12,7 +12,8 @@
       "Bash(curl:*)",
       "Bash(node -e:*)",
       "Bash(sort:*)",
-      "Bash(timeout 15 npm run dev:*)"
+      "Bash(timeout 15 npm run dev:*)",
+      "Bash(node dist/server/index.js:*)"
     ],
     "deny": [],
     "ask": []

@@ -1,18 +1,56 @@
-import {Suspense} from 'react';
+import {Suspense, useState, useEffect} from 'react';
 import {Await, NavLink, useAsyncValue} from 'react-router';
 import {useAnalytics, useOptimisticCart} from '@shopify/hydrogen';
 import {useAside} from '~/components/Aside';
 import {SearchForm} from '~/components/SearchForm';
+
+// Navigation menu configuration
+const NAVIGATION_MENU = [
+  {id: 'flight-suits', title: 'FLIGHT SUITS', url: '/collections/flight-suits'},
+  {id: 'flight-jackets', title: 'FLIGHT JACKETS', url: '/collections/flight-jackets'},
+  {id: 'flight-bag', title: 'FLIGHT BAG', url: '/collections/flight-bag'},
+  {id: 'aviation-gear', title: 'AVIATION GEAR', url: '/collections/aviation-gear'},
+  {id: 'apparels', title: 'APPARELS', url: '/collections/apparels'},
+  {id: 'custom-products', title: 'CUSTOM PRODUCTS', url: '/collections/custom-products'},
+];
 
 /**
  * @param {HeaderProps}
  */
 export function Header({header, isLoggedIn, cart, publicStoreDomain}) {
   const {shop, menu} = header;
+  const [isVisible, setIsVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+
+  useEffect(() => {
+    // Only run on client side
+    if (typeof window === 'undefined') return;
+
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      // Show header if scrolled to top
+      if (currentScrollY < 10) {
+        setIsVisible(true);
+      }
+      // Hide header when scrolling down, show when scrolling up
+      else if (currentScrollY > lastScrollY && currentScrollY > 100) {
+        setIsVisible(false);
+      } else if (currentScrollY < lastScrollY) {
+        setIsVisible(true);
+      }
+
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener('scroll', handleScroll, {passive: true});
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [lastScrollY]);
+
   return (
     <>
       {/* Main Header - Fixed Dark Bar */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-[#1f1f1f] text-white">
+      <header className={`fixed top-0 left-0 right-0 z-50 bg-[#1f1f1f] text-white transition-transform duration-300 ease-in-out ${isVisible ? 'translate-y-0' : '-translate-y-full'}`}>
         <div className="max-w-[1600px] mx-auto px-8">
           <div className="flex items-center justify-between h-24">
             {/* Logo - Left */}
@@ -68,7 +106,7 @@ export function Header({header, isLoggedIn, cart, publicStoreDomain}) {
       </header>
 
       {/* Navigation Bar - Below Header */}
-      <nav className="fixed top-24 left-0 right-0 z-40 bg-[#1f1f1f] text-white border-t border-[#2a2a2a]">
+      <nav className={`fixed top-24 left-0 right-0 z-40 bg-[#1f1f1f] text-white border-t border-[#2a2a2a] transition-transform duration-300 ease-in-out ${isVisible ? 'translate-y-0' : '-translate-y-[calc(100%+6rem)]'}`}>
         <div className="max-w-[1600px] mx-auto px-8">
           <HeaderMenu
             menu={menu}
@@ -98,16 +136,6 @@ export function HeaderMenu({
 }) {
   const {close} = useAside();
 
-  // Wingman Tactical menu items - exact match from screenshot
-  const wingmanMenu = [
-    {id: '1', title: 'FLIGHT SUITS', url: '/collections/flight-suits'},
-    {id: '2', title: 'FLIGHT JACKETS', url: '/collections/flight-jackets'},
-    {id: '3', title: 'FLIGHT BAG', url: '/collections/flight-bag'},
-    {id: '4', title: 'AVIATION GEAR', url: '/collections/aviation-gear'},
-    {id: '5', title: 'APPARELS', url: '/collections/apparels'},
-    {id: '6', title: 'CUSTOM PRODUCTS', url: '/collections/custom-products'},
-  ];
-
   if (viewport === 'mobile') {
     return (
       <nav className="flex flex-col space-y-4 p-6" role="navigation">
@@ -120,38 +148,56 @@ export function HeaderMenu({
         >
           Home
         </NavLink>
-        {wingmanMenu.map((item) => (
-          <NavLink
-            key={item.id}
-            onClick={close}
-            prefetch="intent"
-            to={item.url}
-            className="text-white hover:text-gray-300 transition-colors uppercase font-medium"
-          >
-            {item.title}
-          </NavLink>
+        {NAVIGATION_MENU.map((item) => (
+          <MobileMenuItem key={item.id} item={item} onClick={close} />
         ))}
       </nav>
     );
   }
 
   return (
-    <div className="flex items-center justify-start gap-10 py-4" role="navigation">
-      {wingmanMenu.map((item) => (
-        <NavLink
-          key={item.id}
-          prefetch="intent"
-          to={item.url}
-          className={({isActive}) =>
-            `relative text-sm font-medium uppercase tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-white to-white bg-[length:200%_100%] bg-left transition-all duration-500 hover:bg-right hover:from-white hover:to-[#d32f2f] ${
-              isActive ? 'from-gray-300 to-gray-300' : ''
-            } after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[2px] after:bg-[#d32f2f] after:transition-all after:duration-300 hover:after:w-full`
-          }
-        >
-          {item.title}
-        </NavLink>
+    <nav className="flex items-center justify-start gap-10 py-4" role="navigation">
+      {NAVIGATION_MENU.map((item) => (
+        <DesktopMenuItem key={item.id} item={item} />
       ))}
-    </div>
+    </nav>
+  );
+}
+
+/**
+ * Desktop navigation menu item with gradient text and animated underline
+ * @param {{item: {id: string, title: string, url: string}}}
+ */
+function DesktopMenuItem({item}) {
+  return (
+    <NavLink
+      prefetch="intent"
+      to={item.url}
+      className={({isActive}) =>
+        `relative text-sm font-medium uppercase tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-white to-white bg-[length:200%_100%] bg-left transition-all duration-500 hover:bg-right hover:from-white hover:to-[#d32f2f] ${
+          isActive ? 'from-gray-300 to-gray-300' : ''
+        } after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[2px] after:bg-[#d32f2f] after:transition-all after:duration-300 hover:after:w-full`
+      }
+    >
+      {item.title}
+    </NavLink>
+  );
+}
+
+/**
+ * Mobile navigation menu item
+ * @param {{item: {id: string, title: string, url: string}, onClick: () => void}}
+ */
+function MobileMenuItem({item, onClick}) {
+  return (
+    <NavLink
+      onClick={onClick}
+      prefetch="intent"
+      to={item.url}
+      className="text-white hover:text-gray-300 transition-colors uppercase font-medium"
+    >
+      {item.title}
+    </NavLink>
   );
 }
 
