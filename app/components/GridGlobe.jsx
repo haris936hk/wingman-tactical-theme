@@ -39,7 +39,7 @@ const GridGlobe = () => {
   // Dynamically import Globe component only when shouldLoad is true
   useEffect(() => {
     if (shouldLoad && !World) {
-      import('./Globe')
+      import('./Globe.client')
         .then((module) => {
           setWorld(() => module.World);
         })
