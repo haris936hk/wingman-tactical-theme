@@ -86,7 +86,6 @@ export default function Homepage() {
       <DiscountsSection products={data.discountedProducts} />
       <CustomProductsSection products={data.recommendedProducts} />
       <AboutSellSection />
-      <CTASection />
     </div>
   );
 }
@@ -388,25 +387,6 @@ function AboutSellSection() {
             </div>
           </Link>
         </div>
-      </div>
-    </section>
-  );
-}
-
-/* CTA Section */
-function CTASection() {
-  return (
-    <section className="bg-[#1a1a1a] py-20">
-      <div className="max-w-[1400px] mx-auto px-6 text-center">
-        <h2 className="text-4xl lg:text-5xl font-bold uppercase text-white mb-8">
-          GET A QUOTE FOR YOUR CUSTOM GEAR NOW!
-        </h2>
-        <Link
-          to="/pages/quote"
-          className="inline-block bg-[#d32f2f] hover:bg-[#b71c1c] text-white font-bold uppercase tracking-wide px-12 py-5 text-lg rounded transition-colors"
-        >
-          GET A QUOTE
-        </Link>
       </div>
     </section>
   );
