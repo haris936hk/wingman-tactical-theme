@@ -6,16 +6,16 @@
 @import 'tailwindcss';
 
 @theme {
-  /* Wingman Tactical Color Palette */
-  --color-primary: #d32f2f;
-  --color-primary-dark: #b71c1c;
-  --color-secondary: #1a1a1a;
-  --color-accent: #e5d4b8;
-  --color-text-primary: #212121;
-  --color-text-secondary: #757575;
-  --color-text-light: #ffffff;
-  --color-border: #e0e0e0;
-  --color-background: #ffffff;
+  /* Wingman Tactical Color Palette - Pure Black/White/Red Theme */
+  --color-primary: #FF0000;
+  --color-primary-dark: #CC0000;
+  --color-secondary: #000000;
+  --color-accent: #FF0000;
+  --color-text-primary: #FFFFFF;
+  --color-text-secondary: #CCCCCC;
+  --color-text-light: #FFFFFF;
+  --color-border: #333333;
+  --color-background: #000000;
 
   /* Typography - Wingman Tactical Style */
   --font-family-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
@@ -34,10 +34,10 @@
   --radius-md: 0.375rem;
   --radius-lg: 0.5rem;
 
-  /* Shadows */
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  /* Shadows - Red Glow Effects */
+  --shadow-sm: 0 1px 2px 0 rgb(255 0 0 / 0.2);
+  --shadow-md: 0 4px 6px -1px rgb(255 0 0 / 0.3), 0 2px 4px -2px rgb(255 0 0 / 0.2);
+  --shadow-lg: 0 10px 15px -3px rgb(255 0 0 / 0.4), 0 4px 6px -4px rgb(255 0 0 / 0.3);
 }
 
 /* Global Typography Styles - Wingman Tactical */
@@ -50,17 +50,19 @@ h1, h2, h3, h4, h5, h6 {
 /* Button Base Styles */
 .btn-primary {
   background-color: var(--color-primary);
-  color: var(--color-text-light);
+  color: #FFFFFF;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   padding: 0.75rem 2rem;
   border-radius: var(--radius-sm);
-  transition: background-color 0.3s ease;
+  transition: all 0.3s ease;
 }
 
 .btn-primary:hover {
   background-color: var(--color-primary-dark);
+  box-shadow: 0 0 20px rgb(255 0 0 / 0.6);
+  color: #FFFFFF;
 }
 
 /* Product Card Hover Effect */

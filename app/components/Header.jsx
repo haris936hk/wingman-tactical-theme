@@ -50,7 +50,7 @@ export function Header({header, isLoggedIn, cart, publicStoreDomain}) {
   return (
     <>
       {/* Main Header - Fixed Dark Bar */}
-      <header className={`fixed top-0 left-0 right-0 z-50 bg-[#1f1f1f] text-white transition-transform duration-300 ease-in-out ${isVisible ? 'translate-y-0' : '-translate-y-full'}`}>
+      <header className={`fixed top-0 left-0 right-0 z-50 bg-[#000000] text-white transition-transform duration-300 ease-in-out ${isVisible ? 'translate-y-0' : '-translate-y-full'}`}>
         <div className="max-w-[1600px] mx-auto px-8">
           <div className="flex items-center justify-between h-24">
             {/* Logo - Left */}
@@ -74,17 +74,17 @@ export function Header({header, isLoggedIn, cart, publicStoreDomain}) {
               <SearchForm action="/search" className="w-full max-w-none">
                 {({inputRef}) => (
                   <div className="relative w-full">
-                    <div className="relative rounded-md p-[2px] bg-gradient-to-r from-[#d32f2f] via-white to-[#d32f2f] bg-[length:200%_100%] animate-[gradient_3s_linear_infinite]">
+                    <div className="relative rounded-md p-[2px] bg-gradient-to-r from-[#FF0000] via-white to-[#FF0000] bg-[length:200%_100%] animate-[gradient_3s_linear_infinite]">
                       <input
                         ref={inputRef}
                         type="search"
                         name="q"
                         placeholder="Search for products"
-                        className="w-full pl-5 pr-12 py-3 bg-[#2a2a2a] text-white placeholder-white rounded-md focus:outline-none"
+                        className="w-full pl-5 pr-12 py-3 bg-[#000000] text-white placeholder-white rounded-md focus:outline-none"
                       />
                       <button
                         type="submit"
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-white hover:text-gray-300 transition-colors"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-white hover:text-[#FF0000] transition-colors"
                         aria-label="Search"
                       >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -106,7 +106,7 @@ export function Header({header, isLoggedIn, cart, publicStoreDomain}) {
       </header>
 
       {/* Navigation Bar - Below Header */}
-      <nav className={`fixed top-24 left-0 right-0 z-40 bg-[#1f1f1f] text-white border-t border-[#2a2a2a] transition-transform duration-300 ease-in-out ${isVisible ? 'translate-y-0' : '-translate-y-[calc(100%+6rem)]'}`}>
+      <nav className={`fixed left-0 right-0 z-50 bg-[#000000] text-white border-t border-[#FF0000] transition-all duration-300 ease-in-out ${isVisible ? 'top-24' : 'top-0'}`}>
         <div className="max-w-[1600px] mx-auto px-8">
           <HeaderMenu
             menu={menu}
@@ -144,7 +144,7 @@ export function HeaderMenu({
           onClick={close}
           prefetch="intent"
           to="/"
-          className="text-white hover:text-gray-300 transition-colors uppercase font-medium"
+          className="text-white hover:text-[#FF0000] transition-colors uppercase font-medium"
         >
           Home
         </NavLink>
@@ -174,9 +174,9 @@ function DesktopMenuItem({item}) {
       prefetch="intent"
       to={item.url}
       className={({isActive}) =>
-        `relative text-sm font-medium uppercase tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-white to-white bg-[length:200%_100%] bg-left transition-all duration-500 hover:bg-right hover:from-white hover:to-[#d32f2f] ${
+        `relative text-sm font-medium uppercase tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-white to-white bg-[length:200%_100%] bg-left transition-all duration-500 hover:bg-right hover:from-white hover:to-[#FF0000] ${
           isActive ? 'from-gray-300 to-gray-300' : ''
-        } after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[2px] after:bg-[#d32f2f] after:transition-all after:duration-300 hover:after:w-full`
+        } after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[2px] after:bg-[#FF0000] after:transition-all after:duration-300 hover:after:w-full`
       }
     >
       {item.title}
@@ -194,7 +194,7 @@ function MobileMenuItem({item, onClick}) {
       onClick={onClick}
       prefetch="intent"
       to={item.url}
-      className="text-white hover:text-gray-300 transition-colors uppercase font-medium"
+      className="text-white hover:text-[#FF0000] transition-colors uppercase font-medium"
     >
       {item.title}
     </NavLink>
@@ -214,7 +214,7 @@ function HeaderCtas({isLoggedIn, cart}) {
       <NavLink
         prefetch="intent"
         to="/account"
-        className="hidden md:block relative text-sm font-medium uppercase tracking-wider whitespace-nowrap bg-clip-text text-transparent bg-gradient-to-r from-white to-white bg-[length:200%_100%] bg-left transition-all duration-500 hover:bg-right hover:from-white hover:to-[#d32f2f] after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[2px] after:bg-[#d32f2f] after:transition-all after:duration-300 hover:after:w-full"
+        className="hidden md:block relative text-sm font-medium uppercase tracking-wider whitespace-nowrap bg-clip-text text-transparent bg-gradient-to-r from-white to-white bg-[length:200%_100%] bg-left transition-all duration-500 hover:bg-right hover:from-white hover:to-[#FF0000] after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[2px] after:bg-[#FF0000] after:transition-all after:duration-300 hover:after:w-full"
       >
         <Suspense fallback="LOGIN / REGISTER">
           <Await resolve={isLoggedIn} errorElement="LOGIN / REGISTER">
@@ -233,7 +233,7 @@ function HeaderMenuMobileToggle() {
   const {open} = useAside();
   return (
     <button
-      className="md:hidden text-white hover:text-[#d32f2f] transition-colors p-2"
+      className="md:hidden text-white hover:text-[#FF0000] transition-colors p-2"
       onClick={() => open('mobile')}
       aria-label="Open menu"
     >
@@ -271,7 +271,7 @@ function CartBadge({count, cart}) {
       className="flex items-center gap-2 group"
       aria-label={`Cart with ${count || 0} items`}
     >
-      <div className="relative text-white transition-colors group-hover:text-[#d32f2f]">
+      <div className="relative text-white transition-colors group-hover:text-[#FF0000]">
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
             strokeLinecap="round"
@@ -281,12 +281,12 @@ function CartBadge({count, cart}) {
           />
         </svg>
         {count !== null && count > 0 && (
-          <span className="absolute -top-2 -right-2 bg-[#d32f2f] text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+          <span className="absolute -top-2 -right-2 bg-[#FF0000] text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-[0_0_10px_rgba(255,0,0,0.6)]">
             {count}
           </span>
         )}
       </div>
-      <span className="text-sm font-medium whitespace-nowrap bg-clip-text text-transparent bg-gradient-to-r from-white to-white bg-[length:200%_100%] bg-left transition-all duration-500 group-hover:bg-right group-hover:from-white group-hover:to-[#d32f2f]">{totalPrice}</span>
+      <span className="text-sm font-medium whitespace-nowrap bg-clip-text text-transparent bg-gradient-to-r from-white to-white bg-[length:200%_100%] bg-left transition-all duration-500 group-hover:bg-right group-hover:from-white group-hover:to-[#FF0000]">{totalPrice}</span>
     </button>
   );
 }

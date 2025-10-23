@@ -1,10 +1,10 @@
 import {Await, useLoaderData, Link} from 'react-router';
 import {Suspense, lazy} from 'react';
 import {Image} from '@shopify/hydrogen';
-import {ProductItem} from '~/components/ProductItem';
 import {CountUpStat} from '~/components/CountUpStat';
 import {ClientCarousel} from '~/components/ClientCarousel';
 import {ProductCarousel} from '~/components/ProductCarousel';
+import {CustomProductCarousel} from '~/components/CustomProductCarousel';
 
 // Client-only lazy load for GridGlobe to prevent server bundle bloat
 const GridGlobe = lazy(() => import('~/components/GridGlobe'));
@@ -84,7 +84,7 @@ export default function Homepage() {
       <ClientShowcaseSection />
       <WingmanFeaturedSection products={data.recommendedProducts} />
       <DiscountsSection products={data.discountedProducts} />
-      <CustomProductsSection products={data.recommendedProducts} />
+      <CustomProductsSection />
       <AboutSellSection />
     </div>
   );
@@ -93,7 +93,7 @@ export default function Homepage() {
 /* Wingman Tactical Hero Section */
 function HeroSection() {
   return (
-    <section className="relative bg-gradient-to-r from-[#1a1a1a] to-[#2a2a2a] pt-[156px] pb-20 lg:pb-32">
+    <section className="relative bg-[#000000] pt-[156px] pb-20 lg:pb-32">
       <div className="max-w-[1400px] mx-auto px-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           {/* Text Side */}
@@ -110,7 +110,7 @@ function HeroSection() {
             <div className="flex justify-center">
               <Link
                 to="/pages/quote"
-                className="relative inline-block px-8 py-4 font-bold uppercase tracking-wide text-white overflow-hidden rounded-lg backdrop-blur-md bg-gradient-to-r from-[#d32f2f] via-gray-600 to-[#d32f2f] bg-[length:200%_100%] animate-[gradient_3s_linear_infinite] shadow-lg hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 border border-white/20"
+                className="relative inline-block px-8 py-4 font-bold uppercase tracking-wide text-white overflow-hidden rounded-lg backdrop-blur-md bg-gradient-to-r from-[#FF0000] via-gray-600 to-[#FF0000] bg-[length:200%_100%] animate-[gradient_3s_linear_infinite] shadow-[0_0_20px_rgba(255,0,0,0.6)] hover:shadow-[0_0_30px_rgba(255,0,0,0.8)] hover:-translate-y-1 transition-all duration-300 border border-white/20"
               >
                 GET A QUOTE
               </Link>
@@ -137,9 +137,9 @@ function HeroSection() {
               />
               <defs>
                 <linearGradient id="borderGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%" stopColor="#d32f2f" />
-                  <stop offset="50%" stopColor="#ffffff" />
-                  <stop offset="100%" stopColor="#d32f2f" />
+                  <stop offset="0%" stopColor="#FF0000" />
+                  <stop offset="50%" stopColor="#FFFFFF" />
+                  <stop offset="100%" stopColor="#FF0000" />
                 </linearGradient>
               </defs>
             </svg>
@@ -168,7 +168,7 @@ function HeroSection() {
 /* Split Content Section - Two Column Layout */
 function SplitContentSection() {
   return (
-    <section className="relative bg-gradient-to-r from-[#2a2a2a] to-[#1a1a1a] py-20 lg:py-32">
+    <section className="relative bg-[#000000] py-20 lg:py-32 border-t border-[#FF0000]">
       <div className="max-w-[1400px] mx-auto px-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           {/* Left Side - Globe */}
@@ -191,9 +191,9 @@ function SplitContentSection() {
               />
               <defs>
                 <linearGradient id="splitBorderGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%" stopColor="#d32f2f" />
-                  <stop offset="50%" stopColor="#ffffff" />
-                  <stop offset="100%" stopColor="#d32f2f" />
+                  <stop offset="0%" stopColor="#FF0000" />
+                  <stop offset="50%" stopColor="#FFFFFF" />
+                  <stop offset="100%" stopColor="#FF0000" />
                 </linearGradient>
               </defs>
             </svg>
@@ -217,7 +217,7 @@ function SplitContentSection() {
             <h2
               className="text-2xl lg:text-3xl font-bold uppercase mb-12 text-center text-white"
               style={{
-                textShadow: '0 0 10px rgba(211, 47, 47, 0.8), 0 0 20px rgba(211, 47, 47, 0.6), 0 0 30px rgba(211, 47, 47, 0.4)'
+                textShadow: '0 0 10px rgba(255, 0, 0, 0.8), 0 0 20px rgba(255, 0, 0, 0.6), 0 0 30px rgba(255, 0, 0, 0.4)'
               }}
             >
               CLIENTS SERVED ACROSS THE WORLD
@@ -274,9 +274,11 @@ function SplitContentSection() {
 /* Client Showcase Section */
 function ClientShowcaseSection() {
   return (
-    <section className="py-16 bg-white">
+    <section className="py-16 bg-[#000000] border-t border-[#FF0000]">
       <div className="max-w-[1400px] mx-auto px-6">
-        <h2 className="text-3xl lg:text-4xl font-bold uppercase text-center mb-12 text-[#1a1a1a]">
+        <h2 className="text-3xl lg:text-4xl font-bold uppercase text-center mb-12 text-white" style={{
+          textShadow: '0 0 10px rgba(255, 0, 0, 0.6)'
+        }}>
           EXPLORE OUR ACROSS THE WORLD SERVED CLIENTS
         </h2>
 
@@ -289,9 +291,11 @@ function ClientShowcaseSection() {
 /* Wingman Featured Section */
 function WingmanFeaturedSection({products}) {
   return (
-    <section className="py-16 bg-gray-50">
+    <section className="py-16 bg-[#000000] border-t border-[#FF0000]">
       <div className="max-w-[1400px] mx-auto px-6">
-        <h2 className="text-3xl lg:text-4xl font-bold uppercase text-center mb-12">
+        <h2 className="text-3xl lg:text-4xl font-bold uppercase text-center mb-12 text-white" style={{
+          textShadow: '0 0 10px rgba(255, 0, 0, 0.6)'
+        }}>
           WINGMAN FEATURED
         </h2>
 
@@ -310,9 +314,11 @@ function WingmanFeaturedSection({products}) {
 /* Discounts & Offers Section */
 function DiscountsSection({products}) {
   return (
-    <section className="py-16 bg-white">
+    <section className="py-16 bg-[#000000] border-t border-[#FF0000]">
       <div className="max-w-[1400px] mx-auto px-6">
-        <h2 className="text-3xl lg:text-4xl font-bold uppercase text-center mb-12">
+        <h2 className="text-3xl lg:text-4xl font-bold uppercase text-center mb-12 text-white" style={{
+          textShadow: '0 0 10px rgba(255, 0, 0, 0.6)'
+        }}>
           DISCOUNTS & OFFERS
         </h2>
 
@@ -329,25 +335,50 @@ function DiscountsSection({products}) {
 }
 
 /* Custom Products Section */
-function CustomProductsSection({products}) {
+function CustomProductsSection() {
+  const customProducts = [
+    {
+      image: '/customproducts/custom-tshirts.png',
+      title: 'Custom Aviation T-Shirts',
+      link: '/pages/quote'
+    },
+    {
+      image: '/customproducts/zyn-patch.png',
+      title: 'Custom Military Patches',
+      link: '/pages/quote'
+    },
+    {
+      image: '/customproducts/drew-patch.png',
+      title: 'Squadron Patches',
+      link: '/pages/quote'
+    },
+    {
+      image: '/customproducts/helmet-bag.png',
+      title: 'Custom Helmet Bags',
+      link: '/pages/quote'
+    },
+    {
+      image: '/customproducts/mechanics-patches.png',
+      title: 'Custom Keychains & Patches',
+      link: '/pages/quote'
+    },
+    {
+      image: '/customproducts/aviation-lanyard.png',
+      title: 'Custom Aviation Lanyards',
+      link: '/pages/quote'
+    }
+  ];
+
   return (
-    <section className="py-16 bg-gray-50">
+    <section className="py-16 bg-[#000000] border-t border-[#FF0000]">
       <div className="max-w-[1400px] mx-auto px-6">
-        <h2 className="text-3xl lg:text-4xl font-bold uppercase text-center mb-12">
+        <h2 className="text-3xl lg:text-4xl font-bold uppercase text-center mb-12 text-white" style={{
+          textShadow: '0 0 10px rgba(255, 0, 0, 0.6)'
+        }}>
           CUSTOM PRODUCTS
         </h2>
 
-        <Suspense fallback={<div className="text-center">Loading...</div>}>
-          <Await resolve={products}>
-            {(response) => (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {response?.products.nodes.map((product) => (
-                  <ProductItem key={product.id} product={product} />
-                ))}
-              </div>
-            )}
-          </Await>
-        </Suspense>
+        <CustomProductCarousel items={customProducts} showCTA={true} />
       </div>
     </section>
   );
@@ -356,14 +387,14 @@ function CustomProductsSection({products}) {
 /* About Us / Sell With Us Section */
 function AboutSellSection() {
   return (
-    <section className="py-16 bg-white">
+    <section className="py-16 bg-[#000000] border-t border-[#FF0000]">
       <div className="max-w-[1400px] mx-auto px-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* About Us Card */}
           <Link to="/pages/about" className="relative h-[400px] rounded-lg overflow-hidden group">
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-black/20 z-10" />
             <img
-              src="https://cdn.shopify.com/s/files/1/0000/0000/files/about-us.jpg"
+              src="/aboutus.png"
               alt="About Us"
               className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
             />
@@ -377,7 +408,7 @@ function AboutSellSection() {
           <Link to="/pages/sell" className="relative h-[400px] rounded-lg overflow-hidden group">
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-black/20 z-10" />
             <img
-              src="https://cdn.shopify.com/s/files/1/0000/0000/files/sell-with-us.jpg"
+              src="/sellwithus.png"
               alt="Sell With Us"
               className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
             />

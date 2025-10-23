@@ -4,8 +4,15 @@
   --cart-aside-summary-height: 250px;
   --grid-item-width: 355px;
   --header-height: 64px;
-  --color-dark: #000;
-  --color-light: #fff;
+  --color-dark: #000000;
+  --color-light: #FFFFFF;
+  --color-red: #FF0000;
+}
+
+/* Global Black Background & White Text */
+body {
+  background-color: #000000;
+  color: #FFFFFF;
 }
 
 img {
@@ -20,6 +27,7 @@ img {
 .link:hover {
   text-decoration: underline;
   cursor: pointer;
+  color: var(--color-red);
 }
 
 /*
@@ -34,8 +42,8 @@ img {
 }
 
 aside {
-  background: var(--color-light);
-  box-shadow: 0 0 50px rgba(0, 0, 0, 0.3);
+  background: var(--color-dark);
+  box-shadow: 0 0 50px rgba(255, 0, 0, 0.5);
   height: 100vh;
   width: min(var(--aside-width), 100vw);
   position: fixed;
@@ -46,11 +54,12 @@ aside {
 
 aside header {
   align-items: center;
-  border-bottom: 1px solid var(--color-dark);
+  border-bottom: 1px solid var(--color-red);
   display: flex;
   height: var(--header-height);
   justify-content: space-between;
   padding: 0 20px;
+  color: var(--color-light);
 }
 
 aside header h3 {
@@ -67,6 +76,7 @@ aside header .close {
 
 aside header .close:hover {
   opacity: 1;
+  color: var(--color-red);
 }
 
 aside header h2 {
@@ -91,7 +101,7 @@ aside li {
 }
 
 .overlay {
-  background: rgba(0, 0, 0, 0.2);
+  background: rgba(0, 0, 0, 0.8);
   bottom: 0;
   left: 0;
   opacity: 0;
@@ -102,7 +112,7 @@ aside li {
   transition: opacity 400ms ease-in-out;
   transition: opacity 400ms;
   visibility: hidden;
-  z-index: 10;
+  z-index: 100;
 }
 
 .overlay .close-outside {
@@ -155,6 +165,7 @@ button.reset:not(:has(> *)) {
 button.reset:hover:not(:has(> *)) {
   text-decoration: underline;
   cursor: pointer;
+  color: var(--color-red);
 }
 
 /*
@@ -203,6 +214,11 @@ button.reset:hover:not(:has(> *)) {
 .footer-menu a {
   color: var(--color-light);
   min-width: fit-content;
+  transition: color 0.3s ease;
+}
+
+.footer-menu a:hover {
+  color: var(--color-red);
 }
 
 /*
@@ -237,12 +253,13 @@ button.reset:hover:not(:has(> *)) {
 }
 
 .cart-summary-aside {
-  background: white;
-  border-top: 1px solid var(--color-dark);
+  background: var(--color-dark);
+  border-top: 1px solid var(--color-red);
   bottom: 0;
   padding-top: 0.75rem;
   position: absolute;
   width: calc(var(--aside-width) - 40px);
+  color: var(--color-light);
 }
 
 .cart-line-quantity {
@@ -270,9 +287,10 @@ button.reset:hover:not(:has(> *)) {
 }
 
 .predictive-search-form {
-  background: var(--color-light);
+  background: var(--color-dark);
   position: sticky;
   top: 0;
+  color: var(--color-light);
 }
 
 .predictive-search-result {

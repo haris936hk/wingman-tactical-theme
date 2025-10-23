@@ -17,7 +17,7 @@ export function ProductItem({product, loading, showSaleBadge = false}) {
   const image = product.featuredImage;
 
   return (
-    <div className="product-card bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-lg transition-all duration-300 group">
+    <div className="product-card bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-[0_0_20px_rgba(255,0,0,0.5)] transition-all duration-300 group hover:-translate-y-2">
       <Link
         key={product.id}
         prefetch="intent"
@@ -28,7 +28,7 @@ export function ProductItem({product, loading, showSaleBadge = false}) {
         <div className="relative bg-gray-100 rounded-t-lg overflow-hidden">
           {/* Sale Badge */}
           {showSaleBadge && (
-            <div className="absolute top-2 left-2 z-10 bg-[#d32f2f] text-white text-xs font-bold uppercase px-2 py-1 rounded">
+            <div className="absolute top-2 left-2 z-10 bg-[#FF0000] text-white text-xs font-bold uppercase px-2 py-1 rounded shadow-[0_0_10px_rgba(255,0,0,0.5)]">
               SALE
             </div>
           )}
@@ -75,13 +75,13 @@ export function ProductItem({product, loading, showSaleBadge = false}) {
           )}
 
           {/* Product Price */}
-          <div className={`text-lg font-bold mb-4 ${showSaleBadge ? 'text-[#d32f2f]' : 'text-gray-900'}`}>
+          <div className={`text-lg font-bold mb-4 ${showSaleBadge ? 'text-[#FF0000]' : 'text-gray-900'}`}>
             <Money data={product.priceRange.minVariantPrice} />
           </div>
 
           {/* Add to Cart Button */}
           <button
-            className="w-full bg-[#d32f2f] hover:bg-[#b71c1c] text-white font-bold uppercase text-sm py-3 px-4 rounded transition-colors flex items-center justify-center gap-2"
+            className="w-full bg-[#FF0000] hover:bg-[#CC0000] text-white font-bold uppercase text-sm py-3 px-4 rounded transition-all hover:shadow-[0_0_15px_rgba(255,0,0,0.6)] flex items-center justify-center gap-2"
             onClick={(e) => {
               e.preventDefault();
               // TODO: Add to cart functionality

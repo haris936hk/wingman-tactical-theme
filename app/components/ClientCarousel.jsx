@@ -101,12 +101,12 @@ export function ClientCarousel() {
               className="flex-shrink-0 px-3"
               style={{width: `${100 / slidesToShow}%`}}
             >
-              <div className="group bg-white rounded-xl overflow-hidden h-full flex flex-col shadow-md relative will-change-transform transition-[transform,box-shadow] duration-300 ease-out hover:-translate-y-2 hover:shadow-2xl">
+              <div className="group bg-white rounded-xl overflow-hidden h-full flex flex-col shadow-md relative will-change-transform transition-[transform,box-shadow] duration-300 ease-out hover:-translate-y-2 hover:shadow-[0_0_25px_rgba(255,0,0,0.6)]">
                 {/* Optimized border effect - only opacity changes */}
                 <div
                   className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none -z-10"
                   style={{
-                    background: 'linear-gradient(45deg, #d32f2f 0%, transparent 50%, #d32f2f 100%)',
+                    background: 'linear-gradient(45deg, #FF0000 0%, transparent 50%, #FF0000 100%)',
                     padding: '2px',
                   }}
                 >
@@ -133,10 +133,10 @@ export function ClientCarousel() {
                 {/* Content */}
                 <div className="p-6 text-center flex-1 flex flex-col bg-gradient-to-b from-white to-gray-50 relative">
                   {/* Simplified decorative line */}
-                  <div className="w-16 h-1 bg-gradient-to-r from-transparent via-[#d32f2f] to-transparent mx-auto mb-4 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-out" />
+                  <div className="w-16 h-1 bg-gradient-to-r from-transparent via-[#FF0000] to-transparent mx-auto mb-4 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-out" />
 
                   <h3
-                    className="text-2xl font-bold uppercase mb-4 text-[#1a1a1a] transition-colors duration-300 ease-out group-hover:text-[#d32f2f]"
+                    className="text-2xl font-bold uppercase mb-4 text-[#1a1a1a] transition-colors duration-300 ease-out group-hover:text-[#FF0000]"
                     style={{
                       textShadow: '0 2px 4px rgba(0,0,0,0.05)'
                     }}
@@ -161,13 +161,13 @@ export function ClientCarousel() {
               onClick={() => goToSlide(index)}
               className={`rounded-full transition-all duration-300 ${
                 currentIndex === index
-                  ? 'bg-[#d32f2f] w-10 h-3 shadow-lg'
+                  ? 'bg-[#FF0000] w-10 h-3 shadow-lg'
                   : 'bg-gray-300 hover:bg-gray-400 w-3 h-3 hover:scale-125'
               }`}
               style={
                 currentIndex === index
                   ? {
-                      boxShadow: '0 2px 8px rgba(211, 47, 47, 0.4)',
+                      boxShadow: '0 2px 8px rgba(255, 0, 0, 0.5)',
                     }
                   : {}
               }
@@ -180,11 +180,8 @@ export function ClientCarousel() {
       {/* Navigation Arrows */}
       <button
         onClick={prevSlide}
-        className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 bg-white hover:bg-[#d32f2f] text-[#d32f2f] hover:text-white p-4 rounded-full shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-110 border-2 border-[#d32f2f] group z-10"
+        className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 bg-white hover:bg-[#FF0000] text-[#FF0000] hover:text-white p-4 rounded-full shadow-lg hover:shadow-[0_0_20px_rgba(255,0,0,0.6)] transition-all duration-300 hover:scale-110 border-2 border-[#FF0000] group z-10"
         aria-label="Previous slide"
-        style={{
-          boxShadow: '0 4px 6px rgba(0,0,0,0.1), 0 0 20px rgba(211, 47, 47, 0.2)'
-        }}
       >
         <svg
           className="w-6 h-6 transform group-hover:-translate-x-1 transition-transform duration-300"
@@ -203,11 +200,8 @@ export function ClientCarousel() {
 
       <button
         onClick={nextSlide}
-        className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 bg-white hover:bg-[#d32f2f] text-[#d32f2f] hover:text-white p-4 rounded-full shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-110 border-2 border-[#d32f2f] group z-10"
+        className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 bg-white hover:bg-[#FF0000] text-[#FF0000] hover:text-white p-4 rounded-full shadow-lg hover:shadow-[0_0_20px_rgba(255,0,0,0.6)] transition-all duration-300 hover:scale-110 border-2 border-[#FF0000] group z-10"
         aria-label="Next slide"
-        style={{
-          boxShadow: '0 4px 6px rgba(0,0,0,0.1), 0 0 20px rgba(211, 47, 47, 0.2)'
-        }}
       >
         <svg
           className="w-6 h-6 transform group-hover:translate-x-1 transition-transform duration-300"
