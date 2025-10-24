@@ -229,6 +229,10 @@ export function ClientCarousel() {
                     src={client.image}
                     alt={client.title}
                     className="w-full h-full object-cover"
+                    loading="lazy"
+                    decoding="async"
+                    width="400"
+                    height="300"
                     onError={(e) => {
                       e.target.src =
                         'https://via.placeholder.com/400x300?text=' +

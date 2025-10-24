@@ -405,8 +405,12 @@ function AboutSellSection() {
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-black/20 z-10" />
             <img
               src={aboutUsImg}
-              alt="About Us"
+              alt="About Us - Quality Aviation Gear and Merchandise"
               className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+              loading="lazy"
+              decoding="async"
+              width="800"
+              height="400"
             />
             <div className="absolute bottom-0 left-0 right-0 p-8 z-20">
               <h3 className="text-4xl font-bold uppercase text-white mb-4">ABOUT US</h3>
@@ -419,8 +423,12 @@ function AboutSellSection() {
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-black/20 z-10" />
             <img
               src={sellWithUsImg}
-              alt="Sell With Us"
+              alt="Sell With Us - Partner with Wingman Tactical"
               className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+              loading="lazy"
+              decoding="async"
+              width="800"
+              height="400"
             />
             <div className="absolute bottom-0 left-0 right-0 p-8 z-20">
               <h3 className="text-4xl font-bold uppercase text-white mb-4">SELL WITH US</h3>

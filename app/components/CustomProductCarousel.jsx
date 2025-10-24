@@ -79,8 +79,12 @@ export function CustomProductCarousel({items, showCTA = false}) {
                 <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/60 z-10" />
                 <img
                   src={aboutUsImg}
-                  alt="Get a Quote"
+                  alt="Get a Quote for Custom Aviation Gear"
                   className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  loading="lazy"
+                  decoding="async"
+                  width="1400"
+                  height="280"
                 />
                 <div className="absolute inset-0 flex flex-col items-center justify-center z-20 px-8">
                   <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold uppercase text-white mb-4 text-center leading-tight">
@@ -154,6 +158,9 @@ function CustomProductCard({item}) {
           alt={item.title}
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
           loading="lazy"
+          decoding="async"
+          width="400"
+          height="400"
         />
 
         {/* Overlay gradient on hover */}
