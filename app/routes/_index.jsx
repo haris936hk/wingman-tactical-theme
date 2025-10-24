@@ -6,6 +6,16 @@ import {ClientCarousel} from '~/components/ClientCarousel';
 import {ProductCarousel} from '~/components/ProductCarousel';
 import {CustomProductCarousel} from '~/components/CustomProductCarousel';
 
+// Import static images for cache busting
+import customTshirtsImg from '~/assets/customproducts/custom-tshirts.png';
+import zynPatchImg from '~/assets/customproducts/zyn-patch.png';
+import drewPatchImg from '~/assets/customproducts/drew-patch.png';
+import helmetBagImg from '~/assets/customproducts/helmet-bag.png';
+import mechanicsPatchesImg from '~/assets/customproducts/mechanics-patches.png';
+import aviationLanyardImg from '~/assets/customproducts/aviation-lanyard.png';
+import aboutUsImg from '~/assets/aboutus.png';
+import sellWithUsImg from '~/assets/sellwithus.png';
+
 // Client-only lazy load for GridGlobe to prevent server bundle bloat
 const GridGlobe = lazy(() => import('~/components/GridGlobe'));
 
@@ -338,32 +348,32 @@ function DiscountsSection({products}) {
 function CustomProductsSection() {
   const customProducts = [
     {
-      image: '/customproducts/custom-tshirts.png',
+      image: customTshirtsImg,
       title: 'Custom Aviation T-Shirts',
       link: '/pages/quote'
     },
     {
-      image: '/customproducts/zyn-patch.png',
+      image: zynPatchImg,
       title: 'Custom Military Patches',
       link: '/pages/quote'
     },
     {
-      image: '/customproducts/drew-patch.png',
+      image: drewPatchImg,
       title: 'Squadron Patches',
       link: '/pages/quote'
     },
     {
-      image: '/customproducts/helmet-bag.png',
+      image: helmetBagImg,
       title: 'Custom Helmet Bags',
       link: '/pages/quote'
     },
     {
-      image: '/customproducts/mechanics-patches.png',
+      image: mechanicsPatchesImg,
       title: 'Custom Keychains & Patches',
       link: '/pages/quote'
     },
     {
-      image: '/customproducts/aviation-lanyard.png',
+      image: aviationLanyardImg,
       title: 'Custom Aviation Lanyards',
       link: '/pages/quote'
     }
@@ -394,7 +404,7 @@ function AboutSellSection() {
           <Link to="/pages/about" className="relative h-[400px] rounded-lg overflow-hidden group">
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-black/20 z-10" />
             <img
-              src="/aboutus.png"
+              src={aboutUsImg}
               alt="About Us"
               className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
             />
@@ -408,7 +418,7 @@ function AboutSellSection() {
           <Link to="/pages/sell" className="relative h-[400px] rounded-lg overflow-hidden group">
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-black/20 z-10" />
             <img
-              src="/sellwithus.png"
+              src={sellWithUsImg}
               alt="Sell With Us"
               className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
             />

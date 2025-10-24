@@ -46,21 +46,21 @@ export function Globe({globeConfig, data}) {
   };
 
   useEffect(() => {
-    if (globeRef.current) {
+    if (globeRef.current && data && Array.isArray(data) && data.length > 0) {
       _buildData();
       _buildMaterial();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [globeRef.current]);
+  }, [globeRef.current, data]);
 
   const _buildMaterial = () => {
-    if (!globeRef.current) return;
+    if (!globeRef.current || !globeConfig) return;
 
     const globeMaterial = globeRef.current.globeMaterial();
-    globeMaterial.color = new Color(globeConfig.globeColor);
-    globeMaterial.emissive = new Color(globeConfig.emissive);
-    globeMaterial.emissiveIntensity = globeConfig.emissiveIntensity || 0.1;
-    globeMaterial.shininess = globeConfig.shininess || 0.9;
+    globeMaterial.color = new Color(globeConfig.globeColor || defaultProps.globeColor);
+    globeMaterial.emissive = new Color(globeConfig.emissive || defaultProps.emissive);
+    globeMaterial.emissiveIntensity = globeConfig.emissiveIntensity || defaultProps.emissiveIntensity;
+    globeMaterial.shininess = globeConfig.shininess || defaultProps.shininess;
   };
 
   const _buildData = () => {
@@ -68,7 +68,27 @@ export function Globe({globeConfig, data}) {
     let points = [];
     for (let i = 0; i < arcs.length; i++) {
       const arc = arcs[i];
+
+      // Validate arc data
+      if (!arc ||
+          typeof arc.startLat !== 'number' ||
+          typeof arc.startLng !== 'number' ||
+          typeof arc.endLat !== 'number' ||
+          typeof arc.endLng !== 'number' ||
+          isNaN(arc.startLat) ||
+          isNaN(arc.startLng) ||
+          isNaN(arc.endLat) ||
+          isNaN(arc.endLng)) {
+        console.warn('Invalid arc data at index', i, arc);
+        continue;
+      }
+
       const rgb = hexToRgb(arc.color);
+      if (!rgb) {
+        console.warn('Invalid color for arc at index', i, arc.color);
+        continue;
+      }
+
       points.push({
         size: defaultProps.pointSize,
         order: arc.order,
@@ -116,29 +136,47 @@ export function Globe({globeConfig, data}) {
   }, [globeData, countries]);
 
   const startAnimation = () => {
-    if (!globeRef.current || !globeData) return;
+    if (!globeRef.current || !globeData || !data || !Array.isArray(data)) return;
+
+    // Filter valid arcs
+    const validArcs = data.filter((d) =>
+      d &&
+      typeof d.startLat === 'number' &&
+      typeof d.startLng === 'number' &&
+      typeof d.endLat === 'number' &&
+      typeof d.endLng === 'number' &&
+      typeof d.arcAlt === 'number' &&
+      !isNaN(d.startLat) &&
+      !isNaN(d.startLng) &&
+      !isNaN(d.endLat) &&
+      !isNaN(d.endLng) &&
+      !isNaN(d.arcAlt)
+    );
+
+    if (validArcs.length === 0) {
+      console.warn('No valid arcs to display');
+      return;
+    }
 
     globeRef.current
-      .arcsData(data)
-      .arcStartLat((d) => d.startLat * 1)
-      .arcStartLng((d) => d.startLng * 1)
-      .arcEndLat((d) => d.endLat * 1)
-      .arcEndLng((d) => d.endLng * 1)
-      .arcColor((e) => e.color)
-      .arcAltitude((e) => {
-        return e.arcAlt * 1;
-      })
+      .arcsData(validArcs)
+      .arcStartLat((d) => d.startLat)
+      .arcStartLng((d) => d.startLng)
+      .arcEndLat((d) => d.endLat)
+      .arcEndLng((d) => d.endLng)
+      .arcColor((e) => e.color || '#ffffff')
+      .arcAltitude((e) => e.arcAlt)
       .arcStroke(() => {
         return [0.32, 0.28, 0.3][Math.round(Math.random() * 2)];
       })
       .arcDashLength(defaultProps.arcLength)
-      .arcDashInitialGap((e) => e.order * 1)
+      .arcDashInitialGap((e) => (typeof e.order === 'number' ? e.order : 0))
       .arcDashGap(15)
       .arcDashAnimateTime(() => defaultProps.arcTime);
 
     globeRef.current
-      .pointsData(data)
-      .pointColor((e) => e.color)
+      .pointsData(validArcs)
+      .pointColor((e) => e.color || '#ffffff')
       .pointsMerge(true)
       .pointAltitude(0.0)
       .pointRadius(2);
@@ -154,10 +192,16 @@ export function Globe({globeConfig, data}) {
   };
 
   useEffect(() => {
-    if (!globeRef.current || !globeData) return;
+    if (!globeRef.current || !globeData || !data || !Array.isArray(data)) return;
 
     // Get all unique orders from the data
-    const orders = [...new Set(data.map((arc) => arc.order))].sort((a, b) => a - b);
+    const validOrders = data
+      .filter((arc) => arc && typeof arc.order === 'number' && !isNaN(arc.order))
+      .map((arc) => arc.order);
+
+    if (validOrders.length === 0) return;
+
+    const orders = [...new Set(validOrders)].sort((a, b) => a - b);
     let orderIndex = 0;
 
     const updateRings = () => {
@@ -169,6 +213,18 @@ export function Globe({globeConfig, data}) {
 
       // Find all arcs with the current order
       data.forEach((arc) => {
+        if (!arc ||
+            typeof arc.startLat !== 'number' ||
+            typeof arc.startLng !== 'number' ||
+            typeof arc.endLat !== 'number' ||
+            typeof arc.endLng !== 'number' ||
+            isNaN(arc.startLat) ||
+            isNaN(arc.startLng) ||
+            isNaN(arc.endLat) ||
+            isNaN(arc.endLng)) {
+          return;
+        }
+
         if (arc.order === currentOrder) {
           // Find the corresponding start and end points in globeData
           const startPoint = globeData.find(

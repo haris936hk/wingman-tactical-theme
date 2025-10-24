@@ -1,5 +1,6 @@
 import {useState, useEffect} from 'react';
 import {Link} from 'react-router';
+import aboutUsImg from '~/assets/aboutus.png';
 
 export function CustomProductCarousel({items, showCTA = false}) {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -77,7 +78,7 @@ export function CustomProductCarousel({items, showCTA = false}) {
               <Link to="/pages/quote" className="relative block h-[250px] md:h-[280px] rounded-lg overflow-hidden group">
                 <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/60 z-10" />
                 <img
-                  src="/aboutus.png"
+                  src={aboutUsImg}
                   alt="Get a Quote"
                   className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                 />

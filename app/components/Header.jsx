@@ -3,6 +3,7 @@ import {Await, NavLink, useAsyncValue} from 'react-router';
 import {useAnalytics, useOptimisticCart} from '@shopify/hydrogen';
 import {useAside} from '~/components/Aside';
 import {SearchForm} from '~/components/SearchForm';
+import logoImage from '~/assets/logo.png';
 
 // Navigation menu configuration
 const NAVIGATION_MENU = [
@@ -62,7 +63,7 @@ export function Header({header, isLoggedIn, cart, publicStoreDomain}) {
                 className="block"
               >
                 <img
-                  src="/logo.png"
+                  src={logoImage}
                   alt="Wingman Tactical"
                   className="h-16 w-auto"
                 />

@@ -1,47 +1,154 @@
 import {useState, useEffect} from 'react';
 
+// Import client images for cache busting
+import client1 from '~/assets/images/clients/image.png';
+import client2 from '~/assets/images/clients/image copy.png';
+import client3 from '~/assets/images/clients/image copy 2.png';
+import client4 from '~/assets/images/clients/image copy 3.png';
+import client5 from '~/assets/images/clients/image copy 4.png';
+import client6 from '~/assets/images/clients/image copy 5.png';
+import client7 from '~/assets/images/clients/image copy 6.png';
+import client8 from '~/assets/images/clients/image copy 7.png';
+import client9 from '~/assets/images/clients/image copy 8.png';
+import client10 from '~/assets/images/clients/image copy 9.png';
+import client11 from '~/assets/images/clients/image copy 10.png';
+import client12 from '~/assets/images/clients/image copy 11.png';
+import client13 from '~/assets/images/clients/image copy 12.png';
+import client14 from '~/assets/images/clients/image copy 13.png';
+import client15 from '~/assets/images/clients/image copy 14.png';
+import client16 from '~/assets/images/clients/image copy 15.png';
+import client17 from '~/assets/images/clients/image copy 16.png';
+import client18 from '~/assets/images/clients/image copy 17.png';
+import client19 from '~/assets/images/clients/image copy 18.png';
+import client20 from '~/assets/images/clients/image copy 19.png';
+import client21 from '~/assets/images/clients/image copy 20.png';
+
 const clientsData = [
   {
     id: 1,
-    title: 'USAF 121 FS',
-    description:
-      "121st Fighter Squadron based at Joint Base Andrews, Camp Springs, Maryland gave Wingman Tactical the privilege to design & restock the Flight Helmet Visor covers for 121 Sqn fighter pilots wearing HMIT & JHMCS.",
-    image: '/images/clients/usaf-121-fs.jpg',
+    title: 'Client 1',
+    description: 'Client description here.',
+    image: client1,
   },
   {
     id: 2,
-    title: 'VAQ-129 SQN',
-    description:
-      "Wingman Tactical proudly delivered custom JHMCS and HGU55P helmet visor covers to VAQ-129 Squadron—ensuring their aviators' critical helmets stay protected, mission-ready, and performance-focused during high-tempo electronic warfare training and operations.",
-    image: '/images/clients/vaq-129.jpg',
+    title: 'Client 2',
+    description: 'Client description here.',
+    image: client2,
   },
   {
     id: 3,
-    title: 'VAQ-133 SQN',
-    description:
-      'We equipped the US Navy VAQ-133 Squadron with mission-specific Vietnam tiger stripe pattern flight suits designed by Wingman Tactical, built to endure intense operations while delivering superior fit, comfort, and reliability in the skies.',
-    image: '/images/clients/vaq-133.jpg',
+    title: 'Client 3',
+    description: 'Client description here.',
+    image: client3,
   },
   {
     id: 4,
-    title: 'VFA-151 SQN',
-    description:
-      "Proud to support US Navy VFA-151 Squadron with tailored helmet visor covers—crafted to shield critical JHMCS helmet, maintain visibility, and withstand demanding carrier-based operations for the US Navy's premier strike fighter team.",
-    image: '/images/clients/vfa-151.jpg',
+    title: 'Client 4',
+    description: 'Client description here.',
+    image: client4,
   },
   {
     id: 5,
-    title: 'VMFA-314 SQN',
-    description:
-      'Supporting the legendary Black Knights of VMFA-314 with precision-engineered flight gear and custom helmet visor covers designed for the demanding conditions of carrier operations and combat missions.',
-    image: '/images/clients/vmfa-314.jpg',
+    title: 'Client 5',
+    description: 'Client description here.',
+    image: client5,
   },
   {
     id: 6,
-    title: 'VFA-2 SQN',
-    description:
-      'Wingman Tactical equipped the Bounty Hunters of VFA-2 with mission-critical flight suits and tactical gear, ensuring superior performance during high-stakes naval aviation operations.',
-    image: '/images/clients/vfa-2.jpg',
+    title: 'Client 6',
+    description: 'Client description here.',
+    image: client6,
+  },
+  {
+    id: 7,
+    title: 'Client 7',
+    description: 'Client description here.',
+    image: client7,
+  },
+  {
+    id: 8,
+    title: 'Client 8',
+    description: 'Client description here.',
+    image: client8,
+  },
+  {
+    id: 9,
+    title: 'Client 9',
+    description: 'Client description here.',
+    image: client9,
+  },
+  {
+    id: 10,
+    title: 'Client 10',
+    description: 'Client description here.',
+    image: client10,
+  },
+  {
+    id: 11,
+    title: 'Client 11',
+    description: 'Client description here.',
+    image: client11,
+  },
+  {
+    id: 12,
+    title: 'Client 12',
+    description: 'Client description here.',
+    image: client12,
+  },
+  {
+    id: 13,
+    title: 'Client 13',
+    description: 'Client description here.',
+    image: client13,
+  },
+  {
+    id: 14,
+    title: 'Client 14',
+    description: 'Client description here.',
+    image: client14,
+  },
+  {
+    id: 15,
+    title: 'Client 15',
+    description: 'Client description here.',
+    image: client15,
+  },
+  {
+    id: 16,
+    title: 'Client 16',
+    description: 'Client description here.',
+    image: client16,
+  },
+  {
+    id: 17,
+    title: 'Client 17',
+    description: 'Client description here.',
+    image: client17,
+  },
+  {
+    id: 18,
+    title: 'Client 18',
+    description: 'Client description here.',
+    image: client18,
+  },
+  {
+    id: 19,
+    title: 'Client 19',
+    description: 'Client description here.',
+    image: client19,
+  },
+  {
+    id: 20,
+    title: 'Client 20',
+    description: 'Client description here.',
+    image: client20,
+  },
+  {
+    id: 21,
+    title: 'Client 21',
+    description: 'Client description here.',
+    image: client21,
   },
 ];
 
