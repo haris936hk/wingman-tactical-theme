@@ -193,7 +193,7 @@ export function ClientCarousel() {
   };
 
   return (
-    <div className="relative py-8">
+    <div className="relative">
       {/* Carousel Container */}
       <div className="overflow-hidden px-2">
         <div
@@ -202,13 +202,16 @@ export function ClientCarousel() {
             transform: `translateX(-${currentIndex * (100 / slidesToShow)}%)`,
           }}
         >
-          {clientsData.map((client) => (
+          {clientsData.map((client, index) => (
             <div
               key={client.id}
               className="flex-shrink-0 px-3"
               style={{width: `${100 / slidesToShow}%`}}
             >
-              <div className="group bg-white rounded-xl overflow-hidden h-full flex flex-col shadow-md relative will-change-transform transition-[transform,box-shadow] duration-300 ease-out hover:-translate-y-2 hover:shadow-[0_0_25px_rgba(255,0,0,0.6)]">
+              <div
+                className="group bg-white rounded-xl overflow-hidden h-full flex flex-col shadow-md relative will-change-transform motion-safe:transition-all motion-safe:duration-200 motion-safe:ease-out hover:scale-[1.03] hover:-translate-y-2 hover:shadow-[0_0_25px_rgba(255,0,0,0.6)] focus-visible:scale-[1.03] focus-visible:-translate-y-2 focus-visible:shadow-[0_0_25px_rgba(255,0,0,0.6)] focus-visible:outline-2 focus-visible:outline-[#FF0000] focus-visible:outline-offset-2 opacity-0 translate-y-4 motion-safe:animate-[fadeSlideUp_300ms_ease-out_forwards]"
+                style={{animationDelay: `${index * 50}ms`}}
+              >
                 {/* Optimized border effect - only opacity changes */}
                 <div
                   className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none -z-10"
@@ -265,7 +268,7 @@ export function ClientCarousel() {
         </div>
 
         {/* Dots Navigation - moved inside container */}
-        <div className="flex justify-center gap-3 mt-8 mb-2">
+        <div className="flex justify-center gap-3 mt-8">
           {Array.from({length: maxIndex + 1}).map((_, index) => (
             <button
               key={index}

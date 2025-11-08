@@ -54,7 +54,7 @@ export default function Collections() {
       <h1>Collections</h1>
       <PaginatedResourceSection
         connection={collections}
-        resourcesClassName="collections-grid"
+        resourcesClassName="grid gap-6 grid-cols-[repeat(auto-fit,minmax(355px,1fr))] mb-8"
       >
         {({node: collection, index}) => (
           <CollectionItem
@@ -77,7 +77,6 @@ export default function Collections() {
 function CollectionItem({collection, index}) {
   return (
     <Link
-      className="collection-item"
       key={collection.id}
       to={`/collections/${collection.handle}`}
       prefetch="intent"

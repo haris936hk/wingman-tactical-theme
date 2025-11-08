@@ -19,7 +19,7 @@ export function CartLineItem({layout, line}) {
   const {close} = useAside();
 
   return (
-    <li key={id} className="cart-line">
+    <li key={id} className="flex py-3">
       {image && (
         <Image
           alt={title}
@@ -28,6 +28,7 @@ export function CartLineItem({layout, line}) {
           height={100}
           loading="lazy"
           width={100}
+          className="h-full block mr-3"
         />
       )}
 
@@ -74,7 +75,7 @@ function CartLineQuantity({line}) {
   const nextQuantity = Number((quantity + 1).toFixed(0));
 
   return (
-    <div className="cart-line-quantity">
+    <div className="flex">
       <small>Quantity: {quantity} &nbsp;&nbsp;</small>
       <CartLineUpdateButton lines={[{id: lineId, quantity: prevQuantity}]}>
         <button

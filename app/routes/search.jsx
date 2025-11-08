@@ -1,14 +1,20 @@
-import {useLoaderData} from 'react-router';
+import {useState, useEffect} from 'react';
+import {useLoaderData, useNavigate, useSearchParams} from 'react-router';
 import {getPaginationVariables, Analytics} from '@shopify/hydrogen';
-import {SearchForm} from '~/components/SearchForm';
 import {SearchResults} from '~/components/SearchResults';
+import {FilterSidebar} from '~/components/FilterSidebar';
+import {MobileFilterDrawer} from '~/components/MobileFilterDrawer';
+import {ActiveFilters} from '~/components/ActiveFilters';
+import {SearchHeader} from '~/components/SearchHeader';
+import {NoResults} from '~/components/NoResults';
 import {getEmptyPredictiveSearchResult} from '~/lib/search';
 
 /**
  * @type {Route.MetaFunction}
  */
-export const meta = () => {
-  return [{title: `Hydrogen | Search`}];
+export const meta = ({data}) => {
+  const term = data?.term || '';
+  return [{title: term ? `Search: ${term} | Wingman Tactical` : 'Search | Wingman Tactical'}];
 };
 
 /**
@@ -30,45 +36,299 @@ export async function loader({request, context}) {
 }
 
 /**
- * Renders the /search route
+ * Renders the /search route - Wingman Tactical themed
  */
 export default function SearchPage() {
   /** @type {LoaderReturnData} */
   const {type, term, result, error} = useLoaderData();
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+
+  // State management
+  const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
+  const [filters, setFilters] = useState({});
+  const [sortValue, setSortValue] = useState('relevance');
+  const [recentSearches, setRecentSearches] = useState([]);
+
+  // Don't render predictive search on this page
   if (type === 'predictive') return null;
 
+  // Load recent searches from localStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const recent = JSON.parse(localStorage.getItem('recentSearches') || '[]');
+      setRecentSearches(recent);
+
+      // Save current search to recent
+      if (term && !recent.includes(term)) {
+        const updated = [term, ...recent].slice(0, 5);
+        localStorage.setItem('recentSearches', JSON.stringify(updated));
+        setRecentSearches(updated);
+      }
+    }
+  }, [term]);
+
+  // Parse filters from URL params
+  useEffect(() => {
+    const priceMin = searchParams.get('priceMin');
+    const priceMax = searchParams.get('priceMax');
+    const types = searchParams.getAll('type');
+    const vendors = searchParams.getAll('vendor');
+    const available = searchParams.get('available') === 'true';
+    const sort = searchParams.get('sort') || 'relevance';
+
+    setFilters({
+      price: priceMin && priceMax ? [Number(priceMin), Number(priceMax)] : [0, 500],
+      type: types,
+      vendor: vendors,
+      available,
+    });
+    setSortValue(sort);
+  }, [searchParams]);
+
+  // Handle filter changes
+  const handleFilterChange = (filterType, value) => {
+    const newFilters = {...filters, [filterType]: value};
+    setFilters(newFilters);
+    updateURL(newFilters, sortValue);
+  };
+
+  // Handle sort change
+  const handleSortChange = (newSort) => {
+    setSortValue(newSort);
+    updateURL(filters, newSort);
+  };
+
+  // Handle remove single filter
+  const handleRemoveFilter = (filterId) => {
+    const newFilters = {...filters};
+    const [filterType, filterValue] = filterId.split(':');
+
+    if (filterType === 'price') {
+      newFilters.price = [0, 500];
+    } else if (filterType === 'available') {
+      newFilters.available = false;
+    } else if (Array.isArray(newFilters[filterType])) {
+      newFilters[filterType] = newFilters[filterType].filter((v) => v !== filterValue);
+    }
+
+    setFilters(newFilters);
+    updateURL(newFilters, sortValue);
+  };
+
+  // Handle clear all filters
+  const handleClearAll = () => {
+    const emptyFilters = {
+      price: [0, 500],
+      type: [],
+      vendor: [],
+      available: false,
+    };
+    setFilters(emptyFilters);
+    updateURL(emptyFilters, 'relevance');
+    setSortValue('relevance');
+  };
+
+  // Update URL with filter params
+  const updateURL = (newFilters, newSort) => {
+    const params = new URLSearchParams();
+    if (term) params.set('q', term);
+
+    if (newFilters.price && (newFilters.price[0] !== 0 || newFilters.price[1] !== 500)) {
+      params.set('priceMin', newFilters.price[0]);
+      params.set('priceMax', newFilters.price[1]);
+    }
+
+    if (newFilters.type?.length) {
+      newFilters.type.forEach((t) => params.append('type', t));
+    }
+
+    if (newFilters.vendor?.length) {
+      newFilters.vendor.forEach((v) => params.append('vendor', v));
+    }
+
+    if (newFilters.available) {
+      params.set('available', 'true');
+    }
+
+    if (newSort !== 'relevance') {
+      params.set('sort', newSort);
+    }
+
+    navigate(`/search?${params.toString()}`, {replace: true, preventScrollReset: true});
+  };
+
+  // Build active filter chips
+  const activeFilterChips = [];
+  if (filters.price && (filters.price[0] !== 0 || filters.price[1] !== 500)) {
+    activeFilterChips.push({
+      id: 'price:range',
+      label: `$${filters.price[0]} - $${filters.price[1]}`,
+    });
+  }
+  if (filters.type?.length) {
+    filters.type.forEach((type) => {
+      activeFilterChips.push({
+        id: `type:${type}`,
+        label: type,
+      });
+    });
+  }
+  if (filters.vendor?.length) {
+    filters.vendor.forEach((vendor) => {
+      activeFilterChips.push({
+        id: `vendor:${vendor}`,
+        label: vendor,
+      });
+    });
+  }
+  if (filters.available) {
+    activeFilterChips.push({
+      id: 'available:true',
+      label: 'In Stock Only',
+    });
+  }
+
+  // Available filters (mock data - would come from API in production)
+  const availableFilters = {
+    types: ['Flight Suits', 'Flight Jackets', 'Flight Bag', 'Aviation Gear', 'Apparels'],
+    vendors: ['Wingman Tactical', 'Alpha Industries', 'Propper'],
+  };
+
+  const resultCount = result?.total || 0;
+  const hasResults = resultCount > 0;
+
   return (
-    <div className="search">
-      <h1>Search</h1>
-      <SearchForm>
-        {({inputRef}) => (
-          <>
-            <input
-              defaultValue={term}
-              name="q"
-              placeholder="Search…"
-              ref={inputRef}
-              type="search"
-            />
-            &nbsp;
-            <button type="submit">Search</button>
-          </>
+    <div className="bg-[#000000] min-h-screen pt-[180px] pb-16">
+      <div className="max-w-[1400px] mx-auto px-6">
+        {/* Search Header */}
+        <SearchHeader
+          searchTerm={term}
+          resultCount={resultCount}
+          sortValue={sortValue}
+          onSortChange={handleSortChange}
+          onFilterToggle={() => setIsFilterDrawerOpen(true)}
+          showFilterButton={true}
+        />
+
+        {/* Error Display */}
+        {error && (
+          <div className="mb-8 p-4 bg-red-900/20 border border-red-500 rounded-lg">
+            <p className="text-red-400">{error}</p>
+          </div>
         )}
-      </SearchForm>
-      {error && <p style={{color: 'red'}}>{error}</p>}
-      {!term || !result?.total ? (
-        <SearchResults.Empty />
-      ) : (
-        <SearchResults result={result} term={term}>
-          {({articles, pages, products, term}) => (
-            <div>
-              <SearchResults.Products products={products} term={term} />
-              <SearchResults.Pages pages={pages} term={term} />
-              <SearchResults.Articles articles={articles} term={term} />
-            </div>
-          )}
-        </SearchResults>
-      )}
+
+        {/* Active Filters */}
+        {activeFilterChips.length > 0 && (
+          <ActiveFilters
+            filters={activeFilterChips}
+            onRemove={handleRemoveFilter}
+            onClearAll={handleClearAll}
+          />
+        )}
+
+        {/* Main Content Grid */}
+        <div className="flex gap-8">
+          {/* Desktop Filter Sidebar */}
+          <div className="hidden lg:block">
+            <FilterSidebar
+              filters={filters}
+              onFilterChange={handleFilterChange}
+              availableFilters={availableFilters}
+            />
+          </div>
+
+          {/* Results Content */}
+          <div className="flex-1 min-w-0">
+            {/* Loading State */}
+            {!term && (
+              <div className="text-center py-12">
+                <svg
+                  className="w-16 h-16 mx-auto mb-4 text-[#FF0000]"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  style={{
+                    filter: 'drop-shadow(0 0 10px rgba(255, 0, 0, 0.6))',
+                  }}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  />
+                </svg>
+                <h2
+                  className="text-2xl font-bold uppercase text-white mb-3"
+                  style={{
+                    fontFamily: 'var(--font-family-shock)',
+                    textShadow: '0 0 10px rgba(255, 0, 0, 0.6)',
+                  }}
+                >
+                  Start Searching
+                </h2>
+                <p className="text-gray-300">
+                  Enter a search term to find products
+                </p>
+
+                {/* Recent Searches */}
+                {recentSearches.length > 0 && (
+                  <div className="mt-8 max-w-md mx-auto">
+                    <h3 className="text-sm font-bold uppercase text-gray-400 mb-3">
+                      Recent Searches
+                    </h3>
+                    <div className="flex flex-wrap gap-2 justify-center">
+                      {recentSearches.map((search) => (
+                        <a
+                          key={search}
+                          href={`/search?q=${encodeURIComponent(search)}`}
+                          className="px-4 py-2 bg-white/10 hover:bg-[#FF0000]/20
+                            text-white rounded-full text-sm
+                            hover:border-[#FF0000] border border-white/30
+                            transition-all"
+                        >
+                          {search}
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* No Results */}
+            {term && !hasResults && (
+              <NoResults searchTerm={term} popularProducts={[]} />
+            )}
+
+            {/* Search Results */}
+            {term && hasResults && (
+              <SearchResults result={result} term={term}>
+                {({products, term}) => (
+                  <SearchResults.Products products={products} term={term} />
+                )}
+              </SearchResults>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile Filter Drawer */}
+      <MobileFilterDrawer
+        isOpen={isFilterDrawerOpen}
+        onClose={() => setIsFilterDrawerOpen(false)}
+        filters={filters}
+        onFilterChange={handleFilterChange}
+        onApplyFilters={(newFilters) => {
+          setFilters(newFilters);
+          updateURL(newFilters, sortValue);
+        }}
+        onClearAll={handleClearAll}
+        availableFilters={availableFilters}
+      />
+
+      {/* Analytics */}
       <Analytics.SearchView data={{searchTerm: term, searchResults: result}} />
     </div>
   );
@@ -76,7 +336,6 @@ export default function SearchPage() {
 
 /**
  * Regular search query and fragments
- * (adjust as needed)
  */
 const SEARCH_PRODUCT_FRAGMENT = `#graphql
   fragment SearchProduct on Product {
@@ -87,6 +346,7 @@ const SEARCH_PRODUCT_FRAGMENT = `#graphql
     title
     trackingParameters
     vendor
+    description
     selectedOrFirstAvailableVariant(
       selectedOptions: []
       ignoreUnknownOptions: true
@@ -209,16 +469,11 @@ export const SEARCH_QUERY = `#graphql
 
 /**
  * Regular search fetcher
- * @param {Pick<
- *   Route.LoaderArgs,
- *   'request' | 'context'
- * >}
- * @return {Promise<RegularSearchReturn>}
  */
 async function regularSearch({request, context}) {
   const {storefront} = context;
   const url = new URL(request.url);
-  const variables = getPaginationVariables(request, {pageBy: 8});
+  const variables = getPaginationVariables(request, {pageBy: 12});
   const term = String(url.searchParams.get('q') || '');
 
   // Search articles, pages, and products for the `q` term
@@ -243,8 +498,7 @@ async function regularSearch({request, context}) {
 }
 
 /**
- * Predictive search query and fragments
- * (adjust as needed)
+ * Predictive search fragments
  */
 const PREDICTIVE_SEARCH_ARTICLE_FRAGMENT = `#graphql
   fragment PredictiveArticle on Article {
@@ -298,19 +552,17 @@ const PREDICTIVE_SEARCH_PRODUCT_FRAGMENT = `#graphql
     title
     handle
     trackingParameters
-    selectedOrFirstAvailableVariant(
-      selectedOptions: []
-      ignoreUnknownOptions: true
-      caseInsensitiveMatch: true
-    ) {
-      id
-      image {
+    images(first: 1) {
+      nodes {
+        id
         url
         altText
         width
         height
       }
-      price {
+    }
+    priceRange {
+      minVariantPrice {
         amount
         currencyCode
       }
@@ -369,11 +621,6 @@ const PREDICTIVE_SEARCH_QUERY = `#graphql
 
 /**
  * Predictive search fetcher
- * @param {Pick<
- *   Route.ActionArgs,
- *   'request' | 'context'
- * >}
- * @return {Promise<PredictiveSearchReturn>}
  */
 async function predictiveSearch({request, context}) {
   const {storefront} = context;
@@ -384,12 +631,10 @@ async function predictiveSearch({request, context}) {
 
   if (!term) return {type, term, result: getEmptyPredictiveSearchResult()};
 
-  // Predictively search articles, collections, pages, products, and queries (suggestions)
   const {predictiveSearch: items, errors} = await storefront.query(
     PREDICTIVE_SEARCH_QUERY,
     {
       variables: {
-        // customize search options as needed
         limit,
         limitScope: 'EACH',
         term,

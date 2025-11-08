@@ -18,13 +18,17 @@ export function CartMain({layout, cart: originalCart}) {
   const withDiscount =
     cart &&
     Boolean(cart?.discountCodes?.filter((code) => code.applicable)?.length);
-  const className = `cart-main ${withDiscount ? 'with-discount' : ''}`;
+  const className = `h-full overflow-y-auto w-auto ${
+    withDiscount
+      ? 'max-h-[calc(100vh-var(--cart-aside-summary-height-with-discount))]'
+      : 'max-h-[calc(100vh-var(--cart-aside-summary-height))]'
+  }`;
   const cartHasItems = cart?.totalQuantity ? cart.totalQuantity > 0 : false;
 
   return (
     <div className={className}>
       <CartEmpty hidden={linesCount} layout={layout} />
-      <div className="cart-details">
+      <div>
         <div aria-labelledby="cart-lines">
           <ul>
             {(cart?.lines?.nodes ?? []).map((line) => (

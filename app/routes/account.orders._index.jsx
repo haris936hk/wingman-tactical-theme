@@ -152,20 +152,20 @@ function OrderSearchForm({currentFilters}) {
     <form
       ref={formRef}
       onSubmit={handleSubmit}
-      className="order-search-form"
+      className="mb-6"
       aria-label="Search orders"
     >
-      <fieldset className="order-search-fieldset">
-        <legend className="order-search-legend">Filter Orders</legend>
+      <fieldset className="border border-gray-300 rounded px-4 py-4">
+        <legend className="font-semibold px-2">Filter Orders</legend>
 
-        <div className="order-search-inputs">
+        <div className="grid gap-4 my-1 grid-cols-1 sm:grid-cols-2">
           <input
             type="search"
             name={ORDER_FILTER_FIELDS.NAME}
             placeholder="Order #"
             aria-label="Order number"
             defaultValue={currentFilters.name || ''}
-            className="order-search-input"
+            className="w-full px-2 py-2 border border-gray-300 rounded text-base"
           />
           <input
             type="search"
@@ -173,11 +173,11 @@ function OrderSearchForm({currentFilters}) {
             placeholder="Confirmation #"
             aria-label="Confirmation number"
             defaultValue={currentFilters.confirmationNumber || ''}
-            className="order-search-input"
+            className="w-full px-2 py-2 border border-gray-300 rounded text-base"
           />
         </div>
 
-        <div className="order-search-buttons">
+        <div className="flex gap-3 flex-wrap">
           <button type="submit" disabled={isSearching}>
             {isSearching ? 'Searching' : 'Search'}
           </button>

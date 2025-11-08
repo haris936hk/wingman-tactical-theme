@@ -50,7 +50,7 @@ export function ProductCarousel({products, showSaleBadge = false}) {
   };
 
   return (
-    <div className="relative py-8">
+    <div className="relative">
       {/* Carousel Container */}
       <div className="overflow-hidden px-2">
         <div
@@ -59,19 +59,19 @@ export function ProductCarousel({products, showSaleBadge = false}) {
             transform: `translateX(-${currentIndex * (100 / slidesToShow)}%)`,
           }}
         >
-          {products.map((product) => (
+          {products.map((product, index) => (
             <div
               key={product.id}
               className="flex-shrink-0 px-3"
               style={{width: `${100 / slidesToShow}%`}}
             >
-              <ProductItem product={product} loading="lazy" showSaleBadge={showSaleBadge} />
+              <ProductItem product={product} loading="lazy" showSaleBadge={showSaleBadge} index={index} />
             </div>
           ))}
         </div>
 
         {/* Dots Navigation */}
-        <div className="flex justify-center gap-3 mt-8 mb-2">
+        <div className="flex justify-center gap-3 mt-8">
           {Array.from({length: maxIndex + 1}).map((_, index) => (
             <button
               key={index}

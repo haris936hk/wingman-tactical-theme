@@ -93,10 +93,9 @@ export default function Article() {
         </div>
       </h1>
 
-      {image && <Image data={image} sizes="90vw" loading="eager" />}
+      {image && <Image data={image} sizes="90vw" loading="eager" className="w-full h-auto" />}
       <div
         dangerouslySetInnerHTML={{__html: contentHtml}}
-        className="article"
       />
     </div>
   );

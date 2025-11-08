@@ -10,14 +10,18 @@ import {useVariantUrl} from '~/lib/variants';
  *     | RecommendedProductFragment;
  *   loading?: 'eager' | 'lazy';
  *   showSaleBadge?: boolean;
+ *   index?: number;
  * }}
  */
-export function ProductItem({product, loading, showSaleBadge = false}) {
+export function ProductItem({product, loading, showSaleBadge = false, index = 0}) {
   const variantUrl = useVariantUrl(product.handle);
   const image = product.featuredImage;
 
   return (
-    <div className="product-card bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-[0_0_20px_rgba(255,0,0,0.5)] transition-all duration-300 group hover:-translate-y-2">
+    <div
+      className="bg-white border border-gray-200 rounded-lg shadow-sm group will-change-transform motion-safe:transition-all motion-safe:duration-200 motion-safe:ease-out hover:scale-[1.03] hover:-translate-y-2 hover:shadow-[0_0_25px_rgba(255,0,0,0.6)] focus-within:scale-[1.03] focus-within:-translate-y-2 focus-within:shadow-[0_0_25px_rgba(255,0,0,0.6)] opacity-0 translate-y-4 motion-safe:animate-[fadeSlideUp_300ms_ease-out_forwards]"
+      style={{animationDelay: `${index * 50}ms`}}
+    >
       <Link
         key={product.id}
         prefetch="intent"
@@ -62,8 +66,8 @@ export function ProductItem({product, loading, showSaleBadge = false}) {
 
         {/* Product Info */}
         <div className="p-4 text-center">
-          {/* Product Title */}
-          <h3 className="text-sm font-semibold text-gray-900 mb-2 line-clamp-2">
+          {/* Product Title - Fixed height for consistency */}
+          <h3 className="text-sm font-semibold text-gray-900 mb-2 line-clamp-2 h-10 flex items-center justify-center">
             {product.title}
           </h3>
 

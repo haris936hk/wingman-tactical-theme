@@ -10,6 +10,8 @@ const RING_PROPAGATION_SPEED = 3;
 const aspect = 1.2;
 const cameraZ = 300;
 
+let numbersOfRings = [0];
+
 export function Globe({globeConfig, data}) {
   const [globeData, setGlobeData] = useState(null);
   const [countries, setCountries] = useState(null);
@@ -18,7 +20,7 @@ export function Globe({globeConfig, data}) {
 
   // Load countries data from public folder (client-only, not bundled)
   useEffect(() => {
-    fetch('/data/globe.json')
+    fetch('/globe.json')
       .then((response) => response.json())
       .then((data) => {
         setCountries(data);
@@ -46,12 +48,12 @@ export function Globe({globeConfig, data}) {
   };
 
   useEffect(() => {
-    if (globeRef.current && data && Array.isArray(data) && data.length > 0) {
+    if (globeRef.current) {
       _buildData();
       _buildMaterial();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [globeRef.current, data]);
+  }, [globeRef.current]);
 
   const _buildMaterial = () => {
     if (!globeRef.current || !globeConfig) return;
@@ -68,27 +70,7 @@ export function Globe({globeConfig, data}) {
     let points = [];
     for (let i = 0; i < arcs.length; i++) {
       const arc = arcs[i];
-
-      // Validate arc data
-      if (!arc ||
-          typeof arc.startLat !== 'number' ||
-          typeof arc.startLng !== 'number' ||
-          typeof arc.endLat !== 'number' ||
-          typeof arc.endLng !== 'number' ||
-          isNaN(arc.startLat) ||
-          isNaN(arc.startLng) ||
-          isNaN(arc.endLat) ||
-          isNaN(arc.endLng)) {
-        console.warn('Invalid arc data at index', i, arc);
-        continue;
-      }
-
       const rgb = hexToRgb(arc.color);
-      if (!rgb) {
-        console.warn('Invalid color for arc at index', i, arc.color);
-        continue;
-      }
-
       points.push({
         size: defaultProps.pointSize,
         order: arc.order,
@@ -127,7 +109,7 @@ export function Globe({globeConfig, data}) {
         .showAtmosphere(defaultProps.showAtmosphere)
         .atmosphereColor(defaultProps.atmosphereColor)
         .atmosphereAltitude(defaultProps.atmosphereAltitude)
-        .hexPolygonColor(() => {
+        .hexPolygonColor((e) => {
           return defaultProps.polygonColor;
         });
       startAnimation();
@@ -136,47 +118,14 @@ export function Globe({globeConfig, data}) {
   }, [globeData, countries]);
 
   const startAnimation = () => {
-    if (!globeRef.current || !globeData || !data || !Array.isArray(data)) return;
+    if (!globeRef.current || !globeData) return;
 
-    // Filter valid arcs
-    const validArcs = data.filter((d) =>
-      d &&
-      typeof d.startLat === 'number' &&
-      typeof d.startLng === 'number' &&
-      typeof d.endLat === 'number' &&
-      typeof d.endLng === 'number' &&
-      typeof d.arcAlt === 'number' &&
-      !isNaN(d.startLat) &&
-      !isNaN(d.startLng) &&
-      !isNaN(d.endLat) &&
-      !isNaN(d.endLng) &&
-      !isNaN(d.arcAlt)
-    );
-
-    if (validArcs.length === 0) {
-      console.warn('No valid arcs to display');
-      return;
-    }
+    // Remove arc lines - only show rings and points
+    globeRef.current.arcsData([]);
 
     globeRef.current
-      .arcsData(validArcs)
-      .arcStartLat((d) => d.startLat)
-      .arcStartLng((d) => d.startLng)
-      .arcEndLat((d) => d.endLat)
-      .arcEndLng((d) => d.endLng)
-      .arcColor((e) => e.color || '#ffffff')
-      .arcAltitude((e) => e.arcAlt)
-      .arcStroke(() => {
-        return [0.32, 0.28, 0.3][Math.round(Math.random() * 2)];
-      })
-      .arcDashLength(defaultProps.arcLength)
-      .arcDashInitialGap((e) => (typeof e.order === 'number' ? e.order : 0))
-      .arcDashGap(15)
-      .arcDashAnimateTime(() => defaultProps.arcTime);
-
-    globeRef.current
-      .pointsData(validArcs)
-      .pointColor((e) => e.color || '#ffffff')
+      .pointsData(data)
+      .pointColor((e) => e.color)
       .pointsMerge(true)
       .pointAltitude(0.0)
       .pointRadius(2);
@@ -192,70 +141,20 @@ export function Globe({globeConfig, data}) {
   };
 
   useEffect(() => {
-    if (!globeRef.current || !globeData || !data || !Array.isArray(data)) return;
+    if (!globeRef.current || !globeData) return;
 
-    // Get all unique orders from the data
-    const validOrders = data
-      .filter((arc) => arc && typeof arc.order === 'number' && !isNaN(arc.order))
-      .map((arc) => arc.order);
-
-    if (validOrders.length === 0) return;
-
-    const orders = [...new Set(validOrders)].sort((a, b) => a - b);
-    let orderIndex = 0;
-
-    const updateRings = () => {
+    const interval = setInterval(() => {
       if (!globeRef.current || !globeData) return;
-
-      // Get current order to show rings for
-      const currentOrder = orders[orderIndex];
-      const ringsToShow = [];
-
-      // Find all arcs with the current order
-      data.forEach((arc) => {
-        if (!arc ||
-            typeof arc.startLat !== 'number' ||
-            typeof arc.startLng !== 'number' ||
-            typeof arc.endLat !== 'number' ||
-            typeof arc.endLng !== 'number' ||
-            isNaN(arc.startLat) ||
-            isNaN(arc.startLng) ||
-            isNaN(arc.endLat) ||
-            isNaN(arc.endLng)) {
-          return;
-        }
-
-        if (arc.order === currentOrder) {
-          // Find the corresponding start and end points in globeData
-          const startPoint = globeData.find(
-            (p) => p.lat === arc.startLat && p.lng === arc.startLng
-          );
-          const endPoint = globeData.find(
-            (p) => p.lat === arc.endLat && p.lng === arc.endLng
-          );
-
-          if (startPoint) ringsToShow.push(startPoint);
-          if (endPoint) ringsToShow.push(endPoint);
-        }
-      });
-
-      // Remove duplicate rings (same lat/lng)
-      const uniqueRings = ringsToShow.filter(
-        (ring, index, self) =>
-          index === self.findIndex((r) => r.lat === ring.lat && r.lng === ring.lng)
+      numbersOfRings = genRandomNumbers(
+        0,
+        data.length,
+        Math.floor((data.length * 4) / 5)
       );
 
-      globeRef.current.ringsData(uniqueRings);
-
-      // Move to next order and loop back to start
-      orderIndex = (orderIndex + 1) % orders.length;
-    };
-
-    // Initial update
-    updateRings();
-
-    // Update rings continuously
-    const interval = setInterval(updateRings, defaultProps.arcTime);
+      globeRef.current.ringsData(
+        globeData.filter((d, i) => numbersOfRings.includes(i))
+      );
+    }, 2000);
 
     return () => {
       clearInterval(interval);
@@ -279,8 +178,8 @@ export function WebGLRendererConfig() {
       gl.setPixelRatio(window.devicePixelRatio);
     }
     gl.setSize(size.width, size.height);
-    gl.setClearColor(0x000000, 0); // Transparent black background
-  }, [gl, size]);
+    gl.setClearColor(0xffaaff, 0);
+  }, []);
 
   return null;
 }
@@ -340,4 +239,14 @@ export function hexToRgb(hex) {
         b: parseInt(result[3], 16),
       }
     : null;
+}
+
+export function genRandomNumbers(min, max, count) {
+  const arr = [];
+  while (arr.length < count) {
+    const r = Math.floor(Math.random() * (max - min)) + min;
+    if (arr.indexOf(r) === -1) arr.push(r);
+  }
+
+  return arr;
 }

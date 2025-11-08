@@ -7,12 +7,12 @@ import {useFetcher} from 'react-router';
  */
 export function CartSummary({cart, layout}) {
   const className =
-    layout === 'page' ? 'cart-summary-page' : 'cart-summary-aside';
+    layout === 'page' ? 'relative' : 'bg-black border-t border-[var(--color-red)] bottom-0 pt-3 absolute w-[calc(var(--aside-width)-40px)] text-white';
 
   return (
     <div aria-labelledby="cart-summary" className={className}>
       <h4>Totals</h4>
-      <dl className="cart-subtotal">
+      <dl className="flex items-center">
         <dt>Subtotal</dt>
         <dd>
           {cart?.cost?.subtotalAmount?.amount ? (
@@ -63,7 +63,7 @@ function CartDiscounts({discountCodes}) {
         <div>
           <dt>Discount(s)</dt>
           <UpdateDiscountForm>
-            <div className="cart-discount">
+            <div className="flex items-center mt-1">
               <code>{codes?.join(', ')}</code>
               &nbsp;
               <button>Remove</button>
@@ -136,7 +136,7 @@ function CartGiftCard({giftCardCodes}) {
           <dt>Applied Gift Card(s)</dt>
           {giftCardCodes.map((giftCard) => (
             <RemoveGiftCardForm key={giftCard.id} giftCardId={giftCard.id}>
-              <div className="cart-discount">
+              <div className="flex items-center mt-1">
                 <code>***{giftCard.lastCharacters}</code>
                 &nbsp;
                 <Money data={giftCard.amountUsed} />

@@ -53,21 +53,21 @@ export function CustomProductCarousel({items, showCTA = false}) {
   return (
     <div className="relative">
       {/* Carousel Container - full width with proper padding for shadows */}
-      <div className="py-8">
-        <div className="overflow-x-hidden -mx-6 px-6 pt-8 pb-4">
+      <div>
+        <div className="overflow-x-hidden -mx-6 px-6">
           <div
             className="flex transition-transform duration-500 ease-out"
             style={{
               transform: `translateX(-${currentIndex * (100 / slidesToShow)}%)`,
             }}
           >
-            {items.map((item) => (
+            {items.map((item, index) => (
               <div
                 key={item.image}
                 className="flex-shrink-0 px-3"
                 style={{width: `${100 / slidesToShow}%`}}
               >
-                <CustomProductCard item={item} />
+                <CustomProductCard item={item} index={index} />
               </div>
             ))}
           </div>
@@ -145,11 +145,12 @@ export function CustomProductCarousel({items, showCTA = false}) {
 }
 
 // Simplified Custom Product Card - Only Image and Title
-function CustomProductCard({item}) {
+function CustomProductCard({item, index}) {
   return (
     <Link
       to={item.link || '/pages/quote'}
-      className="group block bg-white rounded-lg overflow-hidden shadow-md hover:shadow-[0_0_25px_rgba(255,0,0,0.6)] transition-all duration-300 transform hover:-translate-y-2"
+      className="group block bg-white rounded-lg overflow-hidden shadow-md will-change-transform motion-safe:transition-all motion-safe:duration-200 motion-safe:ease-out hover:scale-[1.03] hover:-translate-y-2 hover:shadow-[0_0_25px_rgba(255,0,0,0.6)] focus-visible:scale-[1.03] focus-visible:-translate-y-2 focus-visible:shadow-[0_0_25px_rgba(255,0,0,0.6)] focus-visible:outline-2 focus-visible:outline-[#FF0000] focus-visible:outline-offset-2 opacity-0 translate-y-4 motion-safe:animate-[fadeSlideUp_300ms_ease-out_forwards]"
+      style={{animationDelay: `${index * 50}ms`}}
     >
       {/* Image Container with Aspect Ratio */}
       <div className="relative aspect-square overflow-hidden bg-gray-100">

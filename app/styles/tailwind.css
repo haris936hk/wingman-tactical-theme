@@ -5,6 +5,15 @@
 
 @import 'tailwindcss';
 
+/* Custom Fonts */
+@font-face {
+  font-family: 'Shock Surgent';
+  src: url('/fonts/Shock Surgent.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 @theme {
   /* Wingman Tactical Color Palette - Pure Black/White/Red Theme */
   --color-primary: #FF0000;
@@ -16,9 +25,20 @@
   --color-text-light: #FFFFFF;
   --color-border: #333333;
   --color-background: #000000;
+  --color-dark: #000000;
+  --color-light: #FFFFFF;
+  --color-red: #FF0000;
 
   /* Typography - Wingman Tactical Style */
   --font-family-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  --font-family-shock: 'Shock Surgent', ui-sans-serif, system-ui, sans-serif;
+
+  /* Layout Dimensions - Component Sizing */
+  --aside-width: 400px;
+  --cart-aside-summary-height: 250px;
+  --cart-aside-summary-height-with-discount: 300px;
+  --grid-item-width: 355px;
+  --header-height: 64px;
 
   /* Spacing Scale */
   --spacing-xs: 0.25rem;
@@ -73,4 +93,52 @@ h1, h2, h3, h4, h5, h6 {
 .product-card:hover {
   transform: translateY(-4px);
   box-shadow: var(--shadow-lg);
+}
+
+/* Keyframe Animations */
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
+}
+
+@keyframes border-spin {
+  0% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: -200;
+  }
+}
+
+@keyframes fadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(1rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }

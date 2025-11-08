@@ -106,8 +106,8 @@ export function Header({header, isLoggedIn, cart, publicStoreDomain}) {
         </div>
       </header>
 
-      {/* Navigation Bar - Below Header */}
-      <nav className={`fixed left-0 right-0 z-50 bg-[#000000] text-white border-t border-[#FF0000] transition-all duration-300 ease-in-out ${isVisible ? 'top-24' : 'top-0'}`}>
+      {/* Navigation Bar - Below Header (Desktop Only) */}
+      <nav className={`hidden md:block fixed left-0 right-0 z-50 bg-[#000000] text-white border-t border-[#FF0000] transition-all duration-300 ease-in-out ${isVisible ? 'top-24' : 'top-0'}`}>
         <div className="max-w-[1600px] mx-auto px-8">
           <HeaderMenu
             menu={menu}

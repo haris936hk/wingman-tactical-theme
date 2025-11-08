@@ -1,65 +1,25 @@
-import {useEffect, useState, useRef} from 'react';
+import {World} from './Globe.client';
+import {useState, useEffect} from 'react';
 
 const GridGlobe = () => {
-  const [World, setWorld] = useState(null);
-  const [shouldLoad, setShouldLoad] = useState(false);
-  const containerRef = useRef(null);
+  // Ensure component only renders on client side
+  const [isClient, setIsClient] = useState(false);
 
-  // Intersection Observer - only load when scrolled into view
   useEffect(() => {
-    // Only run on client side
-    if (typeof window === 'undefined' || !('IntersectionObserver' in window)) {
-      // If no IntersectionObserver, load immediately (fallback for SSR/old browsers)
-      setShouldLoad(true);
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setShouldLoad(true);
-          observer.disconnect(); // Stop observing once triggered
-        }
-      },
-      {
-        rootMargin: '200px', // Start loading 200px before visible
-        threshold: 0.1,
-      }
-    );
-
-    if (containerRef.current) {
-      observer.observe(containerRef.current);
-    }
-
-    return () => {
-      observer.disconnect();
-    };
+    setIsClient(true);
   }, []);
-
-  // Dynamically import Globe component only when shouldLoad is true
-  useEffect(() => {
-    if (shouldLoad && !World) {
-      import('./Globe.client')
-        .then((module) => {
-          setWorld(() => module.World);
-        })
-        .catch((error) => {
-          console.error('Failed to load Globe component:', error);
-        });
-    }
-  }, [shouldLoad, World]);
 
   const globeConfig = {
     pointSize: 4,
-    globeColor: '#d32f2f',
+    globeColor: '#8B0000',
     showAtmosphere: true,
-    atmosphereColor: '#FFFFFF',
+    atmosphereColor: '#FF6B6B',
     atmosphereAltitude: 0.1,
-    emissive: '#d32f2f',
+    emissive: '#8B0000',
     emissiveIntensity: 0.1,
     shininess: 0.9,
     polygonColor: 'rgba(255,255,255,0.7)',
-    ambientLight: '#ffffff',
+    ambientLight: '#ff4444',
     directionalLeftLight: '#ffffff',
     directionalTopLight: '#ffffff',
     pointLight: '#ffffff',
@@ -72,7 +32,7 @@ const GridGlobe = () => {
     autoRotateSpeed: 0.5,
   };
 
-  const colors = ['#d32f2f', '#ffffff', '#1a1a1a'];
+  const colors = ['#ffffff', '#f5f5f5', '#e5e5e5'];
 
   const sampleArcs = [
     {
@@ -437,9 +397,10 @@ const GridGlobe = () => {
     },
   ];
 
-  if (!World) {
+  // Don't render on server
+  if (!isClient) {
     return (
-      <div ref={containerRef} className="flex items-center justify-center w-full h-full">
+      <div className="relative w-full h-full flex items-center justify-center">
         <div className="text-white text-center">
           <div className="animate-pulse">Loading Globe...</div>
         </div>
@@ -448,14 +409,13 @@ const GridGlobe = () => {
   }
 
   return (
-    <div ref={containerRef} className="flex items-center justify-center w-full h-full">
-      <div className="max-w-7xl mx-auto w-full relative overflow-hidden h-full px-4">
-        {/* Gradient overlay at the bottom */}
-        <div className="absolute w-full bottom-0 inset-x-0 h-40 bg-gradient-to-b pointer-events-none select-none from-transparent to-[#2a2a2a] z-40" />
-
-        {/* Globe container */}
-        <div className="absolute inset-0 w-full h-full z-10">
-          <World data={sampleArcs} globeConfig={globeConfig} />
+    <div className="relative w-full h-full flex items-center justify-center">
+      <div className="w-full max-w-7xl mx-auto px-4">
+        <div className="relative w-full h-[500px] md:h-[600px]">
+          <div className="absolute inset-0 flex items-center justify-center">
+            <World data={sampleArcs} globeConfig={globeConfig} />
+          </div>
+          <div className="absolute bottom-0 inset-x-0 h-32 bg-gradient-to-b pointer-events-none select-none from-transparent dark:to-black to-white z-10" />
         </div>
       </div>
     </div>

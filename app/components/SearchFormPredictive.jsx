@@ -10,7 +10,7 @@ export const SEARCH_ENDPOINT = '/search';
  */
 export function SearchFormPredictive({
   children,
-  className = 'predictive-search-form',
+  className = 'bg-black sticky top-0 text-white',
   ...props
 }) {
   const fetcher = useFetcher({key: 'search'});

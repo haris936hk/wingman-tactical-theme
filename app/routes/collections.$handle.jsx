@@ -76,12 +76,12 @@ export default function Collection() {
   const {collection} = useLoaderData();
 
   return (
-    <div className="collection">
+    <div>
       <h1>{collection.title}</h1>
-      <p className="collection-description">{collection.description}</p>
+      <p className="mb-4 max-w-full md:max-w-[600px]">{collection.description}</p>
       <PaginatedResourceSection
         connection={collection.products}
-        resourcesClassName="products-grid"
+        resourcesClassName="grid gap-6 grid-cols-[repeat(auto-fit,minmax(355px,1fr))] mb-8"
       >
         {({node: product, index}) => (
           <ProductItem

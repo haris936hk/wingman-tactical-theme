@@ -1,5 +1,6 @@
 import {Link} from 'react-router';
-import {Image, Money, Pagination} from '@shopify/hydrogen';
+import {Pagination} from '@shopify/hydrogen';
+import {SearchResultsGrid} from '~/components/SearchResultsGrid';
 import {urlWithTrackingParams} from '~/lib/search';
 
 /**
@@ -19,72 +20,25 @@ SearchResults.Products = SearchResultsProducts;
 SearchResults.Empty = SearchResultsEmpty;
 
 /**
+ * Articles Results (hidden - products only per plan)
  * @param {PartialSearchResult<'articles'>}
  */
 function SearchResultsArticles({term, articles}) {
-  if (!articles?.nodes.length) {
-    return null;
-  }
-
-  return (
-    <div className="search-result">
-      <h2>Articles</h2>
-      <div>
-        {articles?.nodes?.map((article) => {
-          const articleUrl = urlWithTrackingParams({
-            baseUrl: `/blogs/${article.handle}`,
-            trackingParams: article.trackingParameters,
-            term,
-          });
-
-          return (
-            <div className="search-results-item" key={article.id}>
-              <Link prefetch="intent" to={articleUrl}>
-                {article.title}
-              </Link>
-            </div>
-          );
-        })}
-      </div>
-      <br />
-    </div>
-  );
+  // Products only per plan decision 3A
+  return null;
 }
 
 /**
+ * Pages Results (hidden - products only per plan)
  * @param {PartialSearchResult<'pages'>}
  */
 function SearchResultsPages({term, pages}) {
-  if (!pages?.nodes.length) {
-    return null;
-  }
-
-  return (
-    <div className="search-result">
-      <h2>Pages</h2>
-      <div>
-        {pages?.nodes?.map((page) => {
-          const pageUrl = urlWithTrackingParams({
-            baseUrl: `/pages/${page.handle}`,
-            trackingParams: page.trackingParameters,
-            term,
-          });
-
-          return (
-            <div className="search-results-item" key={page.id}>
-              <Link prefetch="intent" to={pageUrl}>
-                {page.title}
-              </Link>
-            </div>
-          );
-        })}
-      </div>
-      <br />
-    </div>
-  );
+  // Products only per plan decision 3A
+  return null;
 }
 
 /**
+ * Products Results - Uses SearchResultsGrid with pagination
  * @param {PartialSearchResult<'products'>}
  */
 function SearchResultsProducts({term, products}) {
@@ -93,62 +47,157 @@ function SearchResultsProducts({term, products}) {
   }
 
   return (
-    <div className="search-result">
-      <h2>Products</h2>
-      <Pagination connection={products}>
-        {({nodes, isLoading, NextLink, PreviousLink}) => {
-          const ItemsMarkup = nodes.map((product) => {
-            const productUrl = urlWithTrackingParams({
-              baseUrl: `/products/${product.handle}`,
-              trackingParams: product.trackingParameters,
-              term,
-            });
+    <Pagination connection={products}>
+      {({nodes, isLoading, NextLink, PreviousLink, hasNextPage, hasPreviousPage}) => {
+        // Transform nodes to match ProductItem expected format
+        const productsForGrid = nodes.map((product) => ({
+          ...product,
+          priceRange: {
+            minVariantPrice: product.selectedOrFirstAvailableVariant?.price,
+          },
+          compareAtPriceRange: product.selectedOrFirstAvailableVariant?.compareAtPrice
+            ? {
+                minVariantPrice: product.selectedOrFirstAvailableVariant.compareAtPrice,
+              }
+            : null,
+          featuredImage: product.selectedOrFirstAvailableVariant?.image,
+        }));
 
-            const price = product?.selectedOrFirstAvailableVariant?.price;
-            const image = product?.selectedOrFirstAvailableVariant?.image;
-
-            return (
-              <div className="search-results-item" key={product.id}>
-                <Link prefetch="intent" to={productUrl}>
-                  {image && (
-                    <Image data={image} alt={product.title} width={50} />
+        return (
+          <div className="space-y-8">
+            {/* Previous Link */}
+            {hasPreviousPage && (
+              <div className="flex justify-center">
+                <PreviousLink
+                  className="px-8 py-4 font-bold uppercase tracking-wide text-white
+                    rounded-lg bg-gradient-to-r from-[#FF0000] via-gray-600 to-[#FF0000]
+                    bg-[length:200%_100%]
+                    motion-safe:animate-[gradient_3s_linear_infinite]
+                    shadow-[0_0_20px_rgba(255,0,0,0.6)]
+                    hover:shadow-[0_0_30px_rgba(255,0,0,0.8)]
+                    motion-safe:hover:-translate-y-1
+                    transition-all duration-300
+                    border border-white/20
+                    disabled:opacity-50 disabled:cursor-not-allowed"
+                  aria-disabled={isLoading}
+                >
+                  {isLoading ? (
+                    <span className="flex items-center gap-2">
+                      <svg
+                        className="animate-spin w-5 h-5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        />
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        />
+                      </svg>
+                      Loading...
+                    </span>
+                  ) : (
+                    <span className="flex items-center gap-2">
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M5 15l7-7 7 7"
+                        />
+                      </svg>
+                      Load Previous
+                    </span>
                   )}
-                  <div>
-                    <p>{product.title}</p>
-                    <small>{price && <Money data={price} />}</small>
-                  </div>
-                </Link>
-              </div>
-            );
-          });
-
-          return (
-            <div>
-              <div>
-                <PreviousLink>
-                  {isLoading ? 'Loading...' : <span>↑ Load previous</span>}
                 </PreviousLink>
               </div>
-              <div>
-                {ItemsMarkup}
-                <br />
-              </div>
-              <div>
-                <NextLink>
-                  {isLoading ? 'Loading...' : <span>Load more ↓</span>}
+            )}
+
+            {/* Product Grid */}
+            <SearchResultsGrid products={productsForGrid} loading={isLoading} />
+
+            {/* Next Link - Load More */}
+            {hasNextPage && (
+              <div className="flex justify-center pt-4">
+                <NextLink
+                  className="px-8 py-4 font-bold uppercase tracking-wide text-white
+                    rounded-lg bg-gradient-to-r from-[#FF0000] via-gray-600 to-[#FF0000]
+                    bg-[length:200%_100%]
+                    motion-safe:animate-[gradient_3s_linear_infinite]
+                    shadow-[0_0_20px_rgba(255,0,0,0.6)]
+                    hover:shadow-[0_0_30px_rgba(255,0,0,0.8)]
+                    motion-safe:hover:-translate-y-1
+                    transition-all duration-300
+                    border border-white/20
+                    disabled:opacity-50 disabled:cursor-not-allowed"
+                  aria-disabled={isLoading}
+                >
+                  {isLoading ? (
+                    <span className="flex items-center gap-2">
+                      <svg
+                        className="animate-spin w-5 h-5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        />
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        />
+                      </svg>
+                      Loading...
+                    </span>
+                  ) : (
+                    <span className="flex items-center gap-2">
+                      Load More
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M19 9l-7 7-7 7"
+                        />
+                      </svg>
+                    </span>
+                  )}
                 </NextLink>
               </div>
-            </div>
-          );
-        }}
-      </Pagination>
-      <br />
-    </div>
+            )}
+          </div>
+        );
+      }}
+    </Pagination>
   );
 }
 
 function SearchResultsEmpty() {
-  return <p>No results, try a different search.</p>;
+  return null; // Handled by NoResults component
 }
 
 /** @typedef {RegularSearchReturn['result']['items']} SearchItems */

@@ -8,8 +8,11 @@ import {
   useSelectedOptionInUrlParam,
 } from '@shopify/hydrogen';
 import {ProductPrice} from '~/components/ProductPrice';
-import {ProductImage} from '~/components/ProductImage';
+import {ProductImageGallery} from '~/components/ProductImageGallery';
 import {ProductForm} from '~/components/ProductForm';
+import {ProductTabs} from '~/components/ProductTabs';
+import {ProductRecommendations} from '~/components/ProductRecommendations';
+import {ReviewStars} from '~/components/ReviewStars';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 
 /**
@@ -76,16 +79,44 @@ async function loadCriticalData({context, params, request}) {
  * Make sure to not throw any errors here, as it will cause the page to 500.
  * @param {Route.LoaderArgs}
  */
-function loadDeferredData({context, params}) {
-  // Put any API calls that is not critical to be available on first page render
-  // For example: product reviews, product recommendations, social feeds.
+async function loadDeferredData({context, params}) {
+  const {storefront} = context;
+  const {handle} = params;
 
-  return {};
+  // First get the product ID from the handle
+  const productIdQuery = await storefront.query(
+    `#graphql
+      query GetProductId($handle: String!) {
+        product(handle: $handle) {
+          id
+        }
+      }
+    `,
+    {variables: {handle}},
+  ).catch(() => ({product: null}));
+
+  const productId = productIdQuery?.product?.id;
+
+  if (!productId) {
+    return {recommendations: Promise.resolve({productRecommendations: []})};
+  }
+
+  // Query product recommendations using the actual product ID
+  const recommendations = storefront
+    .query(PRODUCT_RECOMMENDATIONS_QUERY, {
+      variables: {productId},
+    })
+    .catch((error) => {
+      console.error(error);
+      return {productRecommendations: []};
+    });
+
+  return {recommendations};
 }
 
 export default function Product() {
   /** @type {LoaderReturnData} */
-  const {product} = useLoaderData();
+  const {product, recommendations} = useLoaderData();
 
   // Optimistically selects a variant with given available variant information
   const selectedVariant = useOptimisticVariant(
@@ -105,29 +136,88 @@ export default function Product() {
 
   const {title, descriptionHtml} = product;
 
+  // Extract metafield content for tabs (if available)
+  const materialsContent = product.metafields?.find(
+    (m) => m?.key === 'materials' || m?.key === 'ingredients',
+  )?.value;
+
+  const shippingContent = product.metafields?.find(
+    (m) => m?.key === 'shipping_info',
+  )?.value;
+
   return (
-    <div className="product">
-      <ProductImage image={selectedVariant?.image} />
-      <div className="product-main">
-        <h1>{title}</h1>
-        <ProductPrice
-          price={selectedVariant?.price}
-          compareAtPrice={selectedVariant?.compareAtPrice}
-        />
-        <br />
-        <ProductForm
-          productOptions={productOptions}
-          selectedVariant={selectedVariant}
-        />
-        <br />
-        <br />
-        <p>
-          <strong>Description</strong>
-        </p>
-        <br />
-        <div dangerouslySetInnerHTML={{__html: descriptionHtml}} />
-        <br />
-      </div>
+    <>
+      {/* Main Product Section */}
+      <section className="bg-[#000000] pt-[180px] pb-12 lg:pb-16">
+        <div className="max-w-[1400px] mx-auto px-6">
+          {/* Product Grid Layout */}
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 motion-safe:animate-[fadeSlideUp_400ms_ease-out]">
+            {/* Left Column: Product Image */}
+            <div className="w-full">
+              <ProductImageGallery
+                image={selectedVariant?.image}
+                productTitle={title}
+              />
+            </div>
+
+            {/* Right Column: Product Details */}
+            <div className="self-start lg:sticky lg:top-24">
+              {/* Sticky Container with Glassmorphism Background */}
+              <div className="bg-black/50 backdrop-blur-sm p-6 lg:p-8 rounded-lg border border-[#FF0000]/30 shadow-[0_0_30px_rgba(255,0,0,0.3)]">
+                {/* Product Title */}
+                <h1
+                  className="text-3xl lg:text-4xl font-bold uppercase text-white mb-4"
+                  style={{
+                    fontFamily: 'var(--font-family-shock)',
+                    textShadow: '0 0 10px rgba(255, 0, 0, 0.6)',
+                  }}
+                >
+                  {title}
+                </h1>
+
+                {/* Review Stars */}
+                <div className="mb-6">
+                  <ReviewStars rating={5} reviewCount={0} showCount={true} />
+                </div>
+
+                {/* Price */}
+                <div className="mb-6">
+                  <ProductPrice
+                    price={selectedVariant?.price}
+                    compareAtPrice={selectedVariant?.compareAtPrice}
+                    size="large"
+                  />
+                </div>
+
+                {/* Product Form (Variants, Quantity, Add to Cart) */}
+                <ProductForm
+                  productOptions={productOptions}
+                  selectedVariant={selectedVariant}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Product Information Tabs */}
+          <div className="mt-12 lg:mt-16">
+            <ProductTabs
+              descriptionHtml={descriptionHtml}
+              materialsContent={materialsContent}
+              shippingContent={shippingContent}
+              reviewsContent={null}
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* Product Recommendations Section */}
+      {recommendations && (
+        <section className="bg-[#000000] pb-12 lg:pb-16">
+          <ProductRecommendations recommendations={recommendations} />
+        </section>
+      )}
+
+      {/* Analytics */}
       <Analytics.ProductView
         data={{
           products: [
@@ -143,7 +233,7 @@ export default function Product() {
           ],
         }}
       />
-    </div>
+    </>
   );
 }
 
@@ -217,6 +307,14 @@ const PRODUCT_FRAGMENT = `#graphql
     adjacentVariants (selectedOptions: $selectedOptions) {
       ...ProductVariant
     }
+    metafields(identifiers: [
+      {namespace: "custom", key: "materials"},
+      {namespace: "custom", key: "ingredients"},
+      {namespace: "custom", key: "shipping_info"}
+    ]) {
+      key
+      value
+    }
     seo {
       description
       title
@@ -237,6 +335,41 @@ const PRODUCT_QUERY = `#graphql
     }
   }
   ${PRODUCT_FRAGMENT}
+`;
+
+const PRODUCT_RECOMMENDATIONS_QUERY = `#graphql
+  query ProductRecommendations(
+    $productId: ID!
+    $country: CountryCode
+    $language: LanguageCode
+  ) @inContext(country: $country, language: $language) {
+    productRecommendations(productId: $productId) {
+      id
+      title
+      handle
+      priceRange {
+        minVariantPrice {
+          amount
+          currencyCode
+        }
+      }
+      images(first: 1) {
+        nodes {
+          id
+          url
+          altText
+          width
+          height
+        }
+      }
+      compareAtPriceRange {
+        minVariantPrice {
+          amount
+          currencyCode
+        }
+      }
+    }
+  }
 `;
 
 /** @typedef {import('./+types/products.$handle').Route} Route */

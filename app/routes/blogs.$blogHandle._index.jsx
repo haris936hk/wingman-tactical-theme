@@ -74,7 +74,7 @@ export default function Blog() {
   return (
     <div className="blog">
       <h1>{blog.title}</h1>
-      <div className="blog-grid">
+      <div className="grid gap-6 grid-cols-[repeat(auto-fit,minmax(355px,1fr))] mb-8">
         <PaginatedResourceSection connection={articles}>
           {({node: article, index}) => (
             <ArticleItem
@@ -102,10 +102,10 @@ function ArticleItem({article, loading}) {
     day: 'numeric',
   }).format(new Date(article.publishedAt));
   return (
-    <div className="blog-article" key={article.id}>
+    <div key={article.id}>
       <Link to={`/blogs/${article.blog.handle}/${article.handle}`}>
         {article.image && (
-          <div className="blog-article-image">
+          <div className="aspect-[3/2] block">
             <Image
               alt={article.image.altText || article.title}
               aspectRatio="3/2"

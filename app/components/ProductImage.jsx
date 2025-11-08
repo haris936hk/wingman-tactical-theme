@@ -7,10 +7,10 @@ import {Image} from '@shopify/hydrogen';
  */
 export function ProductImage({image}) {
   if (!image) {
-    return <div className="product-image" />;
+    return <div className="w-full h-auto" />;
   }
   return (
-    <div className="product-image">
+    <div className="w-full h-auto">
       <Image
         alt={image.altText || 'Product Image'}
         aspectRatio="1/1"

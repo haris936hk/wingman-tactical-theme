@@ -103,12 +103,15 @@ export default function Homepage() {
 /* Wingman Tactical Hero Section */
 function HeroSection() {
   return (
-    <section className="relative bg-[#000000] pt-[156px] pb-20 lg:pb-32">
+    <section className="relative bg-[#000000] pt-[180px] pb-12 lg:pb-16">
       <div className="max-w-[1400px] mx-auto px-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           {/* Text Side */}
           <div className="text-white text-center">
-            <h1 className="text-xl lg:text-2xl xl:text-3xl font-bold uppercase leading-tight mb-6">
+            <h1
+              className="text-xl lg:text-2xl xl:text-3xl font-bold uppercase leading-tight mb-6"
+              style={{ fontFamily: 'var(--font-family-shock)' }}
+            >
               YOUR GEAR/MERCHANDISE IS FAILING? BOOK YOUR CUSTOM AVIATION GEAR & MERCH
             </h1>
             <p className="text-sm lg:text-base text-gray-300 mb-6 leading-relaxed">
@@ -178,7 +181,7 @@ function HeroSection() {
 /* Split Content Section - Two Column Layout */
 function SplitContentSection() {
   return (
-    <section className="relative bg-[#000000] py-20 lg:py-32 border-t border-[#FF0000]">
+    <section className="relative bg-[#000000] py-12 lg:py-16 border-t border-[#FF0000]">
       <div className="max-w-[1400px] mx-auto px-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           {/* Left Side - Globe */}
@@ -223,17 +226,18 @@ function SplitContentSection() {
           </div>
 
           {/* Right Side - Stats Content */}
-          <div>
+          <div className="pt-8 pb-2">
             <h2
-              className="text-2xl lg:text-3xl font-bold uppercase mb-12 text-center text-white"
+              className="text-2xl lg:text-3xl font-bold uppercase mb-2 text-center text-white"
               style={{
+                fontFamily: 'var(--font-family-shock)',
                 textShadow: '0 0 10px rgba(255, 0, 0, 0.8), 0 0 20px rgba(255, 0, 0, 0.6), 0 0 30px rgba(255, 0, 0, 0.4)'
               }}
             >
               CLIENTS SERVED ACROSS THE WORLD
             </h2>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
               {/* Aviation Organisations Stat */}
               <CountUpStat
                 icon={
@@ -284,15 +288,18 @@ function SplitContentSection() {
 /* Client Showcase Section */
 function ClientShowcaseSection() {
   return (
-    <section className="py-16 bg-[#000000] border-t border-[#FF0000]">
+    <section className="py-12 lg:py-16 bg-[#000000] border-t border-[#FF0000]">
       <div className="max-w-[1400px] mx-auto px-6">
-        <h2 className="text-3xl lg:text-4xl font-bold uppercase text-center mb-12 text-white" style={{
+        <h2 className="text-3xl lg:text-4xl font-bold uppercase text-center mb-2 text-white" style={{
+          fontFamily: 'var(--font-family-shock)',
           textShadow: '0 0 10px rgba(255, 0, 0, 0.6)'
         }}>
           EXPLORE OUR ACROSS THE WORLD SERVED CLIENTS
         </h2>
 
-        <ClientCarousel />
+        <div className="mt-8">
+          <ClientCarousel />
+        </div>
       </div>
     </section>
   );
@@ -301,21 +308,24 @@ function ClientShowcaseSection() {
 /* Wingman Featured Section */
 function WingmanFeaturedSection({products}) {
   return (
-    <section className="py-16 bg-[#000000] border-t border-[#FF0000]">
+    <section className="py-12 lg:py-16 bg-[#000000] border-t border-[#FF0000]">
       <div className="max-w-[1400px] mx-auto px-6">
-        <h2 className="text-3xl lg:text-4xl font-bold uppercase text-center mb-12 text-white" style={{
+        <h2 className="text-3xl lg:text-4xl font-bold uppercase text-center mb-2 text-white" style={{
+          fontFamily: 'var(--font-family-shock)',
           textShadow: '0 0 10px rgba(255, 0, 0, 0.6)'
         }}>
           WINGMAN FEATURED
         </h2>
 
-        <Suspense fallback={<div className="text-center">Loading...</div>}>
-          <Await resolve={products}>
-            {(response) => (
-              <ProductCarousel products={response?.products.nodes || []} />
-            )}
-          </Await>
-        </Suspense>
+        <div className="mt-8">
+          <Suspense fallback={<div className="text-center text-white">Loading...</div>}>
+            <Await resolve={products}>
+              {(response) => (
+                <ProductCarousel products={response?.products.nodes || []} />
+              )}
+            </Await>
+          </Suspense>
+        </div>
       </div>
     </section>
   );
@@ -324,21 +334,24 @@ function WingmanFeaturedSection({products}) {
 /* Discounts & Offers Section */
 function DiscountsSection({products}) {
   return (
-    <section className="py-16 bg-[#000000] border-t border-[#FF0000]">
+    <section className="py-12 lg:py-16 bg-[#000000] border-t border-[#FF0000]">
       <div className="max-w-[1400px] mx-auto px-6">
-        <h2 className="text-3xl lg:text-4xl font-bold uppercase text-center mb-12 text-white" style={{
+        <h2 className="text-3xl lg:text-4xl font-bold uppercase text-center mb-2 text-white" style={{
+          fontFamily: 'var(--font-family-shock)',
           textShadow: '0 0 10px rgba(255, 0, 0, 0.6)'
         }}>
           DISCOUNTS & OFFERS
         </h2>
 
-        <Suspense fallback={<div className="text-center">Loading...</div>}>
-          <Await resolve={products}>
-            {(response) => (
-              <ProductCarousel products={response?.products.nodes || []} showSaleBadge={true} />
-            )}
-          </Await>
-        </Suspense>
+        <div className="mt-8">
+          <Suspense fallback={<div className="text-center text-white">Loading...</div>}>
+            <Await resolve={products}>
+              {(response) => (
+                <ProductCarousel products={response?.products.nodes || []} showSaleBadge={true} />
+              )}
+            </Await>
+          </Suspense>
+        </div>
       </div>
     </section>
   );
@@ -380,15 +393,18 @@ function CustomProductsSection() {
   ];
 
   return (
-    <section className="py-16 bg-[#000000] border-t border-[#FF0000]">
+    <section className="py-12 lg:py-16 bg-[#000000] border-t border-[#FF0000]">
       <div className="max-w-[1400px] mx-auto px-6">
-        <h2 className="text-3xl lg:text-4xl font-bold uppercase text-center mb-12 text-white" style={{
+        <h2 className="text-3xl lg:text-4xl font-bold uppercase text-center mb-2 text-white" style={{
+          fontFamily: 'var(--font-family-shock)',
           textShadow: '0 0 10px rgba(255, 0, 0, 0.6)'
         }}>
           CUSTOM PRODUCTS
         </h2>
 
-        <CustomProductCarousel items={customProducts} showCTA={true} />
+        <div className="mt-8">
+          <CustomProductCarousel items={customProducts} showCTA={true} />
+        </div>
       </div>
     </section>
   );
@@ -397,7 +413,7 @@ function CustomProductsSection() {
 /* About Us / Sell With Us Section */
 function AboutSellSection() {
   return (
-    <section className="py-16 bg-[#000000] border-t border-[#FF0000]">
+    <section className="py-12 lg:py-16 bg-[#000000] border-t border-[#FF0000]">
       <div className="max-w-[1400px] mx-auto px-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* About Us Card */}
@@ -413,7 +429,7 @@ function AboutSellSection() {
               height="400"
             />
             <div className="absolute bottom-0 left-0 right-0 p-8 z-20">
-              <h3 className="text-4xl font-bold uppercase text-white mb-4">ABOUT US</h3>
+              <h3 className="text-4xl font-bold uppercase text-white mb-4" style={{ fontFamily: 'var(--font-family-shock)' }}>ABOUT US</h3>
               <p className="text-white text-lg">We are your online wingman, dedicated to providing quality Aviation gear and merchandise. Join our formation to get access to the best OEM manufacturing services with the lowest MOQs and maximum customization.</p>
             </div>
           </Link>
@@ -431,7 +447,7 @@ function AboutSellSection() {
               height="400"
             />
             <div className="absolute bottom-0 left-0 right-0 p-8 z-20">
-              <h3 className="text-4xl font-bold uppercase text-white mb-4">SELL WITH US</h3>
+              <h3 className="text-4xl font-bold uppercase text-white mb-4" style={{ fontFamily: 'var(--font-family-shock)' }}>SELL WITH US</h3>
               <p className="text-white text-lg">Want to create your own private label brand? Do you have a great product within our niche and don&apos;t know how to sell? Let&apos;s join hands and we will help you with everything we have got to make you earn passive income while you can leave the product supply chain till delivery hustles on us.</p>
             </div>
           </Link>

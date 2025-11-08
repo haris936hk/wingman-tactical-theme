@@ -58,8 +58,8 @@ function SearchResultsPredictiveArticles({term, articles, closeSearch}) {
   if (!articles.length) return null;
 
   return (
-    <div className="predictive-search-result" key="articles">
-      <h5>Articles</h5>
+    <div className="mb-8" key="articles">
+      <h5 className="uppercase">Articles</h5>
       <ul>
         {articles.map((article) => {
           const articleUrl = urlWithTrackingParams({
@@ -69,14 +69,15 @@ function SearchResultsPredictiveArticles({term, articles, closeSearch}) {
           });
 
           return (
-            <li className="predictive-search-result-item" key={article.id}>
-              <Link onClick={closeSearch} to={articleUrl}>
+            <li className="mb-2" key={article.id}>
+              <Link onClick={closeSearch} to={articleUrl} className="flex items-center">
                 {article.image?.url && (
                   <Image
                     alt={article.image.altText ?? ''}
                     src={article.image.url}
                     width={50}
                     height={50}
+                    className="mr-3 h-full"
                   />
                 )}
                 <div>
@@ -98,8 +99,8 @@ function SearchResultsPredictiveCollections({term, collections, closeSearch}) {
   if (!collections.length) return null;
 
   return (
-    <div className="predictive-search-result" key="collections">
-      <h5>Collections</h5>
+    <div className="mb-8" key="collections">
+      <h5 className="uppercase">Collections</h5>
       <ul>
         {collections.map((collection) => {
           const collectionUrl = urlWithTrackingParams({
@@ -109,14 +110,15 @@ function SearchResultsPredictiveCollections({term, collections, closeSearch}) {
           });
 
           return (
-            <li className="predictive-search-result-item" key={collection.id}>
-              <Link onClick={closeSearch} to={collectionUrl}>
+            <li className="mb-2" key={collection.id}>
+              <Link onClick={closeSearch} to={collectionUrl} className="flex items-center">
                 {collection.image?.url && (
                   <Image
                     alt={collection.image.altText ?? ''}
                     src={collection.image.url}
                     width={50}
                     height={50}
+                    className="mr-3 h-full"
                   />
                 )}
                 <div>
@@ -138,8 +140,8 @@ function SearchResultsPredictivePages({term, pages, closeSearch}) {
   if (!pages.length) return null;
 
   return (
-    <div className="predictive-search-result" key="pages">
-      <h5>Pages</h5>
+    <div className="mb-8" key="pages">
+      <h5 className="uppercase">Pages</h5>
       <ul>
         {pages.map((page) => {
           const pageUrl = urlWithTrackingParams({
@@ -149,8 +151,8 @@ function SearchResultsPredictivePages({term, pages, closeSearch}) {
           });
 
           return (
-            <li className="predictive-search-result-item" key={page.id}>
-              <Link onClick={closeSearch} to={pageUrl}>
+            <li className="mb-2" key={page.id}>
+              <Link onClick={closeSearch} to={pageUrl} className="flex items-center">
                 <div>
                   <span>{page.title}</span>
                 </div>
@@ -170,8 +172,8 @@ function SearchResultsPredictiveProducts({term, products, closeSearch}) {
   if (!products.length) return null;
 
   return (
-    <div className="predictive-search-result" key="products">
-      <h5>Products</h5>
+    <div className="mb-8" key="products">
+      <h5 className="uppercase">Products</h5>
       <ul>
         {products.map((product) => {
           const productUrl = urlWithTrackingParams({
@@ -183,14 +185,15 @@ function SearchResultsPredictiveProducts({term, products, closeSearch}) {
           const price = product?.selectedOrFirstAvailableVariant?.price;
           const image = product?.selectedOrFirstAvailableVariant?.image;
           return (
-            <li className="predictive-search-result-item" key={product.id}>
-              <Link to={productUrl} onClick={closeSearch}>
+            <li className="mb-2" key={product.id}>
+              <Link to={productUrl} onClick={closeSearch} className="flex items-center">
                 {image && (
                   <Image
                     alt={image.altText ?? ''}
                     src={image.url}
                     width={50}
                     height={50}
+                    className="mr-3 h-full"
                   />
                 )}
                 <div>
