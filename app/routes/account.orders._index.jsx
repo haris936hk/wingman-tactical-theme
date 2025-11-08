@@ -17,6 +17,12 @@ import {
 } from '~/lib/orderFilters';
 import {CUSTOMER_ORDERS_QUERY} from '~/graphql/customer-account/CustomerOrdersQuery';
 import {PaginatedResourceSection} from '~/components/PaginatedResourceSection';
+import {AccountCard} from '~/components/account/AccountCard';
+import {FormInput} from '~/components/account/FormInput';
+import {FormButton} from '~/components/account/FormButton';
+import {FormFieldset} from '~/components/account/FormFieldset';
+import {EmptyState} from '~/components/account/EmptyState';
+import {LoadingSpinner} from '~/components/account/LoadingSpinner';
 
 /**
  * @type {Route.MetaFunction}
@@ -59,7 +65,7 @@ export default function Orders() {
   const {orders} = customer;
 
   return (
-    <div className="orders">
+    <div className="space-y-8">
       <OrderSearchForm currentFilters={filters} />
       <OrdersTable orders={orders} filters={filters} />
     </div>
@@ -92,26 +98,44 @@ function OrdersTable({orders, filters}) {
  * @param {{hasFilters?: boolean}}
  */
 function EmptyOrders({hasFilters = false}) {
+  if (hasFilters) {
+    return (
+      <EmptyState
+        icon={
+          <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            />
+          </svg>
+        }
+        title="No Orders Found"
+        description="No orders found matching your search criteria. Try adjusting your filters."
+        ctaText="Clear Filters"
+        ctaLink="/account/orders"
+      />
+    );
+  }
+
   return (
-    <div>
-      {hasFilters ? (
-        <>
-          <p>No orders found matching your search.</p>
-          <br />
-          <p>
-            <Link to="/account/orders">Clear filters →</Link>
-          </p>
-        </>
-      ) : (
-        <>
-          <p>You haven&apos;t placed any orders yet.</p>
-          <br />
-          <p>
-            <Link to="/collections">Start Shopping →</Link>
-          </p>
-        </>
-      )}
-    </div>
+    <EmptyState
+      icon={
+        <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+          />
+        </svg>
+      }
+      title="No Orders Yet"
+      description="You haven't placed any orders yet. Start shopping to see your orders here."
+      ctaText="Start Shopping"
+      ctaLink="/collections"
+    />
   );
 }
 
@@ -143,58 +167,51 @@ function OrderSearchForm({currentFilters}) {
     if (confirmationNumber)
       params.set(ORDER_FILTER_FIELDS.CONFIRMATION_NUMBER, confirmationNumber);
 
-    setSearchParams(params);
+    setSearchParams(params, {preventScrollReset: true});
   };
 
   const hasFilters = currentFilters.name || currentFilters.confirmationNumber;
 
   return (
-    <form
-      ref={formRef}
-      onSubmit={handleSubmit}
-      className="mb-6"
-      aria-label="Search orders"
-    >
-      <fieldset className="border border-gray-300 rounded px-4 py-4">
-        <legend className="font-semibold px-2">Filter Orders</legend>
-
-        <div className="grid gap-4 my-1 grid-cols-1 sm:grid-cols-2">
-          <input
-            type="search"
+    <form ref={formRef} onSubmit={handleSubmit} aria-label="Search orders">
+      <FormFieldset legend="Filter Orders">
+        <div className="grid gap-4 grid-cols-1 sm:grid-cols-2">
+          <FormInput
             name={ORDER_FILTER_FIELDS.NAME}
-            placeholder="Order #"
-            aria-label="Order number"
-            defaultValue={currentFilters.name || ''}
-            className="w-full px-2 py-2 border border-gray-300 rounded text-base"
-          />
-          <input
             type="search"
+            placeholder="Order #"
+            defaultValue={currentFilters.name || ''}
+            label="Order Number"
+          />
+          <FormInput
             name={ORDER_FILTER_FIELDS.CONFIRMATION_NUMBER}
+            type="search"
             placeholder="Confirmation #"
-            aria-label="Confirmation number"
             defaultValue={currentFilters.confirmationNumber || ''}
-            className="w-full px-2 py-2 border border-gray-300 rounded text-base"
+            label="Confirmation Number"
           />
         </div>
 
-        <div className="flex gap-3 flex-wrap">
-          <button type="submit" disabled={isSearching}>
-            {isSearching ? 'Searching' : 'Search'}
-          </button>
+        <div className="flex gap-3 flex-wrap mt-4">
+          <FormButton type="submit" loading={isSearching} fullWidth={false}>
+            Search Orders
+          </FormButton>
           {hasFilters && (
-            <button
+            <FormButton
               type="button"
+              variant="secondary"
               disabled={isSearching}
+              fullWidth={false}
               onClick={() => {
-                setSearchParams(new URLSearchParams());
+                setSearchParams(new URLSearchParams(), {preventScrollReset: true});
                 formRef.current?.reset();
               }}
             >
-              Clear
-            </button>
+              Clear Filters
+            </FormButton>
           )}
         </div>
-      </fieldset>
+      </FormFieldset>
     </form>
   );
 }
@@ -204,23 +221,112 @@ function OrderSearchForm({currentFilters}) {
  */
 function OrderItem({order}) {
   const fulfillmentStatus = flattenConnection(order.fulfillments)[0]?.status;
+  const orderDate = new Date(order.processedAt);
+
+  // Status badge color mapping
+  const getStatusColor = (status) => {
+    const statusLower = status?.toLowerCase() || '';
+    if (statusLower.includes('fulfilled') || statusLower.includes('paid')) {
+      return 'bg-green-900/30 text-green-400 border-green-500';
+    }
+    if (statusLower.includes('pending') || statusLower.includes('unfulfilled')) {
+      return 'bg-yellow-900/30 text-yellow-400 border-yellow-500';
+    }
+    if (statusLower.includes('cancelled') || statusLower.includes('refunded')) {
+      return 'bg-red-900/30 text-red-400 border-[#FF0000]';
+    }
+    return 'bg-gray-900/30 text-gray-400 border-gray-500';
+  };
+
   return (
-    <>
-      <fieldset>
-        <Link to={`/account/orders/${btoa(order.id)}`}>
-          <strong>#{order.number}</strong>
-        </Link>
-        <p>{new Date(order.processedAt).toDateString()}</p>
-        {order.confirmationNumber && (
-          <p>Confirmation: {order.confirmationNumber}</p>
-        )}
-        <p>{order.financialStatus}</p>
-        {fulfillmentStatus && <p>{fulfillmentStatus}</p>}
-        <Money data={order.totalPrice} />
-        <Link to={`/account/orders/${btoa(order.id)}`}>View Order →</Link>
-      </fieldset>
-      <br />
-    </>
+    <AccountCard className="mb-4">
+      <div className="space-y-4">
+        {/* Order Header */}
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <Link
+              to={`/account/orders/${btoa(order.id)}`}
+              className="text-xl font-bold uppercase text-white hover:text-[#FF0000] transition-colors"
+              style={{
+                fontFamily: 'var(--font-family-shock)',
+              }}
+            >
+              Order #{order.number}
+            </Link>
+            <p className="text-gray-400 text-sm mt-1">
+              {orderDate.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+              })}
+            </p>
+          </div>
+          <div className="text-right">
+            <div className="text-2xl font-bold text-[#FF0000]">
+              <Money data={order.totalPrice} />
+            </div>
+          </div>
+        </div>
+
+        {/* Order Details */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+          {order.confirmationNumber && (
+            <div>
+              <span className="text-gray-400 uppercase">Confirmation:</span>
+              <span className="text-white ml-2 font-mono">
+                {order.confirmationNumber}
+              </span>
+            </div>
+          )}
+
+          {/* Status Badges */}
+          <div className="flex flex-wrap gap-2">
+            {order.financialStatus && (
+              <span
+                className={`px-3 py-1 rounded-full text-xs font-bold uppercase border ${getStatusColor(
+                  order.financialStatus,
+                )}`}
+              >
+                {order.financialStatus}
+              </span>
+            )}
+            {fulfillmentStatus && (
+              <span
+                className={`px-3 py-1 rounded-full text-xs font-bold uppercase border ${getStatusColor(
+                  fulfillmentStatus,
+                )}`}
+              >
+                {fulfillmentStatus}
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* View Order Link */}
+        <div className="pt-4 border-t border-[#FF0000]/20">
+          <Link
+            to={`/account/orders/${btoa(order.id)}`}
+            className="inline-flex items-center gap-2 text-white hover:text-[#FF0000]
+              transition-colors font-bold uppercase text-sm group"
+          >
+            View Order Details
+            <svg
+              className="w-5 h-5 group-hover:translate-x-1 transition-transform"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M13 7l5 5m0 0l-5 5m5-5H6"
+              />
+            </svg>
+          </Link>
+        </div>
+      </div>
+    </AccountCard>
   );
 }
 

@@ -6,6 +6,12 @@ import {
   useNavigation,
   useOutletContext,
 } from 'react-router';
+import {useState, useEffect} from 'react';
+import {AccountCard} from '~/components/account/AccountCard';
+import {FormInput} from '~/components/account/FormInput';
+import {FormButton} from '~/components/account/FormButton';
+import {FormFieldset} from '~/components/account/FormFieldset';
+import {SuccessMessage} from '~/components/account/SuccessMessage';
 
 /**
  * @type {Route.MetaFunction}
@@ -86,50 +92,114 @@ export default function AccountProfile() {
   /** @type {ActionReturnData} */
   const action = useActionData();
   const customer = action?.customer ?? account?.customer;
+  const [showSuccess, setShowSuccess] = useState(false);
+
+  // Show success message when profile is updated
+  useEffect(() => {
+    if (action?.customer && !action?.error) {
+      setShowSuccess(true);
+    }
+  }, [action]);
+
+  const isUpdating = state !== 'idle';
 
   return (
-    <div className="account-profile">
-      <h2>My profile</h2>
-      <br />
-      <Form method="PUT">
-        <legend>Personal information</legend>
-        <fieldset>
-          <label htmlFor="firstName">First name</label>
-          <input
-            id="firstName"
-            name="firstName"
-            type="text"
-            autoComplete="given-name"
-            placeholder="First name"
-            aria-label="First name"
-            defaultValue={customer.firstName ?? ''}
-            minLength={2}
-          />
-          <label htmlFor="lastName">Last name</label>
-          <input
-            id="lastName"
-            name="lastName"
-            type="text"
-            autoComplete="family-name"
-            placeholder="Last name"
-            aria-label="Last name"
-            defaultValue={customer.lastName ?? ''}
-            minLength={2}
-          />
-        </fieldset>
-        {action?.error ? (
-          <p>
-            <mark>
-              <small>{action.error}</small>
-            </mark>
-          </p>
-        ) : (
-          <br />
-        )}
-        <button type="submit" disabled={state !== 'idle'}>
-          {state !== 'idle' ? 'Updating' : 'Update'}
-        </button>
-      </Form>
+    <div className="space-y-8">
+      {/* Success Message */}
+      {showSuccess && (
+        <SuccessMessage
+          message="Profile updated successfully!"
+          variant="success"
+          onDismiss={() => setShowSuccess(false)}
+        />
+      )}
+
+      {/* Profile Header */}
+      <div>
+        <h1
+          className="text-3xl lg:text-4xl font-bold uppercase text-white mb-2"
+          style={{
+            fontFamily: 'var(--font-family-shock)',
+            textShadow: '0 0 15px rgba(255, 0, 0, 0.6)',
+          }}
+        >
+          My Profile
+        </h1>
+        <p className="text-gray-300">Manage your personal information</p>
+      </div>
+
+      {/* Profile Form */}
+      <AccountCard title="Personal Information">
+        <Form method="PUT">
+          <FormFieldset>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <FormInput
+                name="firstName"
+                label="First Name"
+                type="text"
+                autoComplete="given-name"
+                placeholder="Enter your first name"
+                defaultValue={customer.firstName ?? ''}
+                required
+              />
+              <FormInput
+                name="lastName"
+                label="Last Name"
+                type="text"
+                autoComplete="family-name"
+                placeholder="Enter your last name"
+                defaultValue={customer.lastName ?? ''}
+                required
+              />
+            </div>
+
+            {/* Error Message */}
+            {action?.error && (
+              <div
+                className="mt-4 p-4 rounded-lg bg-[#FF0000]/20 border-2 border-[#FF0000]
+                  backdrop-blur-sm"
+              >
+                <div className="flex items-start gap-2">
+                  <svg
+                    className="w-5 h-5 text-[#FF0000] flex-shrink-0 mt-0.5"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  <p className="text-[#FF0000] text-sm font-medium">{action.error}</p>
+                </div>
+              </div>
+            )}
+
+            <div className="mt-6">
+              <FormButton type="submit" loading={isUpdating}>
+                {isUpdating ? 'Updating Profile...' : 'Save Changes'}
+              </FormButton>
+            </div>
+          </FormFieldset>
+        </Form>
+      </AccountCard>
+
+      {/* Account Info Card */}
+      <AccountCard title="Account Information" hover={false}>
+        <div className="space-y-3 text-sm">
+          <div className="flex items-center justify-between py-2 border-b border-white/10">
+            <span className="text-gray-400 uppercase">Account ID:</span>
+            <span className="text-white font-mono">{customer.id?.split('/').pop()}</span>
+          </div>
+          {customer.emailAddress && (
+            <div className="flex items-center justify-between py-2 border-b border-white/10">
+              <span className="text-gray-400 uppercase">Email:</span>
+              <span className="text-white">{customer.emailAddress?.emailAddress}</span>
+            </div>
+          )}
+        </div>
+      </AccountCard>
     </div>
   );
 }
