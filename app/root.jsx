@@ -10,7 +10,11 @@ import {
   useRouteLoaderData,
 } from 'react-router';
 import favicon from '~/assets/favicon.svg';
-import {FOOTER_QUERY, HEADER_QUERY} from '~/lib/fragments';
+import {
+  FOOTER_QUERY,
+  HEADER_QUERY,
+  RECOMMENDED_PRODUCTS_QUERY,
+} from '~/lib/fragments';
 import tailwindCss from './styles/tailwind.css?url';
 import {PageLayout} from './components/PageLayout';
 
@@ -131,10 +135,28 @@ function loadDeferredData({context}) {
       console.error(error);
       return null;
     });
+
+  // defer recommended products for cart upsells
+  const recommendedProducts = storefront
+    .query(RECOMMENDED_PRODUCTS_QUERY, {
+      cache: storefront.CacheLong(),
+      variables: {
+        first: 4,
+        country: storefront.i18n.country,
+        language: storefront.i18n.language,
+      },
+    })
+    .then((response) => response?.products?.nodes || [])
+    .catch((error) => {
+      console.error(error);
+      return [];
+    });
+
   return {
     cart: cart.get(),
     isLoggedIn: customerAccount.isLoggedIn(),
     footer,
+    recommendedProducts,
   };
 }
 

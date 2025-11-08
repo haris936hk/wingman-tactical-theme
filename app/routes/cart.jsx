@@ -1,6 +1,7 @@
 import {useLoaderData, data} from 'react-router';
 import {CartForm} from '@shopify/hydrogen';
 import {CartMain} from '~/components/CartMain';
+import {RECOMMENDED_PRODUCTS_QUERY} from '~/lib/fragments';
 
 /**
  * @type {Route.MetaFunction}
@@ -107,18 +108,41 @@ export async function action({request, context}) {
  * @param {Route.LoaderArgs}
  */
 export async function loader({context}) {
-  const {cart} = context;
-  return await cart.get();
+  const {cart, storefront} = context;
+
+  // Fetch cart and recommended products in parallel
+  const [cartData, recommendedProductsData] = await Promise.all([
+    cart.get(),
+    storefront
+      .query(RECOMMENDED_PRODUCTS_QUERY, {
+        cache: storefront.CacheLong(),
+        variables: {
+          first: 4,
+          country: storefront.i18n.country,
+          language: storefront.i18n.language,
+        },
+      })
+      .then((response) => response?.products?.nodes || [])
+      .catch((error) => {
+        console.error('Error fetching recommended products:', error);
+        return [];
+      }),
+  ]);
+
+  return {
+    cart: cartData,
+    recommendedProducts: recommendedProductsData,
+  };
 }
 
 export default function Cart() {
   /** @type {LoaderReturnData} */
-  const cart = useLoaderData();
+  const {cart, recommendedProducts} = useLoaderData();
 
   return (
     <div className="cart">
       <h1>Cart</h1>
-      <CartMain layout="page" cart={cart} />
+      <CartMain layout="page" cart={cart} recommendedProducts={recommendedProducts} />
     </div>
   );
 }

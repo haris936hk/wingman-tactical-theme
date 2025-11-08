@@ -20,10 +20,11 @@ export function PageLayout({
   header,
   isLoggedIn,
   publicStoreDomain,
+  recommendedProducts,
 }) {
   return (
     <Aside.Provider>
-      <CartAside cart={cart} />
+      <CartAside cart={cart} recommendedProducts={recommendedProducts} />
       <SearchAside />
       <MobileMenuAside header={header} publicStoreDomain={publicStoreDomain} />
       {header && (
@@ -45,15 +46,24 @@ export function PageLayout({
 }
 
 /**
- * @param {{cart: PageLayoutProps['cart']}}
+ * @param {{
+ *   cart: PageLayoutProps['cart'];
+ *   recommendedProducts?: PageLayoutProps['recommendedProducts'];
+ * }}
  */
-function CartAside({cart}) {
+function CartAside({cart, recommendedProducts}) {
   return (
     <Aside type="cart" heading="CART">
       <Suspense fallback={<p>Loading cart ...</p>}>
-        <Await resolve={cart}>
-          {(cart) => {
-            return <CartMain cart={cart} layout="aside" />;
+        <Await resolve={Promise.all([cart, recommendedProducts || Promise.resolve([])])}>
+          {([cart, products]) => {
+            return (
+              <CartMain
+                cart={cart}
+                layout="aside"
+                recommendedProducts={products}
+              />
+            );
           }}
         </Await>
       </Suspense>
@@ -172,7 +182,17 @@ function MobileMenuAside({header, publicStoreDomain}) {
  * @property {HeaderQuery} header
  * @property {Promise<boolean>} isLoggedIn
  * @property {string} publicStoreDomain
+ * @property {Promise<Array<RecommendedProduct>>} [recommendedProducts]
  * @property {React.ReactNode} [children]
+ */
+
+/**
+ * @typedef {Object} RecommendedProduct
+ * @property {string} id
+ * @property {string} handle
+ * @property {string} title
+ * @property {{minVariantPrice: {amount: string; currencyCode: string}}} priceRange
+ * @property {{url: string; altText: string | null; width: number; height: number}} [featuredImage]
  */
 
 /** @typedef {import('storefrontapi.generated').CartApiQueryFragment} CartApiQueryFragment */

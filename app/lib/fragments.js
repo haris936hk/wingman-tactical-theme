@@ -232,3 +232,32 @@ export const FOOTER_QUERY = `#graphql
   }
   ${MENU_FRAGMENT}
 `;
+
+// Recommended Products Query for Cart Upsells
+export const RECOMMENDED_PRODUCTS_QUERY = `#graphql
+  query RecommendedProducts(
+    $country: CountryCode
+    $language: LanguageCode
+    $first: Int = 4
+  ) @inContext(country: $country, language: $language) {
+    products(first: $first, sortKey: BEST_SELLING) {
+      nodes {
+        id
+        handle
+        title
+        priceRange {
+          minVariantPrice {
+            amount
+            currencyCode
+          }
+        }
+        featuredImage {
+          url
+          altText
+          width
+          height
+        }
+      }
+    }
+  }
+`;

@@ -58,6 +58,13 @@
   --shadow-sm: 0 1px 2px 0 rgb(255 0 0 / 0.2);
   --shadow-md: 0 4px 6px -1px rgb(255 0 0 / 0.3), 0 2px 4px -2px rgb(255 0 0 / 0.2);
   --shadow-lg: 0 10px 15px -3px rgb(255 0 0 / 0.4), 0 4px 6px -4px rgb(255 0 0 / 0.3);
+
+  /* Custom Animations */
+  --animate-gradient: gradient 3s linear infinite;
+  --animate-fade-slide-up: fadeSlideUp 0.5s ease-out;
+  --animate-slide-up: slideUp 0.3s ease-out;
+  --animate-fade-in: fadeIn 0.3s ease-out;
+  --animate-border-spin: border-spin 2s linear infinite;
 }
 
 /* Global Typography Styles - Wingman Tactical */
