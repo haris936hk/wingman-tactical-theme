@@ -49,7 +49,7 @@ export function CartEmptyState() {
       </h2>
 
       {/* Description */}
-      <p className="text-gray-300 text-base mb-8 max-w-md">
+      <p className="text-gray-300 text-sm leading-relaxed mb-8 w-full">
         Looks like you haven't added anything to your cart yet. Start shopping
         to load it up with awesome gear!
       </p>

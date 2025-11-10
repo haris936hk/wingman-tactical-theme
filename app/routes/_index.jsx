@@ -16,9 +16,6 @@ import aviationLanyardImg from '~/assets/customproducts/aviation-lanyard.png';
 import aboutUsImg from '~/assets/aboutus.png';
 import sellWithUsImg from '~/assets/sellwithus.png';
 
-// Client-only lazy load for GridGlobe to prevent server bundle bloat
-const GridGlobe = lazy(() => import('~/components/GridGlobe'));
-
 /**
  * @type {Route.MetaFunction}
  */
@@ -178,57 +175,42 @@ function HeroSection() {
   );
 }
 
-/* Split Content Section - Two Column Layout */
+/* Global Stats Section - Centered Layout */
 function SplitContentSection() {
   return (
     <section className="relative bg-[#000000] py-12 lg:py-16 border-t border-[#FF0000]">
       <div className="max-w-[1400px] mx-auto px-6">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          {/* Left Side - Globe */}
-          <div className="relative h-[400px] lg:h-[500px]">
-            {/* SVG animated border */}
-            <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{zIndex: 10}}>
-              <rect
-                x="2"
-                y="2"
-                width="calc(100% - 4px)"
-                height="calc(100% - 4px)"
-                rx="8"
-                fill="none"
-                stroke="url(#splitBorderGradient)"
-                strokeWidth="3"
-                strokeDasharray="50 150"
-                style={{
-                  animation: 'border-spin 4s linear infinite'
-                }}
-              />
-              <defs>
-                <linearGradient id="splitBorderGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%" stopColor="#FF0000" />
-                  <stop offset="50%" stopColor="#FFFFFF" />
-                  <stop offset="100%" stopColor="#FF0000" />
-                </linearGradient>
-              </defs>
-            </svg>
+        {/* Centered Stats Container */}
+        <div className="relative max-w-4xl mx-auto">
+          {/* SVG animated border */}
+          <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{zIndex: 10}}>
+            <rect
+              x="2"
+              y="2"
+              width="calc(100% - 4px)"
+              height="calc(100% - 4px)"
+              rx="8"
+              fill="none"
+              stroke="url(#statsBorderGradient)"
+              strokeWidth="3"
+              strokeDasharray="50 150"
+              style={{
+                animation: 'border-spin 4s linear infinite'
+              }}
+            />
+            <defs>
+              <linearGradient id="statsBorderGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#FF0000" />
+                <stop offset="50%" stopColor="#FFFFFF" />
+                <stop offset="100%" stopColor="#FF0000" />
+              </linearGradient>
+            </defs>
+          </svg>
 
-            {/* Globe container */}
-            <div className="relative h-full rounded-lg overflow-hidden shadow-2xl border-2 border-gray-800 bg-black">
-              <Suspense fallback={
-                <div className="flex items-center justify-center w-full h-full">
-                  <div className="text-white text-center">
-                    <div className="animate-pulse">Loading Globe...</div>
-                  </div>
-                </div>
-              }>
-                <GridGlobe />
-              </Suspense>
-            </div>
-          </div>
-
-          {/* Right Side - Stats Content */}
-          <div className="pt-8 pb-2">
+          {/* Stats Content */}
+          <div className="relative bg-black/50 backdrop-blur-sm rounded-lg border-2 border-[#FF0000]/30 p-8 lg:p-12 shadow-[0_0_30px_rgba(255,0,0,0.3)]">
             <h2
-              className="text-2xl lg:text-3xl font-bold uppercase mb-2 text-center text-white"
+              className="text-2xl lg:text-4xl font-bold uppercase mb-8 text-center text-white"
               style={{
                 fontFamily: 'var(--font-family-shock)',
                 textShadow: '0 0 10px rgba(255, 0, 0, 0.8), 0 0 20px rgba(255, 0, 0, 0.6), 0 0 30px rgba(255, 0, 0, 0.4)'
@@ -237,7 +219,7 @@ function SplitContentSection() {
               CLIENTS SERVED ACROSS THE WORLD
             </h2>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {/* Aviation Organisations Stat */}
               <CountUpStat
                 icon={
@@ -481,7 +463,7 @@ const FEATURED_COLLECTION_QUERY = `#graphql
 `;
 
 const RECOMMENDED_PRODUCTS_QUERY = `#graphql
-  fragment RecommendedProduct on Product {
+  fragment HomeRecommendedProduct on Product {
     id
     title
     handle
@@ -503,7 +485,7 @@ const RECOMMENDED_PRODUCTS_QUERY = `#graphql
     @inContext(country: $country, language: $language) {
     products(first: 4, sortKey: UPDATED_AT, reverse: true) {
       nodes {
-        ...RecommendedProduct
+        ...HomeRecommendedProduct
       }
     }
   }

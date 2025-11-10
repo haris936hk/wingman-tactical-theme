@@ -1,14 +1,35 @@
-import {redirect, useLoaderData} from 'react-router';
+import {useState, useEffect} from 'react';
+import {redirect, useLoaderData, useNavigate, useSearchParams} from 'react-router';
 import {getPaginationVariables, Analytics} from '@shopify/hydrogen';
 import {PaginatedResourceSection} from '~/components/PaginatedResourceSection';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 import {ProductItem} from '~/components/ProductItem';
+import {CollectionHero} from '~/components/collections/CollectionHero';
+import {CollectionBreadcrumbs} from '~/components/collections/CollectionBreadcrumbs';
+import {CollectionFilterBar} from '~/components/collections/CollectionFilterBar';
+import {CollectionEmpty} from '~/components/collections/CollectionEmpty';
+import {FilterSidebar} from '~/components/FilterSidebar';
+import {MobileFilterDrawer} from '~/components/MobileFilterDrawer';
+import {ActiveFilters} from '~/components/ActiveFilters';
 
 /**
  * @type {Route.MetaFunction}
  */
 export const meta = ({data}) => {
-  return [{title: `Hydrogen | ${data?.collection.title ?? ''} Collection`}];
+  const collection = data?.collection;
+  return [
+    {title: `${collection?.title ?? 'Collection'} | Wingman Tactical`},
+    {
+      name: 'description',
+      content:
+        collection?.description ||
+        `Shop the ${collection?.title} collection at Wingman Tactical. Premium tactical gear and equipment.`,
+    },
+    {
+      name: 'keywords',
+      content: `${collection?.title}, tactical gear, military equipment, Wingman Tactical`,
+    },
+  ];
 };
 
 /**
@@ -74,23 +95,253 @@ function loadDeferredData({context}) {
 export default function Collection() {
   /** @type {LoaderReturnData} */
   const {collection} = useLoaderData();
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+
+  // State management
+  const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
+  const [filters, setFilters] = useState({});
+  const [sortValue, setSortValue] = useState('featured');
+  const [currentView, setCurrentView] = useState('4');
+
+  // Parse filters from URL params
+  useEffect(() => {
+    const priceMin = searchParams.get('priceMin');
+    const priceMax = searchParams.get('priceMax');
+    const types = searchParams.getAll('type');
+    const vendors = searchParams.getAll('vendor');
+    const available = searchParams.get('available') === 'true';
+    const sort = searchParams.get('sort') || 'featured';
+    const view = searchParams.get('view') || '4';
+
+    setFilters({
+      price: priceMin && priceMax ? [Number(priceMin), Number(priceMax)] : [0, 500],
+      type: types,
+      vendor: vendors,
+      available,
+    });
+    setSortValue(sort);
+    setCurrentView(view);
+  }, [searchParams]);
+
+  // Handle filter changes
+  const handleFilterChange = (filterType, value) => {
+    const newFilters = {...filters, [filterType]: value};
+    setFilters(newFilters);
+    updateURL(newFilters, sortValue, currentView);
+  };
+
+  // Handle sort change
+  const handleSortChange = (newSort) => {
+    setSortValue(newSort);
+    updateURL(filters, newSort, currentView);
+  };
+
+  // Handle view change
+  const handleViewChange = (newView) => {
+    setCurrentView(newView);
+    updateURL(filters, sortValue, newView);
+  };
+
+  // Handle remove single filter
+  const handleRemoveFilter = (filterId) => {
+    const newFilters = {...filters};
+    const [filterType, filterValue] = filterId.split(':');
+
+    if (filterType === 'price') {
+      newFilters.price = [0, 500];
+    } else if (filterType === 'available') {
+      newFilters.available = false;
+    } else if (Array.isArray(newFilters[filterType])) {
+      newFilters[filterType] = newFilters[filterType].filter((v) => v !== filterValue);
+    }
+
+    setFilters(newFilters);
+    updateURL(newFilters, sortValue, currentView);
+  };
+
+  // Handle clear all filters
+  const handleClearAll = () => {
+    const emptyFilters = {
+      price: [0, 500],
+      type: [],
+      vendor: [],
+      available: false,
+    };
+    setFilters(emptyFilters);
+    updateURL(emptyFilters, 'featured', currentView);
+    setSortValue('featured');
+  };
+
+  // Update URL with filter params
+  const updateURL = (newFilters, newSort, newView) => {
+    const params = new URLSearchParams();
+
+    if (newFilters.price && (newFilters.price[0] !== 0 || newFilters.price[1] !== 500)) {
+      params.set('priceMin', newFilters.price[0]);
+      params.set('priceMax', newFilters.price[1]);
+    }
+
+    if (newFilters.type?.length) {
+      newFilters.type.forEach((t) => params.append('type', t));
+    }
+
+    if (newFilters.vendor?.length) {
+      newFilters.vendor.forEach((v) => params.append('vendor', v));
+    }
+
+    if (newFilters.available) {
+      params.set('available', 'true');
+    }
+
+    if (newSort !== 'featured') {
+      params.set('sort', newSort);
+    }
+
+    if (newView !== '4') {
+      params.set('view', newView);
+    }
+
+    navigate(`?${params.toString()}`, {replace: true, preventScrollReset: true});
+  };
+
+  // Build active filter chips
+  const activeFilterChips = [];
+  if (filters.price && (filters.price[0] !== 0 || filters.price[1] !== 500)) {
+    activeFilterChips.push({
+      id: 'price:range',
+      label: `$${filters.price[0]} - $${filters.price[1]}`,
+    });
+  }
+  if (filters.type?.length) {
+    filters.type.forEach((type) => {
+      activeFilterChips.push({
+        id: `type:${type}`,
+        label: type,
+      });
+    });
+  }
+  if (filters.vendor?.length) {
+    filters.vendor.forEach((vendor) => {
+      activeFilterChips.push({
+        id: `vendor:${vendor}`,
+        label: vendor,
+      });
+    });
+  }
+  if (filters.available) {
+    activeFilterChips.push({
+      id: 'available:true',
+      label: 'In Stock Only',
+    });
+  }
+
+  // Available filters (mock data - would come from API in production)
+  const availableFilters = {
+    types: ['Flight Suits', 'Flight Jackets', 'Flight Bag', 'Aviation Gear', 'Apparels'],
+    vendors: ['Wingman Tactical', 'Alpha Industries', 'Propper'],
+  };
+
+  const productCount = collection.products.nodes.length;
+  const hasProducts = productCount > 0;
+
+  // Determine grid columns based on view
+  const gridClasses = {
+    '2': 'grid-cols-1 sm:grid-cols-2 gap-8',
+    '3': 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6',
+    '4': 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6',
+  };
 
   return (
-    <div>
-      <h1>{collection.title}</h1>
-      <p className="mb-4 max-w-full md:max-w-[600px]">{collection.description}</p>
-      <PaginatedResourceSection
-        connection={collection.products}
-        resourcesClassName="grid gap-6 grid-cols-[repeat(auto-fit,minmax(355px,1fr))] mb-8"
-      >
-        {({node: product, index}) => (
-          <ProductItem
-            key={product.id}
-            product={product}
-            loading={index < 8 ? 'eager' : undefined}
+    <div className="bg-[#000000] min-h-screen pt-[180px] pb-16">
+      {/* Breadcrumbs */}
+      <div className="max-w-[1400px] mx-auto px-6 mb-6">
+        <CollectionBreadcrumbs
+          items={[
+            {name: 'Home', url: '/'},
+            {name: 'Collections', url: '/collections'},
+            {name: collection.title, url: `/collections/${collection.handle}`},
+          ]}
+        />
+      </div>
+
+      {/* Hero Section */}
+      <div className="max-w-[1400px] mx-auto px-6">
+        <CollectionHero collection={collection} productCount={productCount} />
+      </div>
+
+      {/* Filter Bar */}
+      <CollectionFilterBar
+        resultCount={productCount}
+        currentSort={sortValue}
+        onSortChange={handleSortChange}
+        currentView={currentView}
+        onViewChange={handleViewChange}
+        onFilterToggle={() => setIsFilterDrawerOpen(true)}
+        showFilterButton={true}
+      />
+
+      {/* Active Filters */}
+      {activeFilterChips.length > 0 && (
+        <div className="max-w-[1400px] mx-auto px-6 mb-6">
+          <ActiveFilters
+            filters={activeFilterChips}
+            onRemove={handleRemoveFilter}
+            onClearAll={handleClearAll}
           />
-        )}
-      </PaginatedResourceSection>
+        </div>
+      )}
+
+      {/* Main Content */}
+      <div className="max-w-[1400px] mx-auto px-6">
+        <div className="flex gap-8">
+          {/* Desktop Filter Sidebar */}
+          <div className="hidden lg:block">
+            <FilterSidebar
+              filters={filters}
+              onFilterChange={handleFilterChange}
+              availableFilters={availableFilters}
+            />
+          </div>
+
+          {/* Products Grid */}
+          <div className="flex-1 min-w-0">
+            {hasProducts ? (
+              <PaginatedResourceSection
+                connection={collection.products}
+                resourcesClassName={`grid ${gridClasses[currentView]} mb-12`}
+              >
+                {({node: product, index}) => (
+                  <ProductItem
+                    key={product.id}
+                    product={product}
+                    loading={index < 8 ? 'eager' : undefined}
+                    index={index}
+                  />
+                )}
+              </PaginatedResourceSection>
+            ) : (
+              <CollectionEmpty type="no-products" />
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile Filter Drawer */}
+      <MobileFilterDrawer
+        isOpen={isFilterDrawerOpen}
+        onClose={() => setIsFilterDrawerOpen(false)}
+        filters={filters}
+        onFilterChange={handleFilterChange}
+        onApplyFilters={(newFilters) => {
+          setFilters(newFilters);
+          updateURL(newFilters, sortValue, currentView);
+        }}
+        onClearAll={handleClearAll}
+        availableFilters={availableFilters}
+      />
+
+      {/* Analytics */}
       <Analytics.CollectionView
         data={{
           collection: {
@@ -147,6 +398,13 @@ const COLLECTION_QUERY = `#graphql
       handle
       title
       description
+      image {
+        id
+        url
+        altText
+        width
+        height
+      }
       products(
         first: $first,
         last: $last,

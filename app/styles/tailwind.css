@@ -65,6 +65,7 @@
   --animate-slide-up: slideUp 0.3s ease-out;
   --animate-fade-in: fadeIn 0.3s ease-out;
   --animate-border-spin: border-spin 2s linear infinite;
+  --animate-pulse-red: pulseRed 2s ease-in-out infinite;
 }
 
 /* Global Typography Styles - Wingman Tactical */
@@ -147,5 +148,16 @@ h1, h2, h3, h4, h5, h6 {
   }
   to {
     opacity: 1;
+  }
+}
+
+@keyframes pulseRed {
+  0%, 100% {
+    opacity: 1;
+    box-shadow: 0 0 20px rgba(255, 0, 0, 0.6);
+  }
+  50% {
+    opacity: 0.8;
+    box-shadow: 0 0 40px rgba(255, 0, 0, 0.9);
   }
 }
