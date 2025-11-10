@@ -57,6 +57,7 @@ async function loadCriticalData({context, params, request}) {
   const [{product}] = await Promise.all([
     storefront.query(PRODUCT_QUERY, {
       variables: {handle, selectedOptions: getSelectedProductOptions(request)},
+      cache: storefront.CacheShort(),
     }),
     // Add other queries here, so that they are loaded in parallel
   ]);
@@ -79,32 +80,37 @@ async function loadCriticalData({context, params, request}) {
  * Make sure to not throw any errors here, as it will cause the page to 500.
  * @param {Route.LoaderArgs}
  */
-async function loadDeferredData({context, params}) {
+function loadDeferredData({context, params}) {
   const {storefront} = context;
   const {handle} = params;
 
-  // First get the product ID from the handle
-  const productIdQuery = await storefront.query(
-    `#graphql
-      query GetProductId($handle: String!) {
-        product(handle: $handle) {
-          id
-        }
-      }
-    `,
-    {variables: {handle}},
-  ).catch(() => ({product: null}));
-
-  const productId = productIdQuery?.product?.id;
-
-  if (!productId) {
-    return {recommendations: Promise.resolve({productRecommendations: []})};
-  }
-
-  // Query product recommendations using the actual product ID
+  // Chain promises without blocking - fetch product ID, then recommendations
   const recommendations = storefront
-    .query(PRODUCT_RECOMMENDATIONS_QUERY, {
-      variables: {productId},
+    .query(
+      `#graphql
+        query GetProductId($handle: String!) {
+          product(handle: $handle) {
+            id
+          }
+        }
+      `,
+      {
+        variables: {handle},
+        cache: storefront.CacheShort(),
+      },
+    )
+    .then((productIdQuery) => {
+      const productId = productIdQuery?.product?.id;
+
+      if (!productId) {
+        return {productRecommendations: []};
+      }
+
+      // Query product recommendations using the actual product ID
+      return storefront.query(PRODUCT_RECOMMENDATIONS_QUERY, {
+        variables: {productId},
+        cache: storefront.CacheLong(),
+      });
     })
     .catch((error) => {
       console.error(error);

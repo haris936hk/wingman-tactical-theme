@@ -84,23 +84,24 @@ h1, h2, h3, h4, h5, h6 {
   letter-spacing: 0.5px;
   padding: 0.75rem 2rem;
   border-radius: var(--radius-sm);
-  transition: all 0.3s ease;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  will-change: transform, opacity;
 }
 
 .btn-primary:hover {
   background-color: var(--color-primary-dark);
-  box-shadow: 0 0 20px rgb(255 0 0 / 0.6);
+  transform: scale(1.05);
   color: #FFFFFF;
 }
 
 /* Product Card Hover Effect */
 .product-card {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  will-change: transform;
 }
 
 .product-card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-lg);
+  transform: translateY(-4px) scale(1.02);
 }
 
 /* Keyframe Animations */
@@ -154,10 +155,70 @@ h1, h2, h3, h4, h5, h6 {
 @keyframes pulseRed {
   0%, 100% {
     opacity: 1;
-    box-shadow: 0 0 20px rgba(255, 0, 0, 0.6);
+    transform: scale(1);
   }
   50% {
     opacity: 0.8;
-    box-shadow: 0 0 40px rgba(255, 0, 0, 0.9);
+    transform: scale(1.02);
+  }
+}
+
+/* Accessibility: Reduce Motion for Users with Motion Sensitivity */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Disable continuous animations */
+  @keyframes gradient {
+    0%, 100% {
+      background-position: 0% 50%;
+    }
+  }
+
+  @keyframes border-spin {
+    0%, 100% {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  @keyframes pulseRed {
+    0%, 100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  /* Disable transform-based animations but keep opacity for visibility */
+  @keyframes fadeSlideUp {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideUp {
+    from {
+      transform: translateY(0);
+    }
+    to {
+      transform: translateY(0);
+    }
+  }
+
+  /* Keep hover effects minimal */
+  .product-card:hover {
+    transform: none;
+  }
+
+  .btn-primary:hover {
+    transform: none;
   }
 }

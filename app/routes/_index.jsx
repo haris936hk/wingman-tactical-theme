@@ -1,10 +1,12 @@
 import {Await, useLoaderData, Link} from 'react-router';
-import {Suspense, lazy} from 'react';
+import {Suspense, lazy, useEffect, useRef, useState} from 'react';
 import {Image} from '@shopify/hydrogen';
 import {CountUpStat} from '~/components/CountUpStat';
-import {ClientCarousel} from '~/components/ClientCarousel';
-import {ProductCarousel} from '~/components/ProductCarousel';
-import {CustomProductCarousel} from '~/components/CustomProductCarousel';
+
+// Lazy load heavy components for better initial bundle size
+const ClientCarousel = lazy(() => import('~/components/ClientCarousel').then(m => ({default: m.ClientCarousel})));
+const ProductCarousel = lazy(() => import('~/components/ProductCarousel').then(m => ({default: m.ProductCarousel})));
+const CustomProductCarousel = lazy(() => import('~/components/CustomProductCarousel').then(m => ({default: m.CustomProductCarousel})));
 
 // Import static images for cache busting
 import customTshirtsImg from '~/assets/customproducts/custom-tshirts.png';
@@ -43,7 +45,9 @@ export async function loader(args) {
  */
 async function loadCriticalData({context}) {
   const [{collections}] = await Promise.all([
-    context.storefront.query(FEATURED_COLLECTION_QUERY),
+    context.storefront.query(FEATURED_COLLECTION_QUERY, {
+      cache: context.storefront.CacheLong(),
+    }),
     // Add other queries here, so that they are loaded in parallel
   ]);
 
@@ -60,7 +64,9 @@ async function loadCriticalData({context}) {
  */
 function loadDeferredData({context}) {
   const recommendedProducts = context.storefront
-    .query(RECOMMENDED_PRODUCTS_QUERY)
+    .query(RECOMMENDED_PRODUCTS_QUERY, {
+      cache: context.storefront.CacheShort(),
+    })
     .catch((error) => {
       // Log query errors, but don't throw them so the page can still render
       console.error(error);
@@ -68,7 +74,9 @@ function loadDeferredData({context}) {
     });
 
   const discountedProducts = context.storefront
-    .query(DISCOUNTED_PRODUCTS_QUERY)
+    .query(DISCOUNTED_PRODUCTS_QUERY, {
+      cache: context.storefront.CacheShort(),
+    })
     .catch((error) => {
       // Log query errors, but don't throw them so the page can still render
       console.error(error);
@@ -97,6 +105,80 @@ export default function Homepage() {
   );
 }
 
+/* Lazy-Loaded Video Component with Intersection Observer */
+function LazyVideo() {
+  const videoRef = useRef(null);
+  const containerRef = useRef(null);
+  const [shouldLoad, setShouldLoad] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && !shouldLoad) {
+            setShouldLoad(true);
+          }
+        });
+      },
+      {
+        rootMargin: '100px', // Start loading 100px before entering viewport
+        threshold: 0.1,
+      }
+    );
+
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
+
+    return () => {
+      if (containerRef.current) {
+        observer.unobserve(containerRef.current);
+      }
+    };
+  }, [shouldLoad]);
+
+  // Auto-play when video loads
+  useEffect(() => {
+    if (shouldLoad && videoRef.current && !isPlaying) {
+      videoRef.current.play().then(() => setIsPlaying(true)).catch(() => {});
+    }
+  }, [shouldLoad, isPlaying]);
+
+  return (
+    <div ref={containerRef} className="relative h-full rounded-lg overflow-hidden shadow-2xl border-2 border-gray-800">
+      {!shouldLoad ? (
+        // Poster frame placeholder
+        <div className="w-full h-full bg-gradient-to-br from-gray-900 via-gray-800 to-black flex items-center justify-center">
+          <div className="text-center">
+            <svg
+              className="w-20 h-20 mx-auto mb-4 text-[#FF0000] opacity-50"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path d="M8 5v14l11-7z" />
+            </svg>
+            <p className="text-gray-400 text-sm">Loading video...</p>
+          </div>
+        </div>
+      ) : (
+        <video
+          ref={videoRef}
+          className="w-full h-full object-cover"
+          muted
+          loop
+          playsInline
+          controls
+          preload="metadata"
+        >
+          <source src="/videos/hero-video.mp4" type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+      )}
+    </div>
+  );
+}
+
 /* Wingman Tactical Hero Section */
 function HeroSection() {
   return (
@@ -120,7 +202,7 @@ function HeroSection() {
             <div className="flex justify-center">
               <Link
                 to="/pages/quote"
-                className="relative inline-block px-8 py-4 font-bold uppercase tracking-wide text-white overflow-hidden rounded-lg backdrop-blur-md bg-gradient-to-r from-[#FF0000] via-gray-600 to-[#FF0000] bg-[length:200%_100%] animate-[gradient_3s_linear_infinite] shadow-[0_0_20px_rgba(255,0,0,0.6)] hover:shadow-[0_0_30px_rgba(255,0,0,0.8)] hover:-translate-y-1 transition-all duration-300 border border-white/20"
+                className="relative inline-block px-8 py-4 font-bold uppercase tracking-wide text-white overflow-hidden rounded-lg backdrop-blur-md bg-gradient-to-r from-[#FF0000] via-gray-600 to-[#FF0000] bg-[length:200%_100%] motion-safe:animate-[gradient_3s_linear_infinite] shadow-[0_0_20px_rgba(255,0,0,0.6)] hover:shadow-[0_0_30px_rgba(255,0,0,0.8)] motion-safe:hover:-translate-y-1 transition-all duration-300 border border-white/20"
               >
                 GET A QUOTE
               </Link>
@@ -130,7 +212,7 @@ function HeroSection() {
           {/* Video Side */}
           <div className="relative h-[400px] lg:h-[500px]">
             {/* SVG animated border */}
-            <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{zIndex: 10}}>
+            <svg className="absolute inset-0 w-full h-full pointer-events-none motion-reduce:hidden" style={{zIndex: 10}}>
               <rect
                 x="2"
                 y="2"
@@ -154,20 +236,8 @@ function HeroSection() {
               </defs>
             </svg>
 
-            {/* Video container */}
-            <div className="relative h-full rounded-lg overflow-hidden shadow-2xl border-2 border-gray-800">
-              <video
-                className="w-full h-full object-cover"
-                autoPlay
-                muted
-                loop
-                playsInline
-                controls
-              >
-                <source src="/videos/hero-video.mp4" type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
-            </div>
+            {/* Lazy-loaded Video container */}
+            <LazyVideo />
           </div>
         </div>
       </div>
@@ -280,7 +350,16 @@ function ClientShowcaseSection() {
         </h2>
 
         <div className="mt-8">
-          <ClientCarousel />
+          <Suspense fallback={
+            <div className="flex justify-center items-center py-12">
+              <div className="text-white text-center">
+                <div className="w-12 h-12 border-4 border-[#FF0000] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                <p className="text-gray-300">Loading clients...</p>
+              </div>
+            </div>
+          }>
+            <ClientCarousel />
+          </Suspense>
         </div>
       </div>
     </section>
@@ -300,10 +379,19 @@ function WingmanFeaturedSection({products}) {
         </h2>
 
         <div className="mt-8">
-          <Suspense fallback={<div className="text-center text-white">Loading...</div>}>
+          <Suspense fallback={
+            <div className="flex justify-center items-center py-12">
+              <div className="text-white text-center">
+                <div className="w-12 h-12 border-4 border-[#FF0000] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                <p className="text-gray-300">Loading featured products...</p>
+              </div>
+            </div>
+          }>
             <Await resolve={products}>
               {(response) => (
-                <ProductCarousel products={response?.products.nodes || []} />
+                <Suspense fallback={<div className="text-center text-gray-300">Loading carousel...</div>}>
+                  <ProductCarousel products={response?.products.nodes || []} />
+                </Suspense>
               )}
             </Await>
           </Suspense>
@@ -326,10 +414,19 @@ function DiscountsSection({products}) {
         </h2>
 
         <div className="mt-8">
-          <Suspense fallback={<div className="text-center text-white">Loading...</div>}>
+          <Suspense fallback={
+            <div className="flex justify-center items-center py-12">
+              <div className="text-white text-center">
+                <div className="w-12 h-12 border-4 border-[#FF0000] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                <p className="text-gray-300">Loading discounts...</p>
+              </div>
+            </div>
+          }>
             <Await resolve={products}>
               {(response) => (
-                <ProductCarousel products={response?.products.nodes || []} showSaleBadge={true} />
+                <Suspense fallback={<div className="text-center text-gray-300">Loading carousel...</div>}>
+                  <ProductCarousel products={response?.products.nodes || []} showSaleBadge={true} />
+                </Suspense>
               )}
             </Await>
           </Suspense>
@@ -385,7 +482,16 @@ function CustomProductsSection() {
         </h2>
 
         <div className="mt-8">
-          <CustomProductCarousel items={customProducts} showCTA={true} />
+          <Suspense fallback={
+            <div className="flex justify-center items-center py-12">
+              <div className="text-white text-center">
+                <div className="w-12 h-12 border-4 border-[#FF0000] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                <p className="text-gray-300">Loading custom products...</p>
+              </div>
+            </div>
+          }>
+            <CustomProductCarousel items={customProducts} showCTA={true} />
+          </Suspense>
         </div>
       </div>
     </section>
@@ -401,14 +507,16 @@ function AboutSellSection() {
           {/* About Us Card */}
           <Link to="/pages/about" className="relative h-[400px] rounded-lg overflow-hidden group">
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-black/20 z-10" />
-            <img
-              src={aboutUsImg}
-              alt="About Us - Quality Aviation Gear and Merchandise"
-              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+            <Image
+              data={{
+                url: aboutUsImg,
+                altText: 'About Us - Quality Aviation Gear and Merchandise',
+                width: 800,
+                height: 400,
+              }}
+              className="w-full h-full object-cover motion-safe:transition-transform motion-safe:duration-300 motion-safe:group-hover:scale-105"
+              sizes="(min-width: 768px) 50vw, 100vw"
               loading="lazy"
-              decoding="async"
-              width="800"
-              height="400"
             />
             <div className="absolute bottom-0 left-0 right-0 p-8 z-20">
               <h3 className="text-4xl font-bold uppercase text-white mb-4" style={{ fontFamily: 'var(--font-family-shock)' }}>ABOUT US</h3>
@@ -419,14 +527,16 @@ function AboutSellSection() {
           {/* Sell With Us Card */}
           <Link to="/pages/sell" className="relative h-[400px] rounded-lg overflow-hidden group">
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-black/20 z-10" />
-            <img
-              src={sellWithUsImg}
-              alt="Sell With Us - Partner with Wingman Tactical"
-              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+            <Image
+              data={{
+                url: sellWithUsImg,
+                altText: 'Sell With Us - Partner with Wingman Tactical',
+                width: 800,
+                height: 400,
+              }}
+              className="w-full h-full object-cover motion-safe:transition-transform motion-safe:duration-300 motion-safe:group-hover:scale-105"
+              sizes="(min-width: 768px) 50vw, 100vw"
               loading="lazy"
-              decoding="async"
-              width="800"
-              height="400"
             />
             <div className="absolute bottom-0 left-0 right-0 p-8 z-20">
               <h3 className="text-4xl font-bold uppercase text-white mb-4" style={{ fontFamily: 'var(--font-family-shock)' }}>SELL WITH US</h3>

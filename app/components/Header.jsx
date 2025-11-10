@@ -1,9 +1,21 @@
-import {Suspense, useState, useEffect} from 'react';
+import {Suspense, useState, useEffect, useCallback, useRef} from 'react';
 import {Await, NavLink, useAsyncValue} from 'react-router';
 import {useAnalytics, useOptimisticCart} from '@shopify/hydrogen';
 import {useAside} from '~/components/Aside';
 import {SearchForm} from '~/components/SearchForm';
 import logoImage from '~/assets/logo.png';
+
+// Debounce utility for scroll performance
+function useDebounce(callback, delay) {
+  const timeoutRef = useRef(null);
+  return useCallback(
+    (...args) => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      timeoutRef.current = setTimeout(() => callback(...args), delay);
+    },
+    [callback, delay]
+  );
+}
 
 // Navigation menu configuration
 const NAVIGATION_MENU = [
@@ -23,30 +35,36 @@ export function Header({header, isLoggedIn, cart, publicStoreDomain}) {
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
 
+  // Memoized scroll handler
+  const handleScroll = useCallback(() => {
+    if (typeof window === 'undefined') return;
+
+    const currentScrollY = window.scrollY;
+
+    // Show header if scrolled to top
+    if (currentScrollY < 10) {
+      setIsVisible(true);
+    }
+    // Hide header when scrolling down, show when scrolling up
+    else if (currentScrollY > lastScrollY && currentScrollY > 100) {
+      setIsVisible(false);
+    } else if (currentScrollY < lastScrollY) {
+      setIsVisible(true);
+    }
+
+    setLastScrollY(currentScrollY);
+  }, [lastScrollY]);
+
+  // Debounced scroll handler (100ms delay for smooth performance)
+  const debouncedScroll = useDebounce(handleScroll, 100);
+
   useEffect(() => {
     // Only run on client side
     if (typeof window === 'undefined') return;
 
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-
-      // Show header if scrolled to top
-      if (currentScrollY < 10) {
-        setIsVisible(true);
-      }
-      // Hide header when scrolling down, show when scrolling up
-      else if (currentScrollY > lastScrollY && currentScrollY > 100) {
-        setIsVisible(false);
-      } else if (currentScrollY < lastScrollY) {
-        setIsVisible(true);
-      }
-
-      setLastScrollY(currentScrollY);
-    };
-
-    window.addEventListener('scroll', handleScroll, {passive: true});
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [lastScrollY]);
+    window.addEventListener('scroll', debouncedScroll, {passive: true});
+    return () => window.removeEventListener('scroll', debouncedScroll);
+  }, [debouncedScroll]);
 
   return (
     <>

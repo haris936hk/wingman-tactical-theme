@@ -12,10 +12,23 @@ export function CountUpStat({icon, target, label, duration = 2000}) {
   const [count, setCount] = useState(0);
   const [hasAnimated, setHasAnimated] = useState(false);
   const elementRef = useRef(null);
+  const sessionKey = `countup-${label.replace(/\s+/g, '-').toLowerCase()}`;
+
+  // Check sessionStorage on mount to see if animation already ran this session
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const alreadyAnimated = sessionStorage.getItem(sessionKey);
+    if (alreadyAnimated === 'true') {
+      setHasAnimated(true);
+      setCount(target); // Set to final value immediately
+    }
+  }, [sessionKey, target]);
 
   useEffect(() => {
     // Only run on client side
     if (typeof window === 'undefined' || !('IntersectionObserver' in window)) return;
+    if (hasAnimated) return; // Skip if already animated this session
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -23,6 +36,7 @@ export function CountUpStat({icon, target, label, duration = 2000}) {
         // Start animation when element is in viewport and hasn't animated yet
         if (entry.isIntersecting && !hasAnimated) {
           setHasAnimated(true);
+          sessionStorage.setItem(sessionKey, 'true'); // Mark as animated for this session
           animateCount();
         }
       },
@@ -40,7 +54,7 @@ export function CountUpStat({icon, target, label, duration = 2000}) {
         observer.unobserve(elementRef.current);
       }
     };
-  }, [hasAnimated]);
+  }, [hasAnimated, sessionKey]);
 
   const animateCount = () => {
     const startTime = Date.now();

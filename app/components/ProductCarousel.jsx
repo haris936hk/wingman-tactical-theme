@@ -1,31 +1,49 @@
-import {useState, useEffect} from 'react';
+import {useState, useEffect, useCallback, useRef} from 'react';
 import {ProductItem} from '~/components/ProductItem';
+
+// Debounce utility for performance optimization
+function useDebounce(callback, delay) {
+  const timeoutRef = useRef(null);
+  return useCallback(
+    (...args) => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      timeoutRef.current = setTimeout(() => callback(...args), delay);
+    },
+    [callback, delay]
+  );
+}
 
 export function ProductCarousel({products, showSaleBadge = false}) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [slidesToShow, setSlidesToShow] = useState(4);
 
-  // Handle responsive slides
+  // Memoized resize handler
+  const handleResize = useCallback(() => {
+    if (typeof window === 'undefined') return;
+
+    if (window.innerWidth < 640) {
+      setSlidesToShow(1);
+    } else if (window.innerWidth < 1024) {
+      setSlidesToShow(2);
+    } else if (window.innerWidth < 1280) {
+      setSlidesToShow(3);
+    } else {
+      setSlidesToShow(4);
+    }
+  }, []);
+
+  // Debounced resize handler (250ms delay for better performance)
+  const debouncedResize = useDebounce(handleResize, 250);
+
+  // Handle responsive slides with debounced resize listener
   useEffect(() => {
     // Only run on client side
     if (typeof window === 'undefined') return;
 
-    const handleResize = () => {
-      if (window.innerWidth < 640) {
-        setSlidesToShow(1);
-      } else if (window.innerWidth < 1024) {
-        setSlidesToShow(2);
-      } else if (window.innerWidth < 1280) {
-        setSlidesToShow(3);
-      } else {
-        setSlidesToShow(4);
-      }
-    };
-
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+    handleResize(); // Initial call
+    window.addEventListener('resize', debouncedResize, {passive: true});
+    return () => window.removeEventListener('resize', debouncedResize);
+  }, [handleResize, debouncedResize]);
 
   if (!products || products.length === 0) {
     return (

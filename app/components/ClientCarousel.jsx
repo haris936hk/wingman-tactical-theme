@@ -1,182 +1,183 @@
-import {useState, useEffect} from 'react';
+import {useState, useEffect, useRef, useCallback} from 'react';
 
-// Import client images for cache busting
-import client1 from '~/assets/images/clients/image.png';
-import client2 from '~/assets/images/clients/image copy.png';
-import client3 from '~/assets/images/clients/image copy 2.png';
-import client4 from '~/assets/images/clients/image copy 3.png';
-import client5 from '~/assets/images/clients/image copy 4.png';
-import client6 from '~/assets/images/clients/image copy 5.png';
-import client7 from '~/assets/images/clients/image copy 6.png';
-import client8 from '~/assets/images/clients/image copy 7.png';
-import client9 from '~/assets/images/clients/image copy 8.png';
-import client10 from '~/assets/images/clients/image copy 9.png';
-import client11 from '~/assets/images/clients/image copy 10.png';
-import client12 from '~/assets/images/clients/image copy 11.png';
-import client13 from '~/assets/images/clients/image copy 12.png';
-import client14 from '~/assets/images/clients/image copy 13.png';
-import client15 from '~/assets/images/clients/image copy 14.png';
-import client16 from '~/assets/images/clients/image copy 15.png';
-import client17 from '~/assets/images/clients/image copy 16.png';
-import client18 from '~/assets/images/clients/image copy 17.png';
-import client19 from '~/assets/images/clients/image copy 18.png';
-import client20 from '~/assets/images/clients/image copy 19.png';
-import client21 from '~/assets/images/clients/image copy 20.png';
-
+// Use CDN/public folder paths instead of bundled imports for better performance
 const clientsData = [
   {
     id: 1,
     title: 'Client 1',
     description: 'Client description here.',
-    image: client1,
+    image: '/images/clients/image.png',
   },
   {
     id: 2,
     title: 'Client 2',
     description: 'Client description here.',
-    image: client2,
+    image: '/images/clients/image copy.png',
   },
   {
     id: 3,
     title: 'Client 3',
     description: 'Client description here.',
-    image: client3,
+    image: '/images/clients/image copy 2.png',
   },
   {
     id: 4,
     title: 'Client 4',
     description: 'Client description here.',
-    image: client4,
+    image: '/images/clients/image copy 3.png',
   },
   {
     id: 5,
     title: 'Client 5',
     description: 'Client description here.',
-    image: client5,
+    image: '/images/clients/image copy 4.png',
   },
   {
     id: 6,
     title: 'Client 6',
     description: 'Client description here.',
-    image: client6,
+    image: '/images/clients/image copy 5.png',
   },
   {
     id: 7,
     title: 'Client 7',
     description: 'Client description here.',
-    image: client7,
+    image: '/images/clients/image copy 6.png',
   },
   {
     id: 8,
     title: 'Client 8',
     description: 'Client description here.',
-    image: client8,
+    image: '/images/clients/image copy 7.png',
   },
   {
     id: 9,
     title: 'Client 9',
     description: 'Client description here.',
-    image: client9,
+    image: '/images/clients/image copy 8.png',
   },
   {
     id: 10,
     title: 'Client 10',
     description: 'Client description here.',
-    image: client10,
+    image: '/images/clients/image copy 9.png',
   },
   {
     id: 11,
     title: 'Client 11',
     description: 'Client description here.',
-    image: client11,
+    image: '/images/clients/image copy 10.png',
   },
   {
     id: 12,
     title: 'Client 12',
     description: 'Client description here.',
-    image: client12,
+    image: '/images/clients/image copy 11.png',
   },
   {
     id: 13,
     title: 'Client 13',
     description: 'Client description here.',
-    image: client13,
+    image: '/images/clients/image copy 12.png',
   },
   {
     id: 14,
     title: 'Client 14',
     description: 'Client description here.',
-    image: client14,
+    image: '/images/clients/image copy 13.png',
   },
   {
     id: 15,
     title: 'Client 15',
     description: 'Client description here.',
-    image: client15,
+    image: '/images/clients/image copy 14.png',
   },
   {
     id: 16,
     title: 'Client 16',
     description: 'Client description here.',
-    image: client16,
+    image: '/images/clients/image copy 15.png',
   },
   {
     id: 17,
     title: 'Client 17',
     description: 'Client description here.',
-    image: client17,
+    image: '/images/clients/image copy 16.png',
   },
   {
     id: 18,
     title: 'Client 18',
     description: 'Client description here.',
-    image: client18,
+    image: '/images/clients/image copy 17.png',
   },
   {
     id: 19,
     title: 'Client 19',
     description: 'Client description here.',
-    image: client19,
+    image: '/images/clients/image copy 18.png',
   },
   {
     id: 20,
     title: 'Client 20',
     description: 'Client description here.',
-    image: client20,
+    image: '/images/clients/image copy 19.png',
   },
   {
     id: 21,
     title: 'Client 21',
     description: 'Client description here.',
-    image: client21,
+    image: '/images/clients/image copy 20.png',
   },
 ];
+
+// Debounce utility for performance optimization
+function useDebounce(callback, delay) {
+  const timeoutRef = useRef(null);
+
+  return useCallback(
+    (...args) => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+      timeoutRef.current = setTimeout(() => {
+        callback(...args);
+      }, delay);
+    },
+    [callback, delay]
+  );
+}
 
 export function ClientCarousel() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [slidesToShow, setSlidesToShow] = useState(4);
 
-  // Handle responsive slides
+  // Memoized resize handler function
+  const handleResize = useCallback(() => {
+    if (typeof window === 'undefined') return;
+
+    if (window.innerWidth < 640) {
+      setSlidesToShow(1);
+    } else if (window.innerWidth < 1024) {
+      setSlidesToShow(2);
+    } else if (window.innerWidth < 1280) {
+      setSlidesToShow(3);
+    } else {
+      setSlidesToShow(4);
+    }
+  }, []);
+
+  // Debounced resize handler (250ms delay for better performance)
+  const debouncedResize = useDebounce(handleResize, 250);
+
+  // Handle responsive slides with debounced resize listener
   useEffect(() => {
     // Only run on client side
     if (typeof window === 'undefined') return;
 
-    const handleResize = () => {
-      if (window.innerWidth < 640) {
-        setSlidesToShow(1);
-      } else if (window.innerWidth < 1024) {
-        setSlidesToShow(2);
-      } else if (window.innerWidth < 1280) {
-        setSlidesToShow(3);
-      } else {
-        setSlidesToShow(4);
-      }
-    };
-
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+    handleResize(); // Initial call
+    window.addEventListener('resize', debouncedResize, {passive: true});
+    return () => window.removeEventListener('resize', debouncedResize);
+  }, [handleResize, debouncedResize]);
 
   const maxIndex = Math.max(0, clientsData.length - slidesToShow);
 
@@ -209,29 +210,21 @@ export function ClientCarousel() {
               style={{width: `${100 / slidesToShow}%`}}
             >
               <div
-                className="group bg-white rounded-xl overflow-hidden h-full flex flex-col shadow-md relative will-change-transform motion-safe:transition-all motion-safe:duration-200 motion-safe:ease-out hover:scale-[1.03] hover:-translate-y-2 hover:shadow-[0_0_25px_rgba(255,0,0,0.6)] focus-visible:scale-[1.03] focus-visible:-translate-y-2 focus-visible:shadow-[0_0_25px_rgba(255,0,0,0.6)] focus-visible:outline-2 focus-visible:outline-[#FF0000] focus-visible:outline-offset-2 opacity-0 translate-y-4 motion-safe:animate-[fadeSlideUp_300ms_ease-out_forwards]"
-                style={{animationDelay: `${index * 50}ms`}}
+                className="group bg-white rounded-xl overflow-hidden h-full flex flex-col shadow-md relative will-change-transform motion-safe:transition-transform motion-safe:duration-300 motion-safe:ease-out motion-safe:hover:scale-105 motion-reduce:hover:scale-100 focus-visible:outline-2 focus-visible:outline-[#FF0000] focus-visible:outline-offset-2"
               >
-                {/* Optimized border effect - only opacity changes */}
-                <div
-                  className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none -z-10"
+                {/* Optimized border effect - using box-shadow instead of complex gradient */}
+                <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-10 motion-reduce:hidden"
                   style={{
-                    background: 'linear-gradient(45deg, #FF0000 0%, transparent 50%, #FF0000 100%)',
-                    padding: '2px',
+                    boxShadow: 'inset 0 0 0 2px #FF0000',
                   }}
-                >
-                  <div className="w-full h-full bg-white rounded-xl" />
-                </div>
+                />
 
                 {/* Image */}
                 <div className="relative h-64 bg-gray-200 overflow-hidden">
-                  {/* Simplified gradient overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10" />
-
                   <img
                     src={client.image}
                     alt={client.title}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover motion-safe:transition-opacity motion-safe:duration-300 group-hover:opacity-90"
                     loading="lazy"
                     decoding="async"
                     width="400"
@@ -246,11 +239,11 @@ export function ClientCarousel() {
 
                 {/* Content */}
                 <div className="p-6 text-center flex-1 flex flex-col bg-gradient-to-b from-white to-gray-50 relative">
-                  {/* Simplified decorative line */}
-                  <div className="w-16 h-1 bg-gradient-to-r from-transparent via-[#FF0000] to-transparent mx-auto mb-4 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-out" />
+                  {/* Decorative line - only scale animation */}
+                  <div className="w-16 h-1 bg-[#FF0000] mx-auto mb-4 motion-safe:scale-x-0 motion-safe:group-hover:scale-x-100 motion-safe:transition-transform motion-safe:duration-300 motion-safe:ease-out" />
 
                   <h3
-                    className="text-2xl font-bold uppercase mb-4 text-[#1a1a1a] transition-colors duration-300 ease-out group-hover:text-[#FF0000]"
+                    className="text-2xl font-bold uppercase mb-4 text-[#1a1a1a]"
                     style={{
                       textShadow: '0 2px 4px rgba(0,0,0,0.05)'
                     }}
@@ -258,7 +251,7 @@ export function ClientCarousel() {
                     {client.title}
                   </h3>
 
-                  <p className="text-gray-700 leading-relaxed transition-colors duration-300 ease-out group-hover:text-gray-900">
+                  <p className="text-gray-700 leading-relaxed">
                     {client.description}
                   </p>
                 </div>
@@ -291,14 +284,14 @@ export function ClientCarousel() {
         </div>
       </div>
 
-      {/* Navigation Arrows */}
+      {/* Navigation Arrows - Optimized with GPU-accelerated animations only */}
       <button
         onClick={prevSlide}
-        className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 bg-white hover:bg-[#FF0000] text-[#FF0000] hover:text-white p-4 rounded-full shadow-lg hover:shadow-[0_0_20px_rgba(255,0,0,0.6)] transition-all duration-300 hover:scale-110 border-2 border-[#FF0000] group z-10"
+        className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 bg-white hover:bg-[#FF0000] text-[#FF0000] hover:text-white p-4 rounded-full shadow-lg motion-safe:transition-all motion-safe:duration-300 motion-safe:hover:scale-110 border-2 border-[#FF0000] group z-10"
         aria-label="Previous slide"
       >
         <svg
-          className="w-6 h-6 transform group-hover:-translate-x-1 transition-transform duration-300"
+          className="w-6 h-6"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -314,11 +307,11 @@ export function ClientCarousel() {
 
       <button
         onClick={nextSlide}
-        className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 bg-white hover:bg-[#FF0000] text-[#FF0000] hover:text-white p-4 rounded-full shadow-lg hover:shadow-[0_0_20px_rgba(255,0,0,0.6)] transition-all duration-300 hover:scale-110 border-2 border-[#FF0000] group z-10"
+        className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 bg-white hover:bg-[#FF0000] text-[#FF0000] hover:text-white p-4 rounded-full shadow-lg motion-safe:transition-all motion-safe:duration-300 motion-safe:hover:scale-110 border-2 border-[#FF0000] group z-10"
         aria-label="Next slide"
       >
         <svg
-          className="w-6 h-6 transform group-hover:translate-x-1 transition-transform duration-300"
+          className="w-6 h-6"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
