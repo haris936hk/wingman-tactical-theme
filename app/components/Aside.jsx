@@ -143,8 +143,8 @@ export function Aside({children, heading, type}) {
 
           /* Mobile: Slide from bottom */
           max-md:w-full max-md:max-h-[85vh] max-md:rounded-t-2xl
-          max-md:-bottom-full max-md:left-0
-          ${expanded ? 'max-md:translate-y-[-100%]' : 'max-md:translate-y-0'}
+          max-md:bottom-0 max-md:left-0
+          ${expanded ? 'max-md:translate-y-0' : 'max-md:translate-y-full'}
         `}
       >
         {/* Header */}
