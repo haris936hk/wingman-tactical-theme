@@ -2,7 +2,7 @@ import {useState, useEffect} from 'react';
 import {Link} from 'react-router';
 import aboutUsImg from '~/assets/aboutus.png';
 
-export function CustomProductCarousel({items, showCTA = false}) {
+export function CustomProductCarousel({items, showCTA = false, onQuoteClick}) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [slidesToShow, setSlidesToShow] = useState(4);
 
@@ -74,8 +74,8 @@ export function CustomProductCarousel({items, showCTA = false}) {
 
           {/* CTA Image Section - inside overflow container */}
           {showCTA && (
-            <div className="mt-6 px-3">
-              <Link to="/pages/quote" className="relative block h-[250px] md:h-[280px] rounded-lg overflow-hidden group">
+            <div className="mt-12 px-3">
+              <div className="relative block h-[250px] md:h-[280px] rounded-lg overflow-hidden group">
                 <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/60 z-10" />
                 <img
                   src={aboutUsImg}
@@ -90,11 +90,14 @@ export function CustomProductCarousel({items, showCTA = false}) {
                   <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold uppercase text-white mb-4 text-center leading-tight">
                     GET A QUOTE FOR YOUR<br />CUSTOM GEAR NOW!
                   </h3>
-                  <span className="inline-block px-6 py-3 bg-[#FF0000] hover:bg-[#CC0000] text-white font-bold text-base md:text-lg uppercase rounded-lg shadow-lg hover:shadow-[0_0_20px_rgba(255,0,0,0.8)] transition-all duration-300 transform group-hover:scale-105">
-                    Get a Quote
-                  </span>
+                  <button
+                    onClick={onQuoteClick}
+                    className="relative inline-block px-8 py-4 font-bold uppercase tracking-wide text-white overflow-hidden rounded-lg backdrop-blur-md bg-gradient-to-r from-[#FF0000] via-gray-600 to-[#FF0000] bg-[length:200%_100%] motion-safe:animate-[gradient_3s_linear_infinite] shadow-[0_0_20px_rgba(255,0,0,0.6)] hover:shadow-[0_0_30px_rgba(255,0,0,0.8)] motion-safe:hover:-translate-y-1 transition-all duration-300 border border-white/20"
+                  >
+                    GET A QUOTE
+                  </button>
                 </div>
-              </Link>
+              </div>
             </div>
           )}
         </div>

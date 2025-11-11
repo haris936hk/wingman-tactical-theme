@@ -210,7 +210,7 @@ export function ClientCarousel() {
               style={{width: `${100 / slidesToShow}%`}}
             >
               <div
-                className="group bg-white rounded-xl overflow-hidden h-full flex flex-col shadow-md relative will-change-transform motion-safe:transition-transform motion-safe:duration-300 motion-safe:ease-out motion-safe:hover:scale-105 motion-reduce:hover:scale-100 focus-visible:outline-2 focus-visible:outline-[#FF0000] focus-visible:outline-offset-2"
+                className="group bg-white rounded-xl overflow-hidden h-full flex flex-col shadow-md relative will-change-transform motion-safe:transition-all motion-safe:duration-200 motion-safe:ease-out hover:scale-[1.03] hover:-translate-y-2 hover:shadow-[0_0_25px_rgba(255,0,0,0.6)] motion-reduce:hover:scale-100 focus-visible:outline-2 focus-visible:outline-[#FF0000] focus-visible:outline-offset-2"
               >
                 {/* Optimized border effect - using box-shadow instead of complex gradient */}
                 <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-10 motion-reduce:hidden"

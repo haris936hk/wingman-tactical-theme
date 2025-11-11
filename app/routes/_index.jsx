@@ -2,6 +2,7 @@ import {Await, useLoaderData, Link} from 'react-router';
 import {Suspense, lazy, useEffect, useRef, useState} from 'react';
 import {Image} from '@shopify/hydrogen';
 import {CountUpStat} from '~/components/CountUpStat';
+import {QuoteModal} from '~/components/QuoteModal';
 
 // Lazy load heavy components for better initial bundle size
 const ClientCarousel = lazy(() => import('~/components/ClientCarousel').then(m => ({default: m.ClientCarousel})));
@@ -92,15 +93,23 @@ function loadDeferredData({context}) {
 export default function Homepage() {
   /** @type {LoaderReturnData} */
   const data = useLoaderData();
+  const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
+
+  const openQuoteModal = () => setIsQuoteModalOpen(true);
+  const closeQuoteModal = () => setIsQuoteModalOpen(false);
+
   return (
     <div className="home">
-      <HeroSection />
+      <HeroSection onQuoteClick={openQuoteModal} />
       <SplitContentSection />
       <ClientShowcaseSection />
       <WingmanFeaturedSection products={data.recommendedProducts} />
       <DiscountsSection products={data.discountedProducts} />
-      <CustomProductsSection />
+      <CustomProductsSection onQuoteClick={openQuoteModal} />
       <AboutSellSection />
+
+      {/* Quote Modal */}
+      <QuoteModal isOpen={isQuoteModalOpen} onClose={closeQuoteModal} />
     </div>
   );
 }
@@ -180,9 +189,9 @@ function LazyVideo() {
 }
 
 /* Wingman Tactical Hero Section */
-function HeroSection() {
+function HeroSection({onQuoteClick}) {
   return (
-    <section className="relative bg-[#000000] pt-[180px] pb-12 lg:pb-16">
+    <section className="relative bg-[#000000] pt-[104px] pb-12 lg:pb-16">
       <div className="max-w-[1400px] mx-auto px-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           {/* Text Side */}
@@ -200,12 +209,12 @@ function HeroSection() {
               Get a Quote today for precision-engineered helmet bags, sleek flight suits, and custom patches today & prove you're serious about the need for speed!
             </p>
             <div className="flex justify-center">
-              <Link
-                to="/pages/quote"
+              <button
+                onClick={onQuoteClick}
                 className="relative inline-block px-8 py-4 font-bold uppercase tracking-wide text-white overflow-hidden rounded-lg backdrop-blur-md bg-gradient-to-r from-[#FF0000] via-gray-600 to-[#FF0000] bg-[length:200%_100%] motion-safe:animate-[gradient_3s_linear_infinite] shadow-[0_0_20px_rgba(255,0,0,0.6)] hover:shadow-[0_0_30px_rgba(255,0,0,0.8)] motion-safe:hover:-translate-y-1 transition-all duration-300 border border-white/20"
               >
                 GET A QUOTE
-              </Link>
+              </button>
             </div>
           </div>
 
@@ -437,7 +446,7 @@ function DiscountsSection({products}) {
 }
 
 /* Custom Products Section */
-function CustomProductsSection() {
+function CustomProductsSection({onQuoteClick}) {
   const customProducts = [
     {
       image: customTshirtsImg,
@@ -490,7 +499,7 @@ function CustomProductsSection() {
               </div>
             </div>
           }>
-            <CustomProductCarousel items={customProducts} showCTA={true} />
+            <CustomProductCarousel items={customProducts} showCTA={true} onQuoteClick={onQuoteClick} />
           </Suspense>
         </div>
       </div>

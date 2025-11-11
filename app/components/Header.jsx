@@ -24,16 +24,15 @@ const NAVIGATION_MENU = [
   {id: 'flight-bag', title: 'FLIGHT BAG', url: '/collections/flight-bag'},
   {id: 'aviation-gear', title: 'AVIATION GEAR', url: '/collections/aviation-gear'},
   {id: 'apparels', title: 'APPARELS', url: '/collections/apparels'},
-  {id: 'custom-products', title: 'CUSTOM PRODUCTS', url: '/collections/custom-products'},
 ];
 
 /**
  * @param {HeaderProps}
  */
-export function Header({header, isLoggedIn, cart, publicStoreDomain}) {
-  const {shop, menu} = header;
+export function Header({isLoggedIn, cart}) {
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
 
   // Memoized scroll handler
   const handleScroll = useCallback(() => {
@@ -66,118 +65,230 @@ export function Header({header, isLoggedIn, cart, publicStoreDomain}) {
     return () => window.removeEventListener('scroll', debouncedScroll);
   }, [debouncedScroll]);
 
+  // Search blur handler
+  const handleSearchBlur = useCallback(() => {
+    setIsSearchFocused(false);
+  }, []);
+
+  // Keyboard handler for search (Escape to close)
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape' && isSearchFocused) {
+        setIsSearchFocused(false);
+        // Blur the active element
+        if (document.activeElement instanceof HTMLElement) {
+          document.activeElement.blur();
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isSearchFocused]);
+
   return (
-    <>
-      {/* Main Header - Fixed Dark Bar */}
-      <header className={`fixed top-0 left-0 right-0 z-50 bg-[#000000] text-white transition-transform duration-300 ease-in-out ${isVisible ? 'translate-y-0' : '-translate-y-full'}`}>
-        <div className="max-w-[1600px] mx-auto px-8">
-          <div className="flex items-center justify-between h-24">
-            {/* Logo - Left */}
-            <div className="flex-shrink-0">
-              <NavLink
-                prefetch="intent"
-                to="/"
-                end
-                className="block"
-              >
-                <img
-                  src={logoImage}
-                  alt="Wingman Tactical"
-                  className="h-16 w-auto"
-                />
-              </NavLink>
-            </div>
+    <header
+      className={`fixed top-0 left-0 right-0 z-50 bg-[#000000] text-white transition-all duration-300 ease-out motion-safe:transition-all ${
+        isVisible
+          ? 'motion-safe:translate-y-0 opacity-100'
+          : 'motion-safe:-translate-y-full opacity-0'
+      }`}
+      role="banner"
+    >
+      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-20 relative">
+          {/* Logo - Left */}
+          <div className="flex-shrink-0 z-10">
+            <NavLink
+              prefetch="intent"
+              to="/"
+              end
+              className="block"
+              aria-label="Wingman Tactical Home"
+            >
+              <img
+                src={logoImage}
+                alt="Wingman Tactical"
+                className="h-12 w-auto motion-safe:transition-transform motion-safe:hover:scale-105 motion-safe:duration-300"
+              />
+            </NavLink>
+          </div>
 
-            {/* Search Bar - Stretched Center */}
-            <div className="hidden md:flex flex-1 mx-6">
-              <SearchForm action="/search" className="w-full max-w-none">
-                {({inputRef}) => (
-                  <div className="relative w-full">
-                    <div className="relative rounded-md p-[2px] bg-gradient-to-r from-[#FF0000] via-white to-[#FF0000] bg-[length:200%_100%] animate-[gradient_3s_linear_infinite]">
-                      <input
-                        ref={inputRef}
-                        type="search"
-                        name="q"
-                        placeholder="Search for products"
-                        className="w-full pl-5 pr-12 py-3 bg-[#000000] text-white placeholder-white rounded-md focus:outline-none"
-                      />
-                      <button
-                        type="submit"
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-white hover:text-[#FF0000] transition-colors"
-                        aria-label="Search"
-                      >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                        </svg>
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </SearchForm>
-            </div>
+          {/* Desktop Navigation Links - Center (Hidden when search is focused) */}
+          <nav
+            className={`hidden lg:flex items-center justify-center gap-8 flex-1 mx-8 transition-all duration-300 ease-out ${
+              isSearchFocused
+                ? 'motion-safe:opacity-0 motion-safe:-translate-x-5 pointer-events-none'
+                : 'motion-safe:opacity-100 motion-safe:translate-x-0'
+            }`}
+            role="navigation"
+            aria-label="Main navigation"
+            aria-hidden={isSearchFocused}
+          >
+            {NAVIGATION_MENU.map((item) => (
+              <DesktopMenuItem key={item.id} item={item} />
+            ))}
+          </nav>
 
-            {/* User Actions - Right */}
-            <div className="flex-shrink-0">
-              <HeaderCtas isLoggedIn={isLoggedIn} cart={cart} />
+          {/* Search Component - Expands on focus */}
+          <div
+            className={`absolute left-0 right-0 top-1/2 -translate-y-1/2 transition-all duration-300 ease-out ${
+              isSearchFocused
+                ? 'lg:left-[180px] lg:right-[280px] z-20'
+                : 'lg:static lg:w-auto lg:translate-y-0 lg:mr-3 pointer-events-none lg:pointer-events-auto'
+            }`}
+          >
+            {/* Mobile Search Button */}
+            <button
+              onClick={() => setIsSearchFocused(true)}
+              className="lg:hidden text-white hover:text-[#FF0000] transition-colors p-2"
+              aria-label="Open search"
+              aria-expanded={isSearchFocused}
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </button>
+
+            {/* Desktop Search - Button or Expanded */}
+            <div className="hidden lg:block">
+              {!isSearchFocused ? (
+                // Search Icon Button (default state)
+                <button
+                  onClick={() => setIsSearchFocused(true)}
+                  className="text-white hover:text-[#FF0000] transition-colors p-2 motion-safe:hover:scale-110 motion-safe:duration-200"
+                  aria-label="Open search"
+                  aria-expanded={false}
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </button>
+              ) : (
+                // Expanded Search Form
+                <SearchForm action="/search" className="w-full">
+                  {({inputRef}) => {
+                    // Auto-focus the input when expanded
+                    if (inputRef.current && isSearchFocused) {
+                      setTimeout(() => inputRef.current?.focus(), 0);
+                    }
+
+                    return (
+                      <div className="relative" role="search">
+                        {/* Animated gradient border wrapper */}
+                        <div className="relative rounded-md p-[2px] bg-gradient-to-r from-[#FF0000] via-white to-[#FF0000] bg-[length:200%_100%] motion-safe:animate-[gradient_3s_linear_infinite] shadow-[0_0_20px_rgba(255,0,0,0.6)]">
+                          <div className="flex items-center bg-[#000000] rounded-md">
+                            {/* Search Icon - Left side */}
+                            <button
+                              type="submit"
+                              className="pl-4 pr-2 text-white hover:text-[#FF0000] transition-colors motion-safe:hover:scale-110 motion-safe:duration-200"
+                              aria-label="Submit search"
+                            >
+                              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                              </svg>
+                            </button>
+
+                            {/* Search Input */}
+                            <input
+                              ref={inputRef}
+                              type="search"
+                              name="q"
+                              placeholder="Search for products..."
+                              onBlur={handleSearchBlur}
+                              className="w-full py-3 pr-4 bg-transparent text-white placeholder-gray-400 focus:outline-none"
+                              aria-label="Search products"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  }}
+                </SearchForm>
+              )}
             </div>
           </div>
-        </div>
-      </header>
 
-      {/* Navigation Bar - Below Header (Desktop Only) */}
-      <nav className={`hidden md:block fixed left-0 right-0 z-50 bg-[#000000] text-white border-t border-[#FF0000] transition-all duration-300 ease-in-out ${isVisible ? 'top-24' : 'top-0'}`}>
-        <div className="max-w-[1600px] mx-auto px-8">
-          <HeaderMenu
-            menu={menu}
-            viewport="desktop"
-            primaryDomainUrl={header.shop.primaryDomain.url}
-            publicStoreDomain={publicStoreDomain}
-          />
+          {/* User Actions - Right */}
+          <div className="flex-shrink-0 z-10">
+            <HeaderCtas isLoggedIn={isLoggedIn} cart={cart} />
+          </div>
         </div>
-      </nav>
-    </>
+      </div>
+
+      {/* Mobile Search Overlay - Full screen */}
+      {isSearchFocused && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="mobile-search-title"
+          className="lg:hidden fixed inset-0 bg-black/95 backdrop-blur-sm z-50 flex flex-col"
+        >
+          <div className="flex items-center justify-between p-4 border-b border-[#FF0000]">
+            <h2 id="mobile-search-title" className="text-lg font-bold uppercase tracking-wide">Search Products</h2>
+            <button
+              onClick={() => setIsSearchFocused(false)}
+              className="text-white hover:text-[#FF0000] transition-colors p-2"
+              aria-label="Close search"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+          <div className="p-6">
+            <SearchForm action="/search" className="w-full">
+              {({inputRef}) => (
+                <div className="relative" role="search">
+                  <div className="relative rounded-md p-[2px] bg-gradient-to-r from-[#FF0000] via-white to-[#FF0000] bg-[length:200%_100%] motion-safe:animate-[gradient_3s_linear_infinite]">
+                    <input
+                      ref={inputRef}
+                      type="search"
+                      name="q"
+                      placeholder="Search for products..."
+                      className="w-full pl-5 pr-12 py-4 bg-[#000000] text-white placeholder-gray-400 rounded-md focus:outline-none text-lg"
+                      aria-label="Search products"
+                    />
+                    <button
+                      type="submit"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-white hover:text-[#FF0000] transition-colors"
+                      aria-label="Submit search"
+                    >
+                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              )}
+            </SearchForm>
+          </div>
+        </div>
+      )}
+    </header>
   );
 }
 
 /**
- * @param {{
- *   menu: HeaderProps['header']['menu'];
- *   primaryDomainUrl: HeaderProps['header']['shop']['primaryDomain']['url'];
- *   viewport: Viewport;
- *   publicStoreDomain: HeaderProps['publicStoreDomain'];
- * }}
+ * Mobile menu component for Aside
  */
-export function HeaderMenu({
-  menu,
-  primaryDomainUrl,
-  viewport,
-  publicStoreDomain,
-}) {
+export function HeaderMenu() {
   const {close} = useAside();
 
-  if (viewport === 'mobile') {
-    return (
-      <nav className="flex flex-col space-y-4 p-6" role="navigation">
-        <NavLink
-          end
-          onClick={close}
-          prefetch="intent"
-          to="/"
-          className="text-white hover:text-[#FF0000] transition-colors uppercase font-medium"
-        >
-          Home
-        </NavLink>
-        {NAVIGATION_MENU.map((item) => (
-          <MobileMenuItem key={item.id} item={item} onClick={close} />
-        ))}
-      </nav>
-    );
-  }
-
+  // Mobile menu only (desktop navigation is now in main header)
   return (
-    <nav className="flex items-center justify-start gap-10 py-4" role="navigation">
+    <nav className="flex flex-col space-y-4 p-6" role="navigation" aria-label="Mobile navigation">
+      <NavLink
+        end
+        onClick={close}
+        prefetch="intent"
+        to="/"
+        className="text-white hover:text-[#FF0000] transition-colors uppercase font-medium text-lg py-2"
+      >
+        Home
+      </NavLink>
       {NAVIGATION_MENU.map((item) => (
-        <DesktopMenuItem key={item.id} item={item} />
+        <MobileMenuItem key={item.id} item={item} onClick={close} />
       ))}
     </nav>
   );
@@ -213,7 +324,11 @@ function MobileMenuItem({item, onClick}) {
       onClick={onClick}
       prefetch="intent"
       to={item.url}
-      className="text-white hover:text-[#FF0000] transition-colors uppercase font-medium"
+      className={({isActive}) =>
+        `text-white hover:text-[#FF0000] transition-colors uppercase font-medium text-lg py-2 ${
+          isActive ? 'text-[#FF0000]' : ''
+        }`
+      }
     >
       {item.title}
     </NavLink>
@@ -229,18 +344,35 @@ function HeaderCtas({isLoggedIn, cart}) {
       {/* Mobile Menu Toggle */}
       <HeaderMenuMobileToggle />
 
-      {/* Login/Register */}
-      <NavLink
-        prefetch="intent"
-        to="/account"
-        className="hidden md:block relative text-sm font-medium uppercase tracking-wider whitespace-nowrap bg-clip-text text-transparent bg-gradient-to-r from-white to-white bg-[length:200%_100%] bg-left transition-all duration-500 hover:bg-right hover:from-white hover:to-[#FF0000] after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[2px] after:bg-[#FF0000] after:transition-all after:duration-300 hover:after:w-full"
-      >
-        <Suspense fallback="LOGIN / REGISTER">
-          <Await resolve={isLoggedIn} errorElement="LOGIN / REGISTER">
-            {(isLoggedIn) => (isLoggedIn ? 'ACCOUNT' : 'LOGIN / REGISTER')}
-          </Await>
-        </Suspense>
-      </NavLink>
+      {/* Account/Profile Icon */}
+      <Suspense fallback={
+        <div className="hidden md:block text-white p-2">
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+          </svg>
+        </div>
+      }>
+        <Await resolve={isLoggedIn} errorElement={
+          <div className="hidden md:block text-white p-2">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+          </div>
+        }>
+          {(isLoggedIn) => (
+            <NavLink
+              prefetch="intent"
+              to="/account"
+              className="hidden md:block text-white hover:text-[#FF0000] transition-colors p-2 motion-safe:hover:scale-110 motion-safe:duration-200"
+              aria-label={isLoggedIn ? 'Account' : 'Login or Register'}
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+            </NavLink>
+          )}
+        </Await>
+      </Suspense>
 
       {/* Cart with Price */}
       <CartToggle cart={cart} />
@@ -330,15 +462,11 @@ function CartBanner() {
 }
 
 
-/** @typedef {'desktop' | 'mobile'} Viewport */
 /**
  * @typedef {Object} HeaderProps
- * @property {HeaderQuery} header
  * @property {Promise<CartApiQueryFragment|null>} cart
  * @property {Promise<boolean>} isLoggedIn
- * @property {string} publicStoreDomain
  */
 
 /** @typedef {import('@shopify/hydrogen').CartViewPayload} CartViewPayload */
-/** @typedef {import('storefrontapi.generated').HeaderQuery} HeaderQuery */
 /** @typedef {import('storefrontapi.generated').CartApiQueryFragment} CartApiQueryFragment */
