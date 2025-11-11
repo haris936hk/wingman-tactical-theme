@@ -95,8 +95,8 @@ export function Header({isLoggedIn, cart}) {
       }`}
       role="banner"
     >
-      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20 relative">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16 sm:h-18 md:h-20 relative">
           {/* Logo - Left */}
           <div className="flex-shrink-0 z-10">
             <NavLink
@@ -109,7 +109,7 @@ export function Header({isLoggedIn, cart}) {
               <img
                 src={logoImage}
                 alt="Wingman Tactical"
-                className="h-12 w-auto motion-safe:transition-transform motion-safe:hover:scale-105 motion-safe:duration-300"
+                className="h-10 sm:h-11 md:h-12 w-auto motion-safe:transition-transform motion-safe:hover:scale-105 motion-safe:duration-300"
               />
             </NavLink>
           </div>
@@ -141,11 +141,11 @@ export function Header({isLoggedIn, cart}) {
             {/* Mobile Search Button */}
             <button
               onClick={() => setIsSearchFocused(true)}
-              className="lg:hidden text-white hover:text-[#FF0000] transition-colors p-2"
+              className="lg:hidden text-white hover:text-[#FF0000] transition-colors p-3 min-w-[44px] min-h-[44px] flex items-center justify-center"
               aria-label="Open search"
               aria-expanded={isSearchFocused}
             >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
             </button>
@@ -156,11 +156,11 @@ export function Header({isLoggedIn, cart}) {
                 // Search Icon Button (default state)
                 <button
                   onClick={() => setIsSearchFocused(true)}
-                  className="text-white hover:text-[#FF0000] transition-colors p-2 motion-safe:hover:scale-110 motion-safe:duration-200"
+                  className="text-white hover:text-[#FF0000] transition-colors p-3 min-w-[44px] min-h-[44px] flex items-center justify-center motion-safe:hover:scale-110 motion-safe:duration-200"
                   aria-label="Open search"
                   aria-expanded={false}
                 >
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                   </svg>
                 </button>
@@ -225,18 +225,18 @@ export function Header({isLoggedIn, cart}) {
           className="lg:hidden fixed inset-0 bg-black/95 backdrop-blur-sm z-50 flex flex-col"
         >
           <div className="flex items-center justify-between p-4 border-b border-[#FF0000]">
-            <h2 id="mobile-search-title" className="text-lg font-bold uppercase tracking-wide">Search Products</h2>
+            <h2 id="mobile-search-title" className="text-base sm:text-lg font-bold uppercase tracking-wide">Search Products</h2>
             <button
               onClick={() => setIsSearchFocused(false)}
-              className="text-white hover:text-[#FF0000] transition-colors p-2"
+              className="text-white hover:text-[#FF0000] transition-colors p-3 min-w-[44px] min-h-[44px] flex items-center justify-center"
               aria-label="Close search"
             >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
           </div>
-          <div className="p-6">
+          <div className="p-4 sm:p-6">
             <SearchForm action="/search" className="w-full">
               {({inputRef}) => (
                 <div className="relative" role="search">
@@ -246,15 +246,15 @@ export function Header({isLoggedIn, cart}) {
                       type="search"
                       name="q"
                       placeholder="Search for products..."
-                      className="w-full pl-5 pr-12 py-4 bg-[#000000] text-white placeholder-gray-400 rounded-md focus:outline-none text-lg"
+                      className="w-full pl-5 pr-12 py-3 sm:py-4 bg-[#000000] text-white placeholder-gray-400 rounded-md focus:outline-none text-base sm:text-lg"
                       aria-label="Search products"
                     />
                     <button
                       type="submit"
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-white hover:text-[#FF0000] transition-colors"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-white hover:text-[#FF0000] transition-colors p-2 min-w-[44px] min-h-[44px] flex items-center justify-center"
                       aria-label="Submit search"
                     >
-                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                       </svg>
                     </button>
@@ -340,21 +340,21 @@ function MobileMenuItem({item, onClick}) {
  */
 function HeaderCtas({isLoggedIn, cart}) {
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex items-center gap-2 sm:gap-3">
       {/* Mobile Menu Toggle */}
       <HeaderMenuMobileToggle />
 
       {/* Account/Profile Icon */}
       <Suspense fallback={
-        <div className="hidden md:block text-white p-2">
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="text-white p-3 min-w-[44px] min-h-[44px] flex items-center justify-center">
+          <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
           </svg>
         </div>
       }>
         <Await resolve={isLoggedIn} errorElement={
-          <div className="hidden md:block text-white p-2">
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="text-white p-3 min-w-[44px] min-h-[44px] flex items-center justify-center">
+            <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
             </svg>
           </div>
@@ -363,10 +363,10 @@ function HeaderCtas({isLoggedIn, cart}) {
             <NavLink
               prefetch="intent"
               to="/account"
-              className="hidden md:block text-white hover:text-[#FF0000] transition-colors p-2 motion-safe:hover:scale-110 motion-safe:duration-200"
+              className="text-white hover:text-[#FF0000] transition-colors p-3 min-w-[44px] min-h-[44px] flex items-center justify-center motion-safe:hover:scale-110 motion-safe:duration-200"
               aria-label={isLoggedIn ? 'Account' : 'Login or Register'}
             >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
               </svg>
             </NavLink>
@@ -384,11 +384,11 @@ function HeaderMenuMobileToggle() {
   const {open} = useAside();
   return (
     <button
-      className="md:hidden text-white hover:text-[#FF0000] transition-colors p-2"
+      className="lg:hidden text-white hover:text-[#FF0000] transition-colors p-3 min-w-[44px] min-h-[44px] flex items-center justify-center"
       onClick={() => open('mobile')}
       aria-label="Open menu"
     >
-      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
       </svg>
     </button>
@@ -423,7 +423,7 @@ function CartBadge({count, cart}) {
       aria-label={`Cart with ${count || 0} items`}
     >
       <div className="relative text-white transition-colors group-hover:text-[#FF0000]">
-        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -437,7 +437,7 @@ function CartBadge({count, cart}) {
           </span>
         )}
       </div>
-      <span className="text-sm font-medium whitespace-nowrap bg-clip-text text-transparent bg-gradient-to-r from-white to-white bg-[length:200%_100%] bg-left transition-all duration-500 group-hover:bg-right group-hover:from-white group-hover:to-[#FF0000]">{totalPrice}</span>
+      <span className="hidden sm:inline text-xs sm:text-sm font-medium whitespace-nowrap bg-clip-text text-transparent bg-gradient-to-r from-white to-white bg-[length:200%_100%] bg-left transition-all duration-500 group-hover:bg-right group-hover:from-white group-hover:to-[#FF0000]">{totalPrice}</span>
     </button>
   );
 }

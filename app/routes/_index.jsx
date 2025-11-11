@@ -191,27 +191,27 @@ function LazyVideo() {
 /* Wingman Tactical Hero Section */
 function HeroSection({onQuoteClick}) {
   return (
-    <section className="relative bg-[#000000] pt-[104px] pb-12 lg:pb-16">
-      <div className="max-w-[1400px] mx-auto px-6">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+    <section className="relative bg-[#000000] pt-[104px] pb-8 sm:pb-10 md:pb-12 lg:pb-16">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-10 md:gap-12 items-center">
           {/* Text Side */}
-          <div className="text-white text-center">
+          <div className="text-white text-center lg:text-left">
             <h1
-              className="text-xl lg:text-2xl xl:text-3xl font-bold uppercase leading-tight mb-6"
+              className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold uppercase leading-tight mb-4 sm:mb-6"
               style={{ fontFamily: 'var(--font-family-shock)' }}
             >
               YOUR GEAR/MERCHANDISE IS FAILING? BOOK YOUR CUSTOM AVIATION GEAR & MERCH
             </h1>
-            <p className="text-sm lg:text-base text-gray-300 mb-6 leading-relaxed">
+            <p className="text-sm sm:text-base text-gray-300 mb-4 sm:mb-6 leading-relaxed">
               Every day you're hauling your fragile helmet around in that cheap, off-the-shelf bag is another day you risk dents, scratches—and a flight-ending failure. Walking into pre-flight briefs with generic, baggy flight suits and lousy patches sends the wrong message: you don't care. Stop risking thousands in equipment damage and your professional reputation.
             </p>
-            <p className="text-sm lg:text-base text-gray-300 mb-6 leading-relaxed">
+            <p className="text-sm sm:text-base text-gray-300 mb-4 sm:mb-6 leading-relaxed">
               Get a Quote today for precision-engineered helmet bags, sleek flight suits, and custom patches today & prove you're serious about the need for speed!
             </p>
-            <div className="flex justify-center">
+            <div className="flex justify-center lg:justify-start">
               <button
                 onClick={onQuoteClick}
-                className="relative inline-block px-8 py-4 font-bold uppercase tracking-wide text-white overflow-hidden rounded-lg backdrop-blur-md bg-gradient-to-r from-[#FF0000] via-gray-600 to-[#FF0000] bg-[length:200%_100%] motion-safe:animate-[gradient_3s_linear_infinite] shadow-[0_0_20px_rgba(255,0,0,0.6)] hover:shadow-[0_0_30px_rgba(255,0,0,0.8)] motion-safe:hover:-translate-y-1 transition-all duration-300 border border-white/20"
+                className="relative inline-block w-full sm:w-auto min-h-[44px] px-6 sm:px-8 py-3 sm:py-4 font-bold uppercase tracking-wide text-white overflow-hidden rounded-lg backdrop-blur-md bg-gradient-to-r from-[#FF0000] via-gray-600 to-[#FF0000] bg-[length:200%_100%] motion-safe:animate-[gradient_3s_linear_infinite] shadow-[0_0_20px_rgba(255,0,0,0.6)] hover:shadow-[0_0_30px_rgba(255,0,0,0.8)] motion-safe:hover:-translate-y-1 transition-all duration-300 border border-white/20"
               >
                 GET A QUOTE
               </button>
@@ -219,7 +219,7 @@ function HeroSection({onQuoteClick}) {
           </div>
 
           {/* Video Side */}
-          <div className="relative h-[400px] lg:h-[500px]">
+          <div className="relative h-[300px] sm:h-[350px] md:h-[400px] lg:h-[500px]">
             {/* SVG animated border */}
             <svg className="absolute inset-0 w-full h-full pointer-events-none motion-reduce:hidden" style={{zIndex: 10}}>
               <rect
@@ -257,12 +257,12 @@ function HeroSection({onQuoteClick}) {
 /* Global Stats Section - Centered Layout */
 function SplitContentSection() {
   return (
-    <section className="relative bg-[#000000] py-12 lg:py-16 border-t border-[#FF0000]">
-      <div className="max-w-[1400px] mx-auto px-6">
+    <section className="relative bg-[#000000] py-8 sm:py-10 md:py-12 lg:py-16 border-t border-[#FF0000]">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6">
         {/* Centered Stats Container */}
         <div className="relative max-w-4xl mx-auto">
           {/* SVG animated border */}
-          <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{zIndex: 10}}>
+          <svg className="absolute inset-0 w-full h-full pointer-events-none motion-reduce:hidden" style={{zIndex: 10}}>
             <rect
               x="2"
               y="2"
@@ -271,7 +271,7 @@ function SplitContentSection() {
               rx="8"
               fill="none"
               stroke="url(#statsBorderGradient)"
-              strokeWidth="3"
+              strokeWidth="2"
               strokeDasharray="50 150"
               style={{
                 animation: 'border-spin 4s linear infinite'
@@ -287,9 +287,9 @@ function SplitContentSection() {
           </svg>
 
           {/* Stats Content */}
-          <div className="relative bg-black/50 backdrop-blur-sm rounded-lg border-2 border-[#FF0000]/30 p-8 lg:p-12 shadow-[0_0_30px_rgba(255,0,0,0.3)]">
+          <div className="relative bg-black/50 backdrop-blur-sm rounded-lg border-2 border-[#FF0000]/30 p-6 sm:p-8 md:p-10 lg:p-12 shadow-[0_0_30px_rgba(255,0,0,0.3)]">
             <h2
-              className="text-2xl lg:text-4xl font-bold uppercase mb-8 text-center text-white"
+              className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold uppercase mb-6 sm:mb-8 text-center text-white"
               style={{
                 fontFamily: 'var(--font-family-shock)',
                 textShadow: '0 0 10px rgba(255, 0, 0, 0.8), 0 0 20px rgba(255, 0, 0, 0.6), 0 0 30px rgba(255, 0, 0, 0.4)'
@@ -298,7 +298,7 @@ function SplitContentSection() {
               CLIENTS SERVED ACROSS THE WORLD
             </h2>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
               {/* Aviation Organisations Stat */}
               <CountUpStat
                 icon={
@@ -349,16 +349,16 @@ function SplitContentSection() {
 /* Client Showcase Section */
 function ClientShowcaseSection() {
   return (
-    <section className="py-12 lg:py-16 bg-[#000000] border-t border-[#FF0000]">
-      <div className="max-w-[1400px] mx-auto px-6">
-        <h2 className="text-3xl lg:text-4xl font-bold uppercase text-center mb-2 text-white" style={{
+    <section className="py-8 sm:py-10 md:py-12 lg:py-16 bg-[#000000] border-t border-[#FF0000]">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6">
+        <h2 className="text-2xl sm:text-3xl md:text-3xl lg:text-4xl xl:text-5xl font-bold uppercase text-center mb-2 text-white" style={{
           fontFamily: 'var(--font-family-shock)',
           textShadow: '0 0 10px rgba(255, 0, 0, 0.6)'
         }}>
           EXPLORE OUR ACROSS THE WORLD SERVED CLIENTS
         </h2>
 
-        <div className="mt-8">
+        <div className="mt-6 sm:mt-8">
           <Suspense fallback={
             <div className="flex justify-center items-center py-12">
               <div className="text-white text-center">
@@ -378,16 +378,16 @@ function ClientShowcaseSection() {
 /* Wingman Featured Section */
 function WingmanFeaturedSection({products}) {
   return (
-    <section className="py-12 lg:py-16 bg-[#000000] border-t border-[#FF0000]">
-      <div className="max-w-[1400px] mx-auto px-6">
-        <h2 className="text-3xl lg:text-4xl font-bold uppercase text-center mb-2 text-white" style={{
+    <section className="py-8 sm:py-10 md:py-12 lg:py-16 bg-[#000000] border-t border-[#FF0000]">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6">
+        <h2 className="text-2xl sm:text-3xl md:text-3xl lg:text-4xl xl:text-5xl font-bold uppercase text-center mb-2 text-white" style={{
           fontFamily: 'var(--font-family-shock)',
           textShadow: '0 0 10px rgba(255, 0, 0, 0.6)'
         }}>
           WINGMAN FEATURED
         </h2>
 
-        <div className="mt-8">
+        <div className="mt-6 sm:mt-8">
           <Suspense fallback={
             <div className="flex justify-center items-center py-12">
               <div className="text-white text-center">
@@ -413,16 +413,16 @@ function WingmanFeaturedSection({products}) {
 /* Discounts & Offers Section */
 function DiscountsSection({products}) {
   return (
-    <section className="py-12 lg:py-16 bg-[#000000] border-t border-[#FF0000]">
-      <div className="max-w-[1400px] mx-auto px-6">
-        <h2 className="text-3xl lg:text-4xl font-bold uppercase text-center mb-2 text-white" style={{
+    <section className="py-8 sm:py-10 md:py-12 lg:py-16 bg-[#000000] border-t border-[#FF0000]">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6">
+        <h2 className="text-2xl sm:text-3xl md:text-3xl lg:text-4xl xl:text-5xl font-bold uppercase text-center mb-2 text-white" style={{
           fontFamily: 'var(--font-family-shock)',
           textShadow: '0 0 10px rgba(255, 0, 0, 0.6)'
         }}>
           DISCOUNTS & OFFERS
         </h2>
 
-        <div className="mt-8">
+        <div className="mt-6 sm:mt-8">
           <Suspense fallback={
             <div className="flex justify-center items-center py-12">
               <div className="text-white text-center">
@@ -481,16 +481,16 @@ function CustomProductsSection({onQuoteClick}) {
   ];
 
   return (
-    <section className="py-12 lg:py-16 bg-[#000000] border-t border-[#FF0000]">
-      <div className="max-w-[1400px] mx-auto px-6">
-        <h2 className="text-3xl lg:text-4xl font-bold uppercase text-center mb-2 text-white" style={{
+    <section className="py-8 sm:py-10 md:py-12 lg:py-16 bg-[#000000] border-t border-[#FF0000]">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6">
+        <h2 className="text-2xl sm:text-3xl md:text-3xl lg:text-4xl xl:text-5xl font-bold uppercase text-center mb-2 text-white" style={{
           fontFamily: 'var(--font-family-shock)',
           textShadow: '0 0 10px rgba(255, 0, 0, 0.6)'
         }}>
           CUSTOM PRODUCTS
         </h2>
 
-        <div className="mt-8">
+        <div className="mt-6 sm:mt-8">
           <Suspense fallback={
             <div className="flex justify-center items-center py-12">
               <div className="text-white text-center">
@@ -510,11 +510,11 @@ function CustomProductsSection({onQuoteClick}) {
 /* About Us / Sell With Us Section */
 function AboutSellSection() {
   return (
-    <section className="py-12 lg:py-16 bg-[#000000] border-t border-[#FF0000]">
-      <div className="max-w-[1400px] mx-auto px-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <section className="py-8 sm:py-10 md:py-12 lg:py-16 bg-[#000000] border-t border-[#FF0000]">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
           {/* About Us Card */}
-          <Link to="/pages/about" className="relative h-[400px] rounded-lg overflow-hidden group">
+          <Link to="/pages/about" className="relative h-[300px] sm:h-[350px] md:h-[400px] lg:h-[450px] rounded-lg overflow-hidden group">
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-black/20 z-10" />
             <Image
               data={{
@@ -527,14 +527,14 @@ function AboutSellSection() {
               sizes="(min-width: 768px) 50vw, 100vw"
               loading="lazy"
             />
-            <div className="absolute bottom-0 left-0 right-0 p-8 z-20">
-              <h3 className="text-4xl font-bold uppercase text-white mb-4" style={{ fontFamily: 'var(--font-family-shock)' }}>ABOUT US</h3>
-              <p className="text-white text-lg">We are your online wingman, dedicated to providing quality Aviation gear and merchandise. Join our formation to get access to the best OEM manufacturing services with the lowest MOQs and maximum customization.</p>
+            <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 md:p-8 z-20">
+              <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold uppercase text-white mb-2 sm:mb-3 md:mb-4" style={{ fontFamily: 'var(--font-family-shock)' }}>ABOUT US</h3>
+              <p className="text-white text-sm sm:text-base md:text-lg">We are your online wingman, dedicated to providing quality Aviation gear and merchandise. Join our formation to get access to the best OEM manufacturing services with the lowest MOQs and maximum customization.</p>
             </div>
           </Link>
 
           {/* Sell With Us Card */}
-          <Link to="/pages/sell" className="relative h-[400px] rounded-lg overflow-hidden group">
+          <Link to="/pages/sell" className="relative h-[300px] sm:h-[350px] md:h-[400px] lg:h-[450px] rounded-lg overflow-hidden group">
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-black/20 z-10" />
             <Image
               data={{
@@ -547,9 +547,9 @@ function AboutSellSection() {
               sizes="(min-width: 768px) 50vw, 100vw"
               loading="lazy"
             />
-            <div className="absolute bottom-0 left-0 right-0 p-8 z-20">
-              <h3 className="text-4xl font-bold uppercase text-white mb-4" style={{ fontFamily: 'var(--font-family-shock)' }}>SELL WITH US</h3>
-              <p className="text-white text-lg">Want to create your own private label brand? Do you have a great product within our niche and don&apos;t know how to sell? Let&apos;s join hands and we will help you with everything we have got to make you earn passive income while you can leave the product supply chain till delivery hustles on us.</p>
+            <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 md:p-8 z-20">
+              <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold uppercase text-white mb-2 sm:mb-3 md:mb-4" style={{ fontFamily: 'var(--font-family-shock)' }}>SELL WITH US</h3>
+              <p className="text-white text-sm sm:text-base md:text-lg">Want to create your own private label brand? Do you have a great product within our niche and don&apos;t know how to sell? Let&apos;s join hands and we will help you with everything we have got to make you earn passive income while you can leave the product supply chain till delivery hustles on us.</p>
             </div>
           </Link>
         </div>

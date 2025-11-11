@@ -179,6 +179,66 @@ export function MobileFilterDrawer({
             </div>
           )}
 
+          {/* Color */}
+          <div className="border-t border-white/10 pt-6">
+            <h3 className="text-sm font-bold uppercase text-white mb-4 tracking-wide">
+              Color
+            </h3>
+            <div className="space-y-4">
+              {['Black', 'Olive Green', 'Navy Blue', 'Desert Tan', 'Pink', 'Brown'].map((color) => (
+                <label
+                  key={color}
+                  className="flex items-center gap-3 cursor-pointer group min-h-[44px]"
+                >
+                  <input
+                    type="checkbox"
+                    checked={(localFilters.color || []).includes(color)}
+                    onChange={() => handleCheckboxChange('color', color)}
+                    className="w-6 h-6 rounded border-2 border-white/30
+                      bg-transparent checked:bg-[#FF0000] checked:border-[#FF0000]
+                      focus:outline-none focus:ring-2 focus:ring-[#FF0000]
+                      transition-colors cursor-pointer"
+                    aria-label={`Filter by ${color}`}
+                  />
+                  <span className="text-base text-gray-300 group-hover:text-white transition-colors">
+                    {color}
+                  </span>
+                </label>
+              ))}
+            </div>
+          </div>
+
+          {/* Size */}
+          <div className="border-t border-white/10 pt-6">
+            <h3 className="text-sm font-bold uppercase text-white mb-4 tracking-wide">
+              Size
+            </h3>
+            <div className="grid grid-cols-4 gap-2">
+              {['3XS', '2XS', 'XS', 'S', 'M', 'R', 'L', 'XL', '2XL', '3XL', '4XL', '5XL', '6XL'].map((size) => (
+                <label
+                  key={size}
+                  className="flex items-center justify-center cursor-pointer"
+                >
+                  <input
+                    type="checkbox"
+                    checked={(localFilters.size || []).includes(size)}
+                    onChange={() => handleCheckboxChange('size', size)}
+                    className="sr-only peer"
+                    aria-label={`Filter by size ${size}`}
+                  />
+                  <span className="w-full text-center px-2 py-3 text-xs font-bold uppercase
+                    border-2 border-white/30 rounded
+                    text-gray-300 bg-transparent
+                    peer-checked:bg-[#FF0000] peer-checked:border-[#FF0000] peer-checked:text-white
+                    active:scale-95
+                    transition-all cursor-pointer min-h-[44px] flex items-center justify-center">
+                    {size}
+                  </span>
+                </label>
+              ))}
+            </div>
+          </div>
+
           {/* Vendor */}
           {availableFilters.vendors?.length > 0 && (
             <div className="border-t border-white/10 pt-6">

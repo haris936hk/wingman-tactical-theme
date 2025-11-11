@@ -70,9 +70,9 @@ export function ProductCarousel({products, showSaleBadge = false}) {
   return (
     <div className="relative">
       {/* Carousel Container */}
-      <div className="overflow-hidden px-2">
+      <div className="overflow-hidden px-1 sm:px-2">
         <div
-          className="flex transition-transform duration-500 ease-out py-4"
+          className="flex transition-transform duration-500 ease-out py-3 sm:py-4"
           style={{
             transform: `translateX(-${currentIndex * (100 / slidesToShow)}%)`,
           }}
@@ -80,7 +80,7 @@ export function ProductCarousel({products, showSaleBadge = false}) {
           {products.map((product, index) => (
             <div
               key={product.id}
-              className="flex-shrink-0 px-3"
+              className="flex-shrink-0 px-2 sm:px-3"
               style={{width: `${100 / slidesToShow}%`}}
             >
               <ProductItem product={product} loading="lazy" showSaleBadge={showSaleBadge} index={index} />
@@ -89,15 +89,15 @@ export function ProductCarousel({products, showSaleBadge = false}) {
         </div>
 
         {/* Dots Navigation */}
-        <div className="flex justify-center gap-3 mt-8">
+        <div className="flex justify-center gap-2 sm:gap-3 mt-6 sm:mt-8">
           {Array.from({length: maxIndex + 1}).map((_, index) => (
             <button
               key={index}
               onClick={() => goToSlide(index)}
-              className={`rounded-full transition-all duration-300 ${
+              className={`rounded-full transition-all duration-300 min-w-[32px] min-h-[32px] flex items-center justify-center ${
                 currentIndex === index
-                  ? 'bg-[#FF0000] w-10 h-3 shadow-lg'
-                  : 'bg-gray-300 hover:bg-gray-400 w-3 h-3 hover:scale-125'
+                  ? 'bg-[#FF0000] w-8 sm:w-10 h-2.5 sm:h-3 shadow-lg'
+                  : 'bg-gray-300 hover:bg-gray-400 w-2.5 sm:w-3 h-2.5 sm:h-3 hover:scale-125'
               }`}
               style={
                 currentIndex === index
@@ -115,11 +115,11 @@ export function ProductCarousel({products, showSaleBadge = false}) {
       {/* Navigation Arrows */}
       <button
         onClick={prevSlide}
-        className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 bg-white hover:bg-[#FF0000] text-[#FF0000] hover:text-white p-4 rounded-full shadow-lg hover:shadow-[0_0_20px_rgba(255,0,0,0.6)] transition-all duration-300 hover:scale-110 border-2 border-[#FF0000] group z-10"
+        className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 sm:-translate-x-4 bg-white hover:bg-[#FF0000] text-[#FF0000] hover:text-white p-2 sm:p-3 md:p-4 rounded-full shadow-lg hover:shadow-[0_0_20px_rgba(255,0,0,0.6)] transition-all duration-300 hover:scale-110 border-2 border-[#FF0000] group z-10"
         aria-label="Previous slide"
       >
         <svg
-          className="w-6 h-6 transform group-hover:-translate-x-1 transition-transform duration-300"
+          className="w-5 h-5 sm:w-6 sm:h-6 transform group-hover:-translate-x-1 transition-transform duration-300"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -135,11 +135,11 @@ export function ProductCarousel({products, showSaleBadge = false}) {
 
       <button
         onClick={nextSlide}
-        className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 bg-white hover:bg-[#FF0000] text-[#FF0000] hover:text-white p-4 rounded-full shadow-lg hover:shadow-[0_0_20px_rgba(255,0,0,0.6)] transition-all duration-300 hover:scale-110 border-2 border-[#FF0000] group z-10"
+        className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 sm:translate-x-4 bg-white hover:bg-[#FF0000] text-[#FF0000] hover:text-white p-2 sm:p-3 md:p-4 rounded-full shadow-lg hover:shadow-[0_0_20px_rgba(255,0,0,0.6)] transition-all duration-300 hover:scale-110 border-2 border-[#FF0000] group z-10"
         aria-label="Next slide"
       >
         <svg
-          className="w-6 h-6 transform group-hover:translate-x-1 transition-transform duration-300"
+          className="w-5 h-5 sm:w-6 sm:h-6 transform group-hover:translate-x-1 transition-transform duration-300"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"

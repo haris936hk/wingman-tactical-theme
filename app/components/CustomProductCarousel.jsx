@@ -54,7 +54,7 @@ export function CustomProductCarousel({items, showCTA = false, onQuoteClick}) {
     <div className="relative">
       {/* Carousel Container - full width with proper padding for shadows */}
       <div>
-        <div className="overflow-x-hidden -mx-6 px-6">
+        <div className="overflow-x-hidden -mx-4 sm:-mx-6 px-4 sm:px-6">
           <div
             className="flex transition-transform duration-500 ease-out"
             style={{
@@ -64,7 +64,7 @@ export function CustomProductCarousel({items, showCTA = false, onQuoteClick}) {
             {items.map((item, index) => (
               <div
                 key={item.image}
-                className="flex-shrink-0 px-3"
+                className="flex-shrink-0 px-2 sm:px-3"
                 style={{width: `${100 / slidesToShow}%`}}
               >
                 <CustomProductCard item={item} index={index} />
@@ -74,8 +74,8 @@ export function CustomProductCarousel({items, showCTA = false, onQuoteClick}) {
 
           {/* CTA Image Section - inside overflow container */}
           {showCTA && (
-            <div className="mt-12 px-3">
-              <div className="relative block h-[250px] md:h-[280px] rounded-lg overflow-hidden group">
+            <div className="mt-8 sm:mt-10 md:mt-12 px-2 sm:px-3">
+              <div className="relative block h-[200px] sm:h-[250px] md:h-[280px] lg:h-[300px] rounded-lg overflow-hidden group">
                 <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/60 z-10" />
                 <img
                   src={aboutUsImg}
@@ -86,13 +86,13 @@ export function CustomProductCarousel({items, showCTA = false, onQuoteClick}) {
                   width="1400"
                   height="280"
                 />
-                <div className="absolute inset-0 flex flex-col items-center justify-center z-20 px-8">
-                  <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold uppercase text-white mb-4 text-center leading-tight">
-                    GET A QUOTE FOR YOUR<br />CUSTOM GEAR NOW!
+                <div className="absolute inset-0 flex flex-col items-center justify-center z-20 px-4 sm:px-6 md:px-8">
+                  <h3 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold uppercase text-white mb-3 sm:mb-4 text-center leading-tight">
+                    GET A QUOTE FOR YOUR<br className="hidden sm:block" /> CUSTOM GEAR NOW!
                   </h3>
                   <button
                     onClick={onQuoteClick}
-                    className="relative inline-block px-8 py-4 font-bold uppercase tracking-wide text-white overflow-hidden rounded-lg backdrop-blur-md bg-gradient-to-r from-[#FF0000] via-gray-600 to-[#FF0000] bg-[length:200%_100%] motion-safe:animate-[gradient_3s_linear_infinite] shadow-[0_0_20px_rgba(255,0,0,0.6)] hover:shadow-[0_0_30px_rgba(255,0,0,0.8)] motion-safe:hover:-translate-y-1 transition-all duration-300 border border-white/20"
+                    className="relative inline-block w-full sm:w-auto min-h-[44px] px-6 sm:px-8 py-3 sm:py-4 font-bold uppercase tracking-wide text-white overflow-hidden rounded-lg backdrop-blur-md bg-gradient-to-r from-[#FF0000] via-gray-600 to-[#FF0000] bg-[length:200%_100%] motion-safe:animate-[gradient_3s_linear_infinite] shadow-[0_0_20px_rgba(255,0,0,0.6)] hover:shadow-[0_0_30px_rgba(255,0,0,0.8)] motion-safe:hover:-translate-y-1 transition-all duration-300 border border-white/20"
                   >
                     GET A QUOTE
                   </button>
@@ -106,11 +106,11 @@ export function CustomProductCarousel({items, showCTA = false, onQuoteClick}) {
       {/* Navigation Arrows - vertically centered on carousel cards */}
       <button
         onClick={prevSlide}
-        className="absolute left-0 top-[220px] -translate-y-1/2 -translate-x-4 bg-white hover:bg-[#FF0000] text-[#FF0000] hover:text-white p-4 rounded-full shadow-lg hover:shadow-[0_0_20px_rgba(255,0,0,0.6)] transition-all duration-300 hover:scale-110 border-2 border-[#FF0000] group z-10"
+        className="absolute left-0 top-[180px] sm:top-[220px] -translate-y-1/2 -translate-x-2 sm:-translate-x-4 bg-white hover:bg-[#FF0000] text-[#FF0000] hover:text-white p-2 sm:p-3 md:p-4 rounded-full shadow-lg hover:shadow-[0_0_20px_rgba(255,0,0,0.6)] transition-all duration-300 hover:scale-110 border-2 border-[#FF0000] group z-10"
         aria-label="Previous slide"
       >
         <svg
-          className="w-6 h-6 transform group-hover:-translate-x-1 transition-transform duration-300"
+          className="w-5 h-5 sm:w-6 sm:h-6 transform group-hover:-translate-x-1 transition-transform duration-300"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -126,11 +126,11 @@ export function CustomProductCarousel({items, showCTA = false, onQuoteClick}) {
 
       <button
         onClick={nextSlide}
-        className="absolute right-0 top-[220px] -translate-y-1/2 translate-x-4 bg-white hover:bg-[#FF0000] text-[#FF0000] hover:text-white p-4 rounded-full shadow-lg hover:shadow-[0_0_20px_rgba(255,0,0,0.6)] transition-all duration-300 hover:scale-110 border-2 border-[#FF0000] group z-10"
+        className="absolute right-0 top-[180px] sm:top-[220px] -translate-y-1/2 translate-x-2 sm:translate-x-4 bg-white hover:bg-[#FF0000] text-[#FF0000] hover:text-white p-2 sm:p-3 md:p-4 rounded-full shadow-lg hover:shadow-[0_0_20px_rgba(255,0,0,0.6)] transition-all duration-300 hover:scale-110 border-2 border-[#FF0000] group z-10"
         aria-label="Next slide"
       >
         <svg
-          className="w-6 h-6 transform group-hover:translate-x-1 transition-transform duration-300"
+          className="w-5 h-5 sm:w-6 sm:h-6 transform group-hover:translate-x-1 transition-transform duration-300"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -172,8 +172,8 @@ function CustomProductCard({item, index}) {
       </div>
 
       {/* Title Container */}
-      <div className="p-6 text-center">
-        <h3 className="text-lg font-bold text-gray-900 group-hover:text-[#FF0000] transition-colors duration-300 line-clamp-2 min-h-[3.5rem]">
+      <div className="p-4 sm:p-5 md:p-6 text-center">
+        <h3 className="text-base sm:text-lg font-bold text-gray-900 group-hover:text-[#FF0000] transition-colors duration-300 line-clamp-2 min-h-[3rem] sm:min-h-[3.5rem]">
           {item.title}
         </h3>
       </div>

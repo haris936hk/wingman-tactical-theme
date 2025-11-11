@@ -83,7 +83,7 @@ export function CountUpStat({icon, target, label, duration = 2000}) {
   return (
     <div ref={elementRef} className="flex flex-col items-center text-center">
       {/* Icon */}
-      <div className="mb-4 text-white" style={{
+      <div className="mb-3 sm:mb-4 text-white" style={{
         filter: 'drop-shadow(0 0 8px rgba(211, 47, 47, 0.6)) drop-shadow(0 0 16px rgba(211, 47, 47, 0.4))'
       }}>
         {icon}
@@ -91,7 +91,7 @@ export function CountUpStat({icon, target, label, duration = 2000}) {
 
       {/* Animated Number */}
       <div
-        className="text-5xl lg:text-6xl font-bold text-white mb-3"
+        className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-2 sm:mb-3"
         style={{
           textShadow: '0 0 10px rgba(211, 47, 47, 0.8), 0 0 20px rgba(211, 47, 47, 0.6), 0 0 30px rgba(211, 47, 47, 0.4)'
         }}
@@ -100,7 +100,7 @@ export function CountUpStat({icon, target, label, duration = 2000}) {
       </div>
 
       {/* Label */}
-      <p className="text-base lg:text-lg text-gray-300 font-medium max-w-[200px]">
+      <p className="text-sm sm:text-base md:text-lg text-gray-300 font-medium max-w-[180px] sm:max-w-[200px]">
         {label}
       </p>
     </div>

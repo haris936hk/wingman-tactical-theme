@@ -154,14 +154,15 @@ export default function Product() {
   return (
     <>
       {/* Main Product Section */}
-      <section className="bg-[#000000] pt-[180px] pb-12 lg:pb-16">
+      <section className="bg-[#000000] pt-[104px] pb-12 lg:pb-16">
         <div className="max-w-[1400px] mx-auto px-6">
           {/* Product Grid Layout */}
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 motion-safe:animate-[fadeSlideUp_400ms_ease-out]">
             {/* Left Column: Product Image */}
             <div className="w-full">
               <ProductImageGallery
-                image={selectedVariant?.image}
+                images={product.images?.nodes || []}
+                selectedVariantImage={selectedVariant?.image}
                 productTitle={title}
               />
             </div>
@@ -290,6 +291,15 @@ const PRODUCT_FRAGMENT = `#graphql
     description
     encodedVariantExistence
     encodedVariantAvailability
+    images(first: 10) {
+      nodes {
+        id
+        url
+        altText
+        width
+        height
+      }
+    }
     options {
       name
       optionValues {

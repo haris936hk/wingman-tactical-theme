@@ -254,7 +254,7 @@ export default function Collection() {
   };
 
   return (
-    <div className="bg-[#000000] min-h-screen pt-[180px] pb-16">
+    <div className="bg-[#000000] min-h-screen pt-[104px] pb-16">
       {/* Breadcrumbs */}
       <div className="max-w-[1400px] mx-auto px-6 mb-6">
         <CollectionBreadcrumbs
@@ -294,7 +294,7 @@ export default function Collection() {
       )}
 
       {/* Main Content */}
-      <div className="max-w-[1400px] mx-auto px-6">
+      <div className="max-w-[1400px] mx-auto px-6 mt-6">
         <div className="flex gap-8">
           {/* Desktop Filter Sidebar */}
           <div className="hidden lg:block">

@@ -38,11 +38,12 @@ export function CollectionFilterBar({
       className="sticky top-24 z-40 bg-black/95 backdrop-blur-md
         border-y-2 border-[#FF0000]/30
         shadow-[0_0_20px_rgba(255,0,0,0.2)]
-        px-4 md:px-6 py-4
+        py-4
         motion-safe:animate-[fadeSlideUp_0.5s_ease-out_0.2s]
         motion-safe:[animation-fill-mode:both]"
     >
-      <div className="flex items-center justify-between gap-4 flex-wrap">
+      <div className="max-w-[1400px] mx-auto px-6">
+        <div className="flex items-center justify-between gap-4 flex-wrap">
         {/* Left: Result Count + Mobile Filter Button */}
         <div className="flex items-center gap-4">
           {/* Mobile Filter Button */}
@@ -109,6 +110,7 @@ export function CollectionFilterBar({
 
           {/* View Toggle */}
           <ViewToggle currentView={currentView} onViewChange={onViewChange} />
+        </div>
         </div>
       </div>
     </div>

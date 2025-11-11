@@ -13,6 +13,8 @@ export function FilterSidebar({
   const [expandedSections, setExpandedSections] = useState({
     price: true,
     type: true,
+    color: true,
+    size: true,
     vendor: true,
     availability: true,
   });
@@ -109,6 +111,68 @@ export function FilterSidebar({
               </div>
             </FilterSection>
           )}
+
+          {/* Color Filter */}
+          <FilterSection
+            title="Color"
+            isExpanded={expandedSections.color}
+            onToggle={() => toggleSection('color')}
+          >
+            <div className="space-y-3">
+              {['Black', 'Olive Green', 'Navy Blue', 'Desert Tan', 'Pink', 'Brown'].map((color) => (
+                <label
+                  key={color}
+                  className="flex items-center gap-3 cursor-pointer group"
+                >
+                  <input
+                    type="checkbox"
+                    checked={(filters.color || []).includes(color)}
+                    onChange={() => handleCheckboxChange('color', color)}
+                    className="w-5 h-5 rounded border-2 border-white/30
+                      bg-transparent checked:bg-[#FF0000] checked:border-[#FF0000]
+                      focus:outline-none focus:ring-2 focus:ring-[#FF0000] focus:ring-offset-2 focus:ring-offset-black
+                      transition-colors cursor-pointer"
+                    aria-label={`Filter by ${color}`}
+                  />
+                  <span className="text-sm text-gray-300 group-hover:text-white transition-colors">
+                    {color}
+                  </span>
+                </label>
+              ))}
+            </div>
+          </FilterSection>
+
+          {/* Size Filter */}
+          <FilterSection
+            title="Size"
+            isExpanded={expandedSections.size}
+            onToggle={() => toggleSection('size')}
+          >
+            <div className="grid grid-cols-3 gap-2">
+              {['3XS', '2XS', 'XS', 'S', 'M', 'R', 'L', 'XL', '2XL', '3XL', '4XL', '5XL', '6XL'].map((size) => (
+                <label
+                  key={size}
+                  className="flex items-center justify-center cursor-pointer"
+                >
+                  <input
+                    type="checkbox"
+                    checked={(filters.size || []).includes(size)}
+                    onChange={() => handleCheckboxChange('size', size)}
+                    className="sr-only peer"
+                    aria-label={`Filter by size ${size}`}
+                  />
+                  <span className="w-full text-center px-2 py-2 text-xs font-bold uppercase
+                    border-2 border-white/30 rounded
+                    text-gray-300 bg-transparent
+                    peer-checked:bg-[#FF0000] peer-checked:border-[#FF0000] peer-checked:text-white
+                    hover:border-[#FF0000] hover:text-white
+                    transition-all cursor-pointer">
+                    {size}
+                  </span>
+                </label>
+              ))}
+            </div>
+          </FilterSection>
 
           {/* Vendor Filter */}
           {availableFilters.vendors?.length > 0 && (

@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useState, useRef, useEffect} from 'react';
 
 /**
  * ProductTabs Component - Tabbed interface for product information
@@ -11,6 +11,8 @@ export function ProductTabs({
   reviewsContent,
 }) {
   const [activeTab, setActiveTab] = useState('description');
+  const [indicatorStyle, setIndicatorStyle] = useState({});
+  const tabRefs = useRef({});
 
   const tabs = [
     {id: 'description', label: 'Description', content: descriptionHtml},
@@ -40,18 +42,31 @@ export function ProductTabs({
     },
   ];
 
+  // Update indicator position when active tab changes
+  useEffect(() => {
+    const activeButton = tabRefs.current[activeTab];
+    if (activeButton) {
+      const {offsetLeft, offsetWidth} = activeButton;
+      setIndicatorStyle({
+        left: `${offsetLeft}px`,
+        width: `${offsetWidth}px`,
+      });
+    }
+  }, [activeTab]);
+
   const activeContent = tabs.find((tab) => tab.id === activeTab)?.content || '';
 
   return (
     <div className="w-full">
       {/* Tab Navigation */}
-      <div className="flex border-b border-[#FF0000]/30 mb-6">
+      <div className="flex border-b border-[#FF0000]/30 mb-6 relative">
         {tabs.map((tab) => (
           <button
             key={tab.id}
+            ref={(el) => (tabRefs.current[tab.id] = el)}
             onClick={() => setActiveTab(tab.id)}
             className={`px-6 py-3 font-bold uppercase text-sm tracking-wide
-              transition-all duration-300 relative
+              transition-colors duration-300 relative
               ${
                 activeTab === tab.id
                   ? 'text-white'
@@ -59,30 +74,28 @@ export function ProductTabs({
               }`}
           >
             {tab.label}
-
-            {/* Active Tab Indicator */}
-            {activeTab === tab.id && (
-              <div
-                className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#FF0000]"
-                style={{
-                  boxShadow: '0 0 10px rgba(255, 0, 0, 0.6)',
-                }}
-              />
-            )}
           </button>
         ))}
+
+        {/* Animated Active Tab Indicator */}
+        <div
+          className="absolute bottom-0 h-0.5 bg-[#FF0000] transition-all duration-300 ease-out"
+          style={{
+            ...indicatorStyle,
+            boxShadow: '0 0 10px rgba(255, 0, 0, 0.6)',
+          }}
+        />
       </div>
 
       {/* Tab Content */}
       <div
-        className="prose prose-invert max-w-none
-          prose-headings:text-white prose-headings:font-bold prose-headings:uppercase
-          prose-p:text-gray-300 prose-p:leading-relaxed
-          prose-strong:text-white
-          prose-ul:text-gray-300 prose-ol:text-gray-300
-          prose-li:text-gray-300
-          prose-a:text-[#FF0000] prose-a:no-underline hover:prose-a:underline
-          motion-safe:animate-[fadeSlideUp_300ms_ease-out]"
+        className="text-white motion-safe:animate-[fadeSlideUp_300ms_ease-out]
+          [&_p]:mb-4 [&_h1]:mb-4 [&_h2]:mb-4 [&_h3]:mb-4 [&_h4]:mb-4 [&_h5]:mb-4 [&_h6]:mb-4
+          [&_ul]:mb-4 [&_ol]:mb-4 [&_li]:mb-2
+          [&_ul]:pl-6 [&_ol]:pl-6
+          [&_ul]:list-disc [&_ol]:list-decimal
+          [&_blockquote]:pl-4 [&_blockquote]:border-l-4 [&_blockquote]:border-gray-500 [&_blockquote]:mb-4
+          [&_img]:mb-4 [&_table]:mb-4"
         dangerouslySetInnerHTML={{__html: activeContent}}
       />
     </div>

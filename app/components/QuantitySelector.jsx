@@ -25,10 +25,26 @@ export function QuantitySelector({
   };
 
   const handleChange = (e) => {
-    const value = parseInt(e.target.value, 10);
+    const inputValue = e.target.value;
+
+    // Allow empty input temporarily (while user is typing)
+    if (inputValue === '') {
+      setQuantity('');
+      return;
+    }
+
+    const value = parseInt(inputValue, 10);
     if (!isNaN(value) && value >= min && value <= max) {
       setQuantity(value);
       onChange?.(value);
+    }
+  };
+
+  const handleBlur = () => {
+    // If empty or invalid on blur, reset to min value
+    if (quantity === '' || quantity < min) {
+      setQuantity(min);
+      onChange?.(min);
     }
   };
 
@@ -54,6 +70,7 @@ export function QuantitySelector({
         type="number"
         value={quantity}
         onChange={handleChange}
+        onBlur={handleBlur}
         min={min}
         max={max}
         className="w-16 h-12 text-center border-y-2 border-white/30

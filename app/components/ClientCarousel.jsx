@@ -196,9 +196,9 @@ export function ClientCarousel() {
   return (
     <div className="relative">
       {/* Carousel Container */}
-      <div className="overflow-hidden px-2">
+      <div className="overflow-hidden px-1 sm:px-2">
         <div
-          className="flex transition-transform duration-500 ease-out py-4"
+          className="flex transition-transform duration-500 ease-out py-3 sm:py-4"
           style={{
             transform: `translateX(-${currentIndex * (100 / slidesToShow)}%)`,
           }}
@@ -206,11 +206,11 @@ export function ClientCarousel() {
           {clientsData.map((client, index) => (
             <div
               key={client.id}
-              className="flex-shrink-0 px-3"
+              className="flex-shrink-0 px-2 sm:px-3"
               style={{width: `${100 / slidesToShow}%`}}
             >
               <div
-                className="group bg-white rounded-xl overflow-hidden h-full flex flex-col shadow-md relative will-change-transform motion-safe:transition-all motion-safe:duration-200 motion-safe:ease-out hover:scale-[1.03] hover:-translate-y-2 hover:shadow-[0_0_25px_rgba(255,0,0,0.6)] motion-reduce:hover:scale-100 focus-visible:outline-2 focus-visible:outline-[#FF0000] focus-visible:outline-offset-2"
+                className="group bg-white rounded-xl overflow-hidden h-full flex flex-col shadow-md relative will-change-transform motion-safe:transition-transform motion-safe:duration-300 motion-safe:ease-out motion-safe:hover:scale-105 motion-reduce:hover:scale-100 focus-visible:outline-2 focus-visible:outline-[#FF0000] focus-visible:outline-offset-2"
               >
                 {/* Optimized border effect - using box-shadow instead of complex gradient */}
                 <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-10 motion-reduce:hidden"
@@ -220,7 +220,7 @@ export function ClientCarousel() {
                 />
 
                 {/* Image */}
-                <div className="relative h-64 bg-gray-200 overflow-hidden">
+                <div className="relative h-48 sm:h-56 md:h-64 bg-gray-200 overflow-hidden">
                   <img
                     src={client.image}
                     alt={client.title}
@@ -238,12 +238,12 @@ export function ClientCarousel() {
                 </div>
 
                 {/* Content */}
-                <div className="p-6 text-center flex-1 flex flex-col bg-gradient-to-b from-white to-gray-50 relative">
+                <div className="p-4 sm:p-6 text-center flex-1 flex flex-col bg-gradient-to-b from-white to-gray-50 relative">
                   {/* Decorative line - only scale animation */}
-                  <div className="w-16 h-1 bg-[#FF0000] mx-auto mb-4 motion-safe:scale-x-0 motion-safe:group-hover:scale-x-100 motion-safe:transition-transform motion-safe:duration-300 motion-safe:ease-out" />
+                  <div className="w-12 sm:w-16 h-1 bg-[#FF0000] mx-auto mb-3 sm:mb-4 motion-safe:scale-x-0 motion-safe:group-hover:scale-x-100 motion-safe:transition-transform motion-safe:duration-300 motion-safe:ease-out" />
 
                   <h3
-                    className="text-2xl font-bold uppercase mb-4 text-[#1a1a1a]"
+                    className="text-xl sm:text-2xl font-bold uppercase mb-3 sm:mb-4 text-[#1a1a1a]"
                     style={{
                       textShadow: '0 2px 4px rgba(0,0,0,0.05)'
                     }}
@@ -251,7 +251,7 @@ export function ClientCarousel() {
                     {client.title}
                   </h3>
 
-                  <p className="text-gray-700 leading-relaxed">
+                  <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
                     {client.description}
                   </p>
                 </div>
@@ -261,15 +261,15 @@ export function ClientCarousel() {
         </div>
 
         {/* Dots Navigation - moved inside container */}
-        <div className="flex justify-center gap-3 mt-8">
+        <div className="flex justify-center gap-2 sm:gap-3 mt-6 sm:mt-8">
           {Array.from({length: maxIndex + 1}).map((_, index) => (
             <button
               key={index}
               onClick={() => goToSlide(index)}
-              className={`rounded-full transition-all duration-300 ${
+              className={`rounded-full transition-all duration-300 min-w-[32px] min-h-[32px] flex items-center justify-center ${
                 currentIndex === index
-                  ? 'bg-[#FF0000] w-10 h-3 shadow-lg'
-                  : 'bg-gray-300 hover:bg-gray-400 w-3 h-3 hover:scale-125'
+                  ? 'bg-[#FF0000] w-8 sm:w-10 h-2.5 sm:h-3 shadow-lg'
+                  : 'bg-gray-300 hover:bg-gray-400 w-2.5 sm:w-3 h-2.5 sm:h-3 hover:scale-125'
               }`}
               style={
                 currentIndex === index
@@ -287,11 +287,11 @@ export function ClientCarousel() {
       {/* Navigation Arrows - Optimized with GPU-accelerated animations only */}
       <button
         onClick={prevSlide}
-        className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 bg-white hover:bg-[#FF0000] text-[#FF0000] hover:text-white p-4 rounded-full shadow-lg motion-safe:transition-all motion-safe:duration-300 motion-safe:hover:scale-110 border-2 border-[#FF0000] group z-10"
+        className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 sm:-translate-x-4 bg-white hover:bg-[#FF0000] text-[#FF0000] hover:text-white p-2 sm:p-3 md:p-4 rounded-full shadow-lg motion-safe:transition-all motion-safe:duration-300 motion-safe:hover:scale-110 border-2 border-[#FF0000] group z-10"
         aria-label="Previous slide"
       >
         <svg
-          className="w-6 h-6"
+          className="w-5 h-5 sm:w-6 sm:h-6"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -307,11 +307,11 @@ export function ClientCarousel() {
 
       <button
         onClick={nextSlide}
-        className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 bg-white hover:bg-[#FF0000] text-[#FF0000] hover:text-white p-4 rounded-full shadow-lg motion-safe:transition-all motion-safe:duration-300 motion-safe:hover:scale-110 border-2 border-[#FF0000] group z-10"
+        className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 sm:translate-x-4 bg-white hover:bg-[#FF0000] text-[#FF0000] hover:text-white p-2 sm:p-3 md:p-4 rounded-full shadow-lg motion-safe:transition-all motion-safe:duration-300 motion-safe:hover:scale-110 border-2 border-[#FF0000] group z-10"
         aria-label="Next slide"
       >
         <svg
-          className="w-6 h-6"
+          className="w-5 h-5 sm:w-6 sm:h-6"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
