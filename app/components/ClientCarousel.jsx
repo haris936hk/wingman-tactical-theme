@@ -150,6 +150,11 @@ function useDebounce(callback, delay) {
 export function ClientCarousel() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [slidesToShow, setSlidesToShow] = useState(4);
+  const [touchStart, setTouchStart] = useState(null);
+  const [touchEnd, setTouchEnd] = useState(null);
+
+  // Minimum swipe distance (in pixels)
+  const minSwipeDistance = 50;
 
   // Memoized resize handler function
   const handleResize = useCallback(() => {
@@ -193,11 +198,39 @@ export function ClientCarousel() {
     setCurrentIndex(Math.min(index, maxIndex));
   };
 
+  // Touch handlers for swipe functionality
+  const onTouchStart = (e) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const onTouchMove = (e) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const onTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+
+    if (isLeftSwipe) {
+      nextSlide();
+    }
+    if (isRightSwipe) {
+      prevSlide();
+    }
+  };
+
   return (
     <div className="relative">
       {/* Carousel Container */}
       <div className="overflow-hidden px-1 sm:px-2">
         <div
+          onTouchStart={onTouchStart}
+          onTouchMove={onTouchMove}
+          onTouchEnd={onTouchEnd}
           className="flex transition-transform duration-500 ease-out py-3 sm:py-4"
           style={{
             transform: `translateX(-${currentIndex * (100 / slidesToShow)}%)`,
@@ -266,20 +299,24 @@ export function ClientCarousel() {
             <button
               key={index}
               onClick={() => goToSlide(index)}
-              className={`rounded-full transition-all duration-300 min-w-[32px] min-h-[32px] flex items-center justify-center ${
-                currentIndex === index
-                  ? 'bg-[#FF0000] w-8 sm:w-10 h-2.5 sm:h-3 shadow-lg'
-                  : 'bg-gray-300 hover:bg-gray-400 w-2.5 sm:w-3 h-2.5 sm:h-3 hover:scale-125'
-              }`}
-              style={
-                currentIndex === index
-                  ? {
-                      boxShadow: '0 2px 8px rgba(255, 0, 0, 0.5)',
-                    }
-                  : {}
-              }
+              className="min-w-[44px] min-h-[44px] flex items-center justify-center p-2 transition-all duration-300"
               aria-label={`Go to slide ${index + 1}`}
-            />
+            >
+              <span
+                className={`rounded-full transition-all duration-300 ${
+                  currentIndex === index
+                    ? 'bg-[#FF0000] w-6 sm:w-8 h-2 sm:h-2.5 shadow-lg'
+                    : 'bg-gray-300 hover:bg-gray-400 w-2 sm:w-2.5 h-2 sm:h-2.5 hover:scale-125'
+                }`}
+                style={
+                  currentIndex === index
+                    ? {
+                        boxShadow: '0 2px 8px rgba(255, 0, 0, 0.5)',
+                      }
+                    : {}
+                }
+              />
+            </button>
           ))}
         </div>
       </div>

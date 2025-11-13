@@ -68,12 +68,12 @@ export const CUSTOMER_ORDER_QUERY = `#graphql
       formatted(withName: true)
       formattedArea
     }
-    discountApplications(first: 100) {
+    discountApplications(first: 20) {
       nodes {
         ...DiscountApplication
       }
     }
-    lineItems(first: 100) {
+    lineItems(first: 20) {
       nodes {
         ...OrderLineItemFull
       }

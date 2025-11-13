@@ -104,7 +104,7 @@ export default function AccountProfile() {
   const isUpdating = state !== 'idle';
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8">
       {/* Success Message */}
       {showSuccess && (
         <SuccessMessage
@@ -117,7 +117,7 @@ export default function AccountProfile() {
       {/* Profile Header */}
       <div>
         <h1
-          className="text-3xl lg:text-4xl font-bold uppercase text-white mb-2"
+          className="text-2xl sm:text-3xl lg:text-4xl font-bold uppercase text-white mb-2"
           style={{
             fontFamily: 'var(--font-family-shock)',
             textShadow: '0 0 15px rgba(255, 0, 0, 0.6)',
@@ -125,14 +125,14 @@ export default function AccountProfile() {
         >
           My Profile
         </h1>
-        <p className="text-gray-300">Manage your personal information</p>
+        <p className="text-sm sm:text-base text-gray-300">Manage your personal information</p>
       </div>
 
       {/* Profile Form */}
       <AccountCard title="Personal Information">
         <Form method="PUT">
           <FormFieldset>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
               <FormInput
                 name="firstName"
                 label="First Name"
@@ -187,15 +187,15 @@ export default function AccountProfile() {
 
       {/* Account Info Card */}
       <AccountCard title="Account Information" hover={false}>
-        <div className="space-y-3 text-sm">
-          <div className="flex items-center justify-between py-2 border-b border-white/10">
-            <span className="text-gray-400 uppercase">Account ID:</span>
-            <span className="text-white font-mono">{customer.id?.split('/').pop()}</span>
+        <div className="space-y-3 text-xs sm:text-sm">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between py-2 sm:py-3 border-b border-white/10 gap-1 sm:gap-0">
+            <span className="text-gray-400 uppercase text-xs sm:text-sm">Account ID:</span>
+            <span className="text-white font-mono text-xs sm:text-sm break-all">{customer.id?.split('/').pop()}</span>
           </div>
           {customer.emailAddress && (
-            <div className="flex items-center justify-between py-2 border-b border-white/10">
-              <span className="text-gray-400 uppercase">Email:</span>
-              <span className="text-white">{customer.emailAddress?.emailAddress}</span>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between py-2 sm:py-3 border-b border-white/10 gap-1 sm:gap-0">
+              <span className="text-gray-400 uppercase text-xs sm:text-sm">Email:</span>
+              <span className="text-white text-xs sm:text-sm break-all">{customer.emailAddress?.emailAddress}</span>
             </div>
           )}
         </div>

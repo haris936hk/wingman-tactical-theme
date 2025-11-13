@@ -490,15 +490,17 @@ function ExistingAddresses({addresses, defaultAddress}) {
               </div>
 
               {/* Actions */}
-              <div className="pt-4 border-t border-[#FF0000]/20 flex gap-3">
+              <div className="pt-4 border-t border-[#FF0000]/20 flex flex-wrap gap-2 sm:gap-3">
                 <button
                   type="button"
                   onClick={() => setEditingId(address.id)}
-                  className="flex items-center gap-2 text-white hover:text-[#FF0000]
-                    transition-colors font-bold uppercase text-sm"
+                  className="flex items-center justify-center gap-2 px-4 py-3 min-h-[44px] min-w-[44px]
+                    text-white hover:text-[#FF0000] bg-white/5 hover:bg-white/10
+                    rounded-lg transition-all duration-300 font-bold uppercase text-sm"
+                  aria-label="Edit address"
                 >
                   <svg
-                    className="w-4 h-4"
+                    className="w-4 h-4 sm:w-5 sm:h-5"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -510,15 +512,17 @@ function ExistingAddresses({addresses, defaultAddress}) {
                       d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
                     />
                   </svg>
-                  Edit
+                  <span>Edit</span>
                 </button>
 
                 <Form method="DELETE">
                   <input type="hidden" name="addressId" value={address.id} />
                   <button
                     type="submit"
-                    className="flex items-center gap-2 text-gray-400 hover:text-[#FF0000]
-                      transition-colors font-bold uppercase text-sm"
+                    className="flex items-center justify-center gap-2 px-4 py-3 min-h-[44px] min-w-[44px]
+                      text-gray-400 hover:text-[#FF0000] bg-white/5 hover:bg-white/10
+                      rounded-lg transition-all duration-300 font-bold uppercase text-sm"
+                    aria-label="Delete address"
                     onClick={(e) => {
                       if (!confirm('Are you sure you want to delete this address?')) {
                         e.preventDefault();
@@ -526,7 +530,7 @@ function ExistingAddresses({addresses, defaultAddress}) {
                     }}
                   >
                     <svg
-                      className="w-4 h-4"
+                      className="w-4 h-4 sm:w-5 sm:h-5"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -538,7 +542,7 @@ function ExistingAddresses({addresses, defaultAddress}) {
                         d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
                       />
                     </svg>
-                    Delete
+                    <span>Delete</span>
                   </button>
                 </Form>
               </div>
@@ -573,7 +577,7 @@ export function AddressForm({addressId, address, defaultAddress, children}) {
 
       <FormFieldset>
         {/* Name Fields */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
           <FormInput
             name="firstName"
             label="First Name"
@@ -624,7 +628,7 @@ export function AddressForm({addressId, address, defaultAddress, children}) {
         />
 
         {/* City, State, Zip */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
           <FormInput
             name="city"
             label="City"
@@ -655,7 +659,7 @@ export function AddressForm({addressId, address, defaultAddress, children}) {
         </div>
 
         {/* Country and Phone */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
           <FormInput
             name="territoryCode"
             label="Country Code"
@@ -676,17 +680,19 @@ export function AddressForm({addressId, address, defaultAddress, children}) {
         </div>
 
         {/* Default Address Checkbox */}
-        <label className="flex items-center gap-3 cursor-pointer group">
-          <input
-            type="checkbox"
-            name="defaultAddress"
-            defaultChecked={isDefaultAddress}
-            className="w-5 h-5 rounded border-2 border-white/30
-              bg-transparent checked:bg-[#FF0000] checked:border-[#FF0000]
-              focus:outline-none focus:ring-2 focus:ring-[#FF0000] focus:ring-offset-2 focus:ring-offset-black
-              transition-colors cursor-pointer"
-          />
-          <span className="text-sm text-gray-300 group-hover:text-white transition-colors">
+        <label className="flex items-center gap-3 cursor-pointer group min-h-[44px]">
+          <div className="relative flex items-center justify-center min-w-[44px] min-h-[44px]">
+            <input
+              type="checkbox"
+              name="defaultAddress"
+              defaultChecked={isDefaultAddress}
+              className="w-6 h-6 sm:w-7 sm:h-7 rounded border-2 border-white/30
+                bg-transparent checked:bg-[#FF0000] checked:border-[#FF0000]
+                focus:outline-none focus:ring-2 focus:ring-[#FF0000] focus:ring-offset-2 focus:ring-offset-black
+                transition-colors cursor-pointer"
+            />
+          </div>
+          <span className="text-sm sm:text-base text-gray-300 group-hover:text-white transition-colors">
             Set as default address
           </span>
         </label>

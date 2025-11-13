@@ -46,10 +46,10 @@ export function FormInput({
         disabled={disabled}
         aria-invalid={error ? 'true' : 'false'}
         aria-describedby={error ? `${inputId}-error` : undefined}
-        className={`w-full px-4 py-3 rounded-lg
+        className={`w-full px-4 py-3 sm:py-3.5 min-h-[44px] rounded-lg
           bg-black/50 backdrop-blur-sm
           border-2 ${error ? 'border-[#FF0000]' : 'border-white/30'}
-          text-white placeholder:text-gray-500
+          text-sm sm:text-base text-white placeholder:text-gray-500
           focus:outline-none focus:ring-2 focus:ring-[#FF0000] focus:ring-offset-2 focus:ring-offset-black
           focus:border-[#FF0000] focus:shadow-[0_0_20px_rgba(255,0,0,0.4)]
           disabled:opacity-50 disabled:cursor-not-allowed

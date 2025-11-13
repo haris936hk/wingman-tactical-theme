@@ -65,7 +65,7 @@ export default function Orders() {
   const {orders} = customer;
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8">
       <OrderSearchForm currentFilters={filters} />
       <OrdersTable orders={orders} filters={filters} />
     </div>
@@ -306,12 +306,13 @@ function OrderItem({order}) {
         <div className="pt-4 border-t border-[#FF0000]/20">
           <Link
             to={`/account/orders/${btoa(order.id)}`}
-            className="inline-flex items-center gap-2 text-white hover:text-[#FF0000]
+            className="inline-flex items-center justify-center gap-2 px-4 py-3 min-h-[44px]
+              text-white hover:text-[#FF0000]
               transition-colors font-bold uppercase text-sm group"
           >
             View Order Details
             <svg
-              className="w-5 h-5 group-hover:translate-x-1 transition-transform"
+              className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"

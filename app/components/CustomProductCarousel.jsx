@@ -5,6 +5,11 @@ import aboutUsImg from '~/assets/aboutus.png';
 export function CustomProductCarousel({items, showCTA = false, onQuoteClick}) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [slidesToShow, setSlidesToShow] = useState(4);
+  const [touchStart, setTouchStart] = useState(null);
+  const [touchEnd, setTouchEnd] = useState(null);
+
+  // Minimum swipe distance (in pixels)
+  const minSwipeDistance = 50;
 
   // Handle responsive slides
   useEffect(() => {
@@ -50,12 +55,40 @@ export function CustomProductCarousel({items, showCTA = false, onQuoteClick}) {
     setCurrentIndex(Math.min(index, maxIndex));
   };
 
+  // Touch handlers for swipe functionality
+  const onTouchStart = (e) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const onTouchMove = (e) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const onTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+
+    if (isLeftSwipe) {
+      nextSlide();
+    }
+    if (isRightSwipe) {
+      prevSlide();
+    }
+  };
+
   return (
     <div className="relative">
       {/* Carousel Container - full width with proper padding for shadows */}
       <div>
         <div className="overflow-x-hidden -mx-4 sm:-mx-6 px-4 sm:px-6">
           <div
+            onTouchStart={onTouchStart}
+            onTouchMove={onTouchMove}
+            onTouchEnd={onTouchEnd}
             className="flex transition-transform duration-500 ease-out"
             style={{
               transform: `translateX(-${currentIndex * (100 / slidesToShow)}%)`,

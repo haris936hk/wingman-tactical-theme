@@ -7,8 +7,12 @@ import {
 } from 'react-router';
 import {CUSTOMER_DETAILS_QUERY} from '~/graphql/customer-account/CustomerDetailsQuery';
 
-export function shouldRevalidate() {
-  return true;
+export function shouldRevalidate({formMethod}) {
+  // Revalidate on mutations (address updates, profile updates, logout)
+  if (formMethod && formMethod !== 'GET') return true;
+
+  // Don't revalidate on tab navigation within account section
+  return false;
 }
 
 /**
@@ -30,7 +34,7 @@ export async function loader({context}) {
     {customer: data.customer},
     {
       headers: {
-        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Cache-Control': 'private, max-age=60',
       },
     },
   );
@@ -42,7 +46,7 @@ export default function AccountLayout() {
 
   return (
     <div className="bg-[#000000] min-h-screen pt-[180px] pb-16">
-      <div className="max-w-[1400px] mx-auto px-6">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6">
         {/* Account Navigation */}
         <AccountMenu />
 
@@ -69,7 +73,8 @@ function AccountMenu() {
           to="/account"
           end
           className={({isActive}) =>
-            `px-6 py-3 rounded-lg font-bold uppercase tracking-wide text-sm
+            `px-4 sm:px-6 py-3.5 sm:py-4 min-h-[44px] flex items-center justify-center
+            rounded-lg font-bold uppercase tracking-wide text-sm
             transition-all duration-300 relative
             ${
               isActive
@@ -85,7 +90,8 @@ function AccountMenu() {
         <NavLink
           to="/account/orders"
           className={({isActive}) =>
-            `px-6 py-3 rounded-lg font-bold uppercase tracking-wide text-sm
+            `px-4 sm:px-6 py-3.5 sm:py-4 min-h-[44px] flex items-center justify-center
+            rounded-lg font-bold uppercase tracking-wide text-sm
             transition-all duration-300 relative
             ${
               isActive
@@ -101,7 +107,8 @@ function AccountMenu() {
         <NavLink
           to="/account/profile"
           className={({isActive}) =>
-            `px-6 py-3 rounded-lg font-bold uppercase tracking-wide text-sm
+            `px-4 sm:px-6 py-3.5 sm:py-4 min-h-[44px] flex items-center justify-center
+            rounded-lg font-bold uppercase tracking-wide text-sm
             transition-all duration-300 relative
             ${
               isActive
@@ -117,7 +124,8 @@ function AccountMenu() {
         <NavLink
           to="/account/addresses"
           className={({isActive}) =>
-            `px-6 py-3 rounded-lg font-bold uppercase tracking-wide text-sm
+            `px-4 sm:px-6 py-3.5 sm:py-4 min-h-[44px] flex items-center justify-center
+            rounded-lg font-bold uppercase tracking-wide text-sm
             transition-all duration-300 relative
             ${
               isActive
@@ -141,12 +149,13 @@ function Logout() {
     <Form method="POST" action="/account/logout" className="ml-auto">
       <button
         type="submit"
-        className="px-6 py-3 rounded-lg font-bold uppercase tracking-wide text-sm
+        className="px-4 sm:px-6 py-3.5 sm:py-4 min-h-[44px] rounded-lg font-bold uppercase tracking-wide text-sm
           text-gray-300 hover:text-white hover:bg-white/10
-          transition-all duration-300 flex items-center gap-2"
+          transition-all duration-300 flex items-center justify-center gap-2"
+        aria-label="Sign out"
       >
         <svg
-          className="w-4 h-4"
+          className="w-4 h-4 sm:w-5 sm:h-5"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -158,7 +167,8 @@ function Logout() {
             d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
           />
         </svg>
-        Sign Out
+        <span className="hidden sm:inline">Sign Out</span>
+        <span className="sm:hidden">Out</span>
       </button>
     </Form>
   );
