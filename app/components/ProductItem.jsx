@@ -1,6 +1,8 @@
 import {Link} from 'react-router';
-import {Image, Money} from '@shopify/hydrogen';
+import {Image, Money, CartForm} from '@shopify/hydrogen';
 import {useVariantUrl} from '~/lib/variants';
+import {WishlistButton} from './WishlistButton';
+import {useAside} from './Aside';
 
 /**
  * @param {{
@@ -16,10 +18,12 @@ import {useVariantUrl} from '~/lib/variants';
 export function ProductItem({product, loading, showSaleBadge = false, index = 0}) {
   const variantUrl = useVariantUrl(product.handle);
   const image = product.featuredImage;
+  const {open} = useAside();
+  const firstVariant = product.variants?.nodes?.[0];
 
   return (
     <div
-      className="bg-white border border-gray-200 rounded-lg shadow-sm group will-change-transform motion-safe:transition-all motion-safe:duration-200 motion-safe:ease-out hover:scale-[1.03] hover:-translate-y-2 hover:shadow-[0_0_25px_rgba(255,0,0,0.6)] focus-within:scale-[1.03] focus-within:-translate-y-2 focus-within:shadow-[0_0_25px_rgba(255,0,0,0.6)] opacity-0 translate-y-4 motion-safe:animate-[fadeSlideUp_300ms_ease-out_forwards]"
+      className="bg-white border border-gray-200 rounded-lg shadow-sm group will-change-transform motion-safe:transition-all motion-safe:duration-200 motion-safe:ease-out hover:scale-[1.03] hover:-translate-y-2 hover:shadow-[0_0_25px_rgba(255,0,0,0.6)] opacity-0 translate-y-4 motion-safe:animate-[fadeSlideUp_300ms_ease-out_forwards]"
       style={{animationDelay: `${index * 50}ms`}}
     >
       <Link
@@ -38,18 +42,10 @@ export function ProductItem({product, loading, showSaleBadge = false, index = 0}
           )}
 
           {/* Wishlist Heart Icon */}
-          <button
-            className="absolute top-2 right-2 z-10 bg-white rounded-full p-2 shadow-md hover:bg-gray-100 transition-colors"
-            onClick={(e) => {
-              e.preventDefault();
-              // TODO: Add to wishlist functionality
-            }}
-            aria-label="Add to wishlist"
-          >
-            <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-            </svg>
-          </button>
+          <WishlistButton
+            productId={product.id}
+            className="absolute top-2 right-2 z-10"
+          />
 
           {/* Product Image */}
           {image && (
@@ -84,18 +80,34 @@ export function ProductItem({product, loading, showSaleBadge = false, index = 0}
           </div>
 
           {/* Add to Cart Button */}
-          <button
-            className="w-full bg-[#FF0000] hover:bg-[#CC0000] text-white font-bold uppercase text-sm py-3 px-4 rounded transition-all hover:shadow-[0_0_15px_rgba(255,0,0,0.6)] flex items-center justify-center gap-2"
-            onClick={(e) => {
-              e.preventDefault();
-              // TODO: Add to cart functionality
-            }}
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-            </svg>
-            Add to cart
-          </button>
+          {firstVariant?.id && (
+            <CartForm
+              route="/cart"
+              inputs={{
+                lines: [
+                  {
+                    merchandiseId: firstVariant.id,
+                    quantity: 1,
+                  },
+                ],
+              }}
+              action={CartForm.ACTIONS.LinesAdd}
+            >
+              {(fetcher) => (
+                <button
+                  type="submit"
+                  onClick={() => open('cart')}
+                  disabled={!firstVariant.availableForSale || fetcher.state !== 'idle'}
+                  className="w-full bg-[#FF0000] hover:bg-[#CC0000] text-white font-bold uppercase text-sm py-3 px-4 rounded transition-all hover:shadow-[0_0_15px_rgba(255,0,0,0.6)] flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                  </svg>
+                  {fetcher.state !== 'idle' ? 'Adding...' : firstVariant.availableForSale ? 'Add to cart' : 'Sold out'}
+                </button>
+              )}
+            </CartForm>
+          )}
         </div>
       </Link>
     </div>

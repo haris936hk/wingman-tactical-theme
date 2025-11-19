@@ -82,58 +82,56 @@ export function CustomProductCarousel({items, showCTA = false, onQuoteClick}) {
 
   return (
     <div className="relative">
-      {/* Carousel Container - full width with proper padding for shadows */}
-      <div>
-        <div className="overflow-x-hidden -mx-4 sm:-mx-6 px-4 sm:px-6">
-          <div
-            onTouchStart={onTouchStart}
-            onTouchMove={onTouchMove}
-            onTouchEnd={onTouchEnd}
-            className="flex transition-transform duration-500 ease-out"
-            style={{
-              transform: `translateX(-${currentIndex * (100 / slidesToShow)}%)`,
-            }}
-          >
-            {items.map((item, index) => (
-              <div
-                key={item.image}
-                className="flex-shrink-0 px-2 sm:px-3"
-                style={{width: `${100 / slidesToShow}%`}}
-              >
-                <CustomProductCard item={item} index={index} />
-              </div>
-            ))}
-          </div>
+      {/* Carousel Container */}
+      <div className="overflow-hidden px-1 sm:px-2">
+        <div
+          onTouchStart={onTouchStart}
+          onTouchMove={onTouchMove}
+          onTouchEnd={onTouchEnd}
+          className="flex transition-transform duration-500 ease-out py-3 sm:py-4"
+          style={{
+            transform: `translateX(-${currentIndex * (100 / slidesToShow)}%)`,
+          }}
+        >
+          {items.map((item, index) => (
+            <div
+              key={item.image}
+              className="flex-shrink-0 px-2 sm:px-3"
+              style={{width: `${100 / slidesToShow}%`}}
+            >
+              <CustomProductCard item={item} index={index} />
+            </div>
+          ))}
+        </div>
 
-          {/* CTA Image Section - inside overflow container */}
-          {showCTA && (
-            <div className="mt-8 sm:mt-10 md:mt-12 px-2 sm:px-3">
-              <div className="relative block h-[200px] sm:h-[250px] md:h-[280px] lg:h-[300px] rounded-lg overflow-hidden group">
-                <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/60 z-10" />
-                <img
-                  src={aboutUsImg}
-                  alt="Get a Quote for Custom Aviation Gear"
-                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                  loading="lazy"
-                  decoding="async"
-                  width="1400"
-                  height="280"
-                />
-                <div className="absolute inset-0 flex flex-col items-center justify-center z-20 px-4 sm:px-6 md:px-8">
-                  <h3 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold uppercase text-white mb-3 sm:mb-4 text-center leading-tight">
-                    GET A QUOTE FOR YOUR<br className="hidden sm:block" /> CUSTOM GEAR NOW!
-                  </h3>
-                  <button
-                    onClick={onQuoteClick}
-                    className="relative inline-block w-full sm:w-auto min-h-[44px] px-6 sm:px-8 py-3 sm:py-4 font-bold uppercase tracking-wide text-white overflow-hidden rounded-lg backdrop-blur-md bg-gradient-to-r from-[#FF0000] via-gray-600 to-[#FF0000] bg-[length:200%_100%] motion-safe:animate-[gradient_3s_linear_infinite] shadow-[0_0_20px_rgba(255,0,0,0.6)] hover:shadow-[0_0_30px_rgba(255,0,0,0.8)] motion-safe:hover:-translate-y-1 transition-all duration-300 border border-white/20"
-                  >
-                    GET A QUOTE
-                  </button>
-                </div>
+        {/* CTA Image Section - inside overflow container */}
+        {showCTA && (
+          <div className="mt-8 sm:mt-10 md:mt-12 px-2 sm:px-3">
+            <div className="relative block h-[200px] sm:h-[250px] md:h-[280px] lg:h-[300px] rounded-lg overflow-hidden group">
+              <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/60 z-10" />
+              <img
+                src={aboutUsImg}
+                alt="Get a Quote for Custom Aviation Gear"
+                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                loading="lazy"
+                decoding="async"
+                width="1400"
+                height="280"
+              />
+              <div className="absolute inset-0 flex flex-col items-center justify-center z-20 px-4 sm:px-6 md:px-8">
+                <h3 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold uppercase text-white mb-3 sm:mb-4 text-center leading-tight">
+                  GET A QUOTE FOR YOUR<br className="hidden sm:block" /> CUSTOM GEAR NOW!
+                </h3>
+                <button
+                  onClick={onQuoteClick}
+                  className="relative inline-block w-full sm:w-auto min-h-[44px] px-6 sm:px-8 py-3 sm:py-4 font-bold uppercase tracking-wide text-white overflow-hidden rounded-lg backdrop-blur-md bg-gradient-to-r from-[#FF0000] via-gray-600 to-[#FF0000] bg-[length:200%_100%] motion-safe:animate-[gradient_3s_linear_infinite] shadow-[0_0_20px_rgba(255,0,0,0.6)] hover:shadow-[0_0_30px_rgba(255,0,0,0.8)] motion-safe:hover:-translate-y-1 transition-all duration-300 border border-white/20"
+                >
+                  GET A QUOTE
+                </button>
               </div>
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
 
       {/* Navigation Arrows - vertically centered on carousel cards */}
@@ -185,7 +183,7 @@ function CustomProductCard({item, index}) {
   return (
     <Link
       to={item.link || '/pages/quote'}
-      className="group block bg-white rounded-lg overflow-hidden shadow-md will-change-transform motion-safe:transition-all motion-safe:duration-200 motion-safe:ease-out hover:scale-[1.03] hover:-translate-y-2 hover:shadow-[0_0_25px_rgba(255,0,0,0.6)] focus-visible:scale-[1.03] focus-visible:-translate-y-2 focus-visible:shadow-[0_0_25px_rgba(255,0,0,0.6)] focus-visible:outline-2 focus-visible:outline-[#FF0000] focus-visible:outline-offset-2 opacity-0 translate-y-4 motion-safe:animate-[fadeSlideUp_300ms_ease-out_forwards]"
+      className="group block bg-white rounded-lg overflow-hidden shadow-md will-change-transform motion-safe:transition-transform motion-safe:duration-300 motion-safe:ease-out motion-safe:hover:scale-105 motion-reduce:hover:scale-100 focus-visible:outline-2 focus-visible:outline-[#FF0000] focus-visible:outline-offset-2 opacity-0 translate-y-4 motion-safe:animate-[fadeSlideUp_300ms_ease-out_forwards]"
       style={{animationDelay: `${index * 50}ms`}}
     >
       {/* Image Container with Aspect Ratio */}

@@ -13,7 +13,10 @@
       "Bash(node -e:*)",
       "Bash(sort:*)",
       "Bash(timeout 15 npm run dev:*)",
-      "Bash(node dist/server/index.js:*)"
+      "Bash(node dist/server/index.js:*)",
+      "Bash(copy \"banners\\VFA 151.webp\" \"public\\images\\clients\\vfa-151.webp\")",
+      "Bash(copy \"banners\\VFA 129.webp\" \"public\\images\\clients\\vaq-129.webp\")",
+      "Bash(copy:*)"
     ],
     "deny": [],
     "ask": []

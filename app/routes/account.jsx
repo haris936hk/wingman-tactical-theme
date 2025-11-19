@@ -137,6 +137,23 @@ function AccountMenu() {
           Addresses
         </NavLink>
 
+        {/* Wishlist Link */}
+        <NavLink
+          to="/account/wishlist"
+          className={({isActive}) =>
+            `px-4 sm:px-6 py-3.5 sm:py-4 min-h-[44px] flex items-center justify-center
+            rounded-lg font-bold uppercase tracking-wide text-sm
+            transition-all duration-300 relative
+            ${
+              isActive
+                ? 'text-white bg-[#FF0000] shadow-[0_0_15px_rgba(255,0,0,0.6)]'
+                : 'text-gray-300 hover:text-white hover:bg-white/10'
+            }`
+          }
+        >
+          Wishlist
+        </NavLink>
+
         {/* Logout Button */}
         <Logout />
       </div>
