@@ -4,7 +4,9 @@ import {
   NavLink,
   Outlet,
   useLoaderData,
+  Await,
 } from 'react-router';
+import {Suspense} from 'react';
 import {CUSTOMER_DETAILS_QUERY} from '~/graphql/customer-account/CustomerDetailsQuery';
 
 export function shouldRevalidate({formMethod}) {
@@ -20,21 +22,25 @@ export function shouldRevalidate({formMethod}) {
  */
 export async function loader({context}) {
   const {customerAccount} = context;
-  const {data, errors} = await customerAccount.query(CUSTOMER_DETAILS_QUERY, {
+
+  // Use Promise instead of await to defer the query
+  const customerPromise = customerAccount.query(CUSTOMER_DETAILS_QUERY, {
     variables: {
       language: customerAccount.i18n.language,
     },
+  }).then(({data, errors}) => {
+    if (errors?.length || !data?.customer) {
+      throw new Error('Customer not found');
+    }
+    return data.customer;
   });
 
-  if (errors?.length || !data?.customer) {
-    throw new Error('Customer not found');
-  }
-
+  // Return immediately with the promise - don't block rendering
   return remixData(
-    {customer: data.customer},
+    {customer: customerPromise},
     {
       headers: {
-        'Cache-Control': 'private, max-age=60',
+        'Cache-Control': 'private, max-age=300, stale-while-revalidate=600',
       },
     },
   );
@@ -52,7 +58,20 @@ export default function AccountLayout() {
 
         {/* Main Content */}
         <div className="mt-8">
-          <Outlet context={{customer}} />
+          <Suspense
+            fallback={
+              <div className="flex justify-center items-center py-12">
+                <div className="text-white text-center">
+                  <div className="w-12 h-12 border-4 border-[#FF0000] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                  <p className="text-gray-300">Loading account...</p>
+                </div>
+              </div>
+            }
+          >
+            <Await resolve={customer}>
+              {(resolvedCustomer) => <Outlet context={{customer: resolvedCustomer}} />}
+            </Await>
+          </Suspense>
         </div>
       </div>
     </div>
