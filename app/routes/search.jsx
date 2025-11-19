@@ -199,7 +199,7 @@ export default function SearchPage() {
   const hasResults = resultCount > 0;
 
   return (
-    <div className="bg-[#000000] min-h-screen pt-[180px] pb-16">
+    <div className="bg-[#000000] min-h-screen pt-[104px] pb-16">
       <div className="max-w-[1400px] mx-auto px-6">
         {/* Search Header */}
         <SearchHeader

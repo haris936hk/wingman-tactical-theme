@@ -239,37 +239,6 @@ export function MobileFilterDrawer({
             </div>
           </div>
 
-          {/* Vendor */}
-          {availableFilters.vendors?.length > 0 && (
-            <div className="border-t border-white/10 pt-6">
-              <h3 className="text-sm font-bold uppercase text-white mb-4 tracking-wide">
-                Brand
-              </h3>
-              <div className="space-y-4">
-                {availableFilters.vendors.map((vendor) => (
-                  <label
-                    key={vendor}
-                    className="flex items-center gap-3 cursor-pointer group min-h-[44px]"
-                  >
-                    <input
-                      type="checkbox"
-                      checked={(localFilters.vendor || []).includes(vendor)}
-                      onChange={() => handleCheckboxChange('vendor', vendor)}
-                      className="w-6 h-6 rounded border-2 border-white/30
-                        bg-transparent checked:bg-[#FF0000] checked:border-[#FF0000]
-                        focus:outline-none focus:ring-2 focus:ring-[#FF0000]
-                        transition-colors cursor-pointer"
-                      aria-label={`Filter by ${vendor}`}
-                    />
-                    <span className="text-base text-gray-300 group-hover:text-white transition-colors">
-                      {vendor}
-                    </span>
-                  </label>
-                ))}
-              </div>
-            </div>
-          )}
-
           {/* Availability */}
           <div className="border-t border-white/10 pt-6">
             <h3 className="text-sm font-bold uppercase text-white mb-4 tracking-wide">

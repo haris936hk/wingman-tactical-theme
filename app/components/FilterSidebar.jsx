@@ -15,7 +15,6 @@ export function FilterSidebar({
     type: true,
     color: true,
     size: true,
-    vendor: true,
     availability: true,
   });
 
@@ -173,38 +172,6 @@ export function FilterSidebar({
               ))}
             </div>
           </FilterSection>
-
-          {/* Vendor Filter */}
-          {availableFilters.vendors?.length > 0 && (
-            <FilterSection
-              title="Brand"
-              isExpanded={expandedSections.vendor}
-              onToggle={() => toggleSection('vendor')}
-            >
-              <div className="space-y-3">
-                {availableFilters.vendors.map((vendor) => (
-                  <label
-                    key={vendor}
-                    className="flex items-center gap-3 cursor-pointer group"
-                  >
-                    <input
-                      type="checkbox"
-                      checked={(filters.vendor || []).includes(vendor)}
-                      onChange={() => handleCheckboxChange('vendor', vendor)}
-                      className="w-5 h-5 rounded border-2 border-white/30
-                        bg-transparent checked:bg-[#FF0000] checked:border-[#FF0000]
-                        focus:outline-none focus:ring-2 focus:ring-[#FF0000] focus:ring-offset-2 focus:ring-offset-black
-                        transition-colors cursor-pointer"
-                      aria-label={`Filter by ${vendor}`}
-                    />
-                    <span className="text-sm text-gray-300 group-hover:text-white transition-colors">
-                      {vendor}
-                    </span>
-                  </label>
-                ))}
-              </div>
-            </FilterSection>
-          )}
 
           {/* Availability Filter */}
           <FilterSection
