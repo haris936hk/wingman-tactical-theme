@@ -7,7 +7,7 @@ export const CUSTOMER_FRAGMENT = `#graphql
     defaultAddress {
       ...Address
     }
-    addresses(first: 3) {
+    addresses(first: 50) {
       nodes {
         ...Address
       }

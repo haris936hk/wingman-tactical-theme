@@ -3,8 +3,9 @@ import {
   useLoaderData,
   useNavigation,
   useSearchParams,
+  Await,
 } from 'react-router';
-import {useRef} from 'react';
+import {useRef, Suspense, memo} from 'react';
 import {
   Money,
   getPaginationVariables,
@@ -44,30 +45,79 @@ export async function loader({request, context}) {
   const filters = parseOrderFilters(url.searchParams);
   const query = buildOrderSearchQuery(filters);
 
-  const {data, errors} = await customerAccount.query(CUSTOMER_ORDERS_QUERY, {
+  // Defer orders query for faster initial render
+  const customerPromise = customerAccount.query(CUSTOMER_ORDERS_QUERY, {
     variables: {
       ...paginationVariables,
       query,
       language: customerAccount.i18n.language,
     },
+  }).then(({data, errors}) => {
+    if (errors?.length || !data?.customer) {
+      console.error('Failed to load customer orders:', errors);
+      return null;
+    }
+    return data.customer;
+  }).catch((error) => {
+    console.error('Failed to load customer orders:', error);
+    return null;
   });
 
-  if (errors?.length || !data?.customer) {
-    throw Error('Customer orders not found');
-  }
-
-  return {customer: data.customer, filters};
+  return {
+    customer: customerPromise,
+    filters,
+    headers: {
+      'Cache-Control': 'private, max-age=300, stale-while-revalidate=600',
+    },
+  };
 }
 
 export default function Orders() {
   /** @type {LoaderReturnData} */
   const {customer, filters} = useLoaderData();
-  const {orders} = customer;
 
   return (
     <div className="space-y-6 sm:space-y-8">
       <OrderSearchForm currentFilters={filters} />
-      <OrdersTable orders={orders} filters={filters} />
+      <Suspense
+        fallback={
+          <div className="flex justify-center items-center py-12">
+            <LoadingSpinner text="Loading orders..." />
+          </div>
+        }
+      >
+        <Await
+          resolve={customer}
+          errorElement={
+            <div className="text-center py-12">
+              <div className="text-white bg-red-900/20 border border-red-500/30 rounded-lg p-6 max-w-md mx-auto">
+                <svg className="w-12 h-12 text-[#FF0000] mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+                <h2 className="text-xl font-bold text-white mb-2">Failed to Load Orders</h2>
+                <p className="text-gray-300">We couldn't load your orders. Please try refreshing the page.</p>
+              </div>
+            </div>
+          }
+        >
+          {(resolvedCustomer) => {
+            if (!resolvedCustomer) {
+              return (
+                <div className="text-center py-12">
+                  <div className="text-white bg-red-900/20 border border-red-500/30 rounded-lg p-6 max-w-md mx-auto">
+                    <svg className="w-12 h-12 text-[#FF0000] mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                    <h2 className="text-xl font-bold text-white mb-2">Orders Not Found</h2>
+                    <p className="text-gray-300">Your orders could not be loaded. Please try again.</p>
+                  </div>
+                </div>
+              );
+            }
+            return <OrdersTable orders={resolvedCustomer.orders} filters={filters} />;
+          }}
+        </Await>
+      </Suspense>
     </div>
   );
 }
@@ -144,7 +194,7 @@ function EmptyOrders({hasFilters = false}) {
  *   currentFilters: OrderFilterParams;
  * }}
  */
-function OrderSearchForm({currentFilters}) {
+const OrderSearchForm = memo(function OrderSearchForm({currentFilters}) {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigation = useNavigation();
   const isSearching =
@@ -214,12 +264,12 @@ function OrderSearchForm({currentFilters}) {
       </FormFieldset>
     </form>
   );
-}
+});
 
 /**
  * @param {{order: OrderItemFragment}}
  */
-function OrderItem({order}) {
+const OrderItem = memo(function OrderItem({order}) {
   const fulfillmentStatus = flattenConnection(order.fulfillments)[0]?.status;
   const orderDate = new Date(order.processedAt);
 
@@ -329,7 +379,7 @@ function OrderItem({order}) {
       </div>
     </AccountCard>
   );
-}
+});
 
 /**
  * @typedef {{

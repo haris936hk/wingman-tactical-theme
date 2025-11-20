@@ -1,8 +1,10 @@
-import {useLoaderData, useFetcher} from 'react-router';
+import {useLoaderData, useFetcher, Await} from 'react-router';
 import {data as remixData} from 'react-router';
+import {Suspense} from 'react';
 import {Image, Money} from '@shopify/hydrogen';
 import {CUSTOMER_WISHLIST_QUERY} from '~/graphql/customer-account/CustomerWishlistQuery';
 import {parseWishlistMetafield} from '~/lib/wishlist';
+import {LoadingSpinner} from '~/components/account/LoadingSpinner';
 
 /**
  * @param {Route.LoaderArgs}
@@ -10,70 +12,76 @@ import {parseWishlistMetafield} from '~/lib/wishlist';
 export async function loader({context}) {
   const {customerAccount, storefront} = context;
 
-  // Get customer's wishlist from metafield
-  const {data: customerData, errors} = await customerAccount.query(
+  // Defer wishlist query chain for faster initial render
+  const wishlistPromise = customerAccount.query(
     CUSTOMER_WISHLIST_QUERY,
     {
       variables: {
         language: customerAccount.i18n.language,
       },
     },
-  );
+  ).then(async ({data: customerData, errors}) => {
+    if (errors?.length) {
+      console.error('Error fetching wishlist:', errors);
+      return {products: [], wishlistIds: []};
+    }
 
-  if (errors?.length) {
-    console.error('Error fetching wishlist:', errors);
-  }
+    const wishlistIds = parseWishlistMetafield(
+      customerData?.customer?.metafield?.value,
+    );
 
-  const wishlistIds = parseWishlistMetafield(
-    customerData?.customer?.metafield?.value,
-  );
-
-  // Fetch product details for wishlist items
-  let products = [];
-  if (wishlistIds.length > 0) {
-    const productsQuery = `#graphql
-      query WishlistProducts($ids: [ID!]!) {
-        nodes(ids: $ids) {
-          ... on Product {
-            id
-            handle
-            title
-            priceRange {
-              minVariantPrice {
-                amount
-                currencyCode
+    // Fetch product details for wishlist items
+    let products = [];
+    if (wishlistIds.length > 0) {
+      const productsQuery = `#graphql
+        query WishlistProducts($ids: [ID!]!) {
+          nodes(ids: $ids) {
+            ... on Product {
+              id
+              handle
+              title
+              priceRange {
+                minVariantPrice {
+                  amount
+                  currencyCode
+                }
               }
-            }
-            featuredImage {
-              url
-              altText
-              width
-              height
-            }
-            variants(first: 1) {
-              nodes {
-                id
-                availableForSale
+              featuredImage {
+                url
+                altText
+                width
+                height
+              }
+              variants(first: 1) {
+                nodes {
+                  id
+                  availableForSale
+                }
               }
             }
           }
         }
-      }
-    `;
+      `;
 
-    const {nodes} = await storefront.query(productsQuery, {
-      variables: {ids: wishlistIds},
-      cache: storefront.CacheShort(),
-    });
+      const {nodes} = await storefront.query(productsQuery, {
+        variables: {ids: wishlistIds},
+        cache: storefront.CacheLong(), // Increased from CacheShort
+      });
 
-    products = nodes.filter(Boolean);
-  }
+      products = nodes.filter(Boolean);
+    }
+
+    return {products, wishlistIds};
+  }).catch((error) => {
+    console.error('Failed to load wishlist:', error);
+    return {products: [], wishlistIds: []};
+  });
 
   return remixData(
-    {products, wishlistIds},
+    {wishlistData: wishlistPromise},
     {
       headers: {
-        'Cache-Control': 'private, max-age=60',
+        'Cache-Control': 'private, max-age=300, stale-while-revalidate=600', // Increased from 60
       },
     },
   );
@@ -148,64 +156,113 @@ export async function action({request, context}) {
 }
 
 export default function AccountWishlist() {
-  const {products} = useLoaderData();
+  const {wishlistData} = useLoaderData();
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="text-center py-8">
-        <h1
-          className="text-3xl sm:text-4xl font-bold uppercase text-white mb-3"
-          style={{
-            textShadow: '0 0 15px rgba(255, 0, 0, 0.7)',
-          }}
-        >
-          My Wishlist
-        </h1>
-        <p className="text-base text-gray-300">
-          {products.length} {products.length === 1 ? 'item' : 'items'} saved
-        </p>
-      </div>
-
-      {/* Wishlist Items */}
-      {products.length === 0 ? (
-        <div className="bg-black/50 backdrop-blur-sm border-2 border-[#FF0000]/30 rounded-lg p-8 shadow-[0_0_20px_rgba(255,0,0,0.2)]">
-          <div className="text-center py-12">
-            <svg
-              className="w-20 h-20 mx-auto text-gray-600 mb-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+    <Suspense
+      fallback={
+        <div className="space-y-6">
+          <div className="text-center py-8">
+            <h1
+              className="text-3xl sm:text-4xl font-bold uppercase text-white mb-3"
+              style={{
+                textShadow: '0 0 15px rgba(255, 0, 0, 0.7)',
+              }}
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-              />
-            </svg>
-            <p className="text-gray-400 mb-6 text-lg">
-              Your wishlist is empty
-            </p>
-            <p className="text-gray-500 mb-8">
-              Start adding products to your wishlist
-            </p>
-            <a
-              href="/collections/all"
-              className="inline-block px-6 py-3 bg-[#FF0000] text-white font-bold uppercase rounded-lg hover:bg-[#CC0000] transition-colors shadow-[0_0_15px_rgba(255,0,0,0.6)]"
-            >
-              Shop Now
-            </a>
+              My Wishlist
+            </h1>
+          </div>
+          <div className="flex justify-center items-center py-12">
+            <LoadingSpinner text="Loading wishlist..." />
           </div>
         </div>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {products.map((product) => (
-            <WishlistProductCard key={product.id} product={product} />
-          ))}
-        </div>
-      )}
-    </div>
+      }
+    >
+      <Await
+        resolve={wishlistData}
+        errorElement={
+          <div className="space-y-6">
+            <div className="text-center py-8">
+              <h1
+                className="text-3xl sm:text-4xl font-bold uppercase text-white mb-3"
+                style={{
+                  textShadow: '0 0 15px rgba(255, 0, 0, 0.7)',
+                }}
+              >
+                My Wishlist
+              </h1>
+            </div>
+            <div className="text-center py-12">
+              <div className="text-white bg-red-900/20 border border-red-500/30 rounded-lg p-6 max-w-md mx-auto">
+                <svg className="w-12 h-12 text-[#FF0000] mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+                <h2 className="text-xl font-bold text-white mb-2">Failed to Load Wishlist</h2>
+                <p className="text-gray-300">We couldn't load your wishlist. Please try refreshing the page.</p>
+              </div>
+            </div>
+          </div>
+        }
+      >
+        {({products}) => (
+          <div className="space-y-6">
+            {/* Header */}
+            <div className="text-center py-8">
+              <h1
+                className="text-3xl sm:text-4xl font-bold uppercase text-white mb-3"
+                style={{
+                  textShadow: '0 0 15px rgba(255, 0, 0, 0.7)',
+                }}
+              >
+                My Wishlist
+              </h1>
+              <p className="text-base text-gray-300">
+                {products.length} {products.length === 1 ? 'item' : 'items'} saved
+              </p>
+            </div>
+
+            {/* Wishlist Items */}
+            {products.length === 0 ? (
+              <div className="bg-black/50 backdrop-blur-sm border-2 border-[#FF0000]/30 rounded-lg p-8 shadow-[0_0_20px_rgba(255,0,0,0.2)]">
+                <div className="text-center py-12">
+                  <svg
+                    className="w-20 h-20 mx-auto text-gray-600 mb-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                    />
+                  </svg>
+                  <p className="text-gray-400 mb-6 text-lg">
+                    Your wishlist is empty
+                  </p>
+                  <p className="text-gray-500 mb-8">
+                    Start adding products to your wishlist
+                  </p>
+                  <a
+                    href="/collections/all"
+                    className="inline-block px-6 py-3 bg-[#FF0000] text-white font-bold uppercase rounded-lg hover:bg-[#CC0000] transition-colors shadow-[0_0_15px_rgba(255,0,0,0.6)]"
+                  >
+                    Shop Now
+                  </a>
+                </div>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {products.map((product) => (
+                  <WishlistProductCard key={product.id} product={product} />
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+      </Await>
+    </Suspense>
   );
 }
 

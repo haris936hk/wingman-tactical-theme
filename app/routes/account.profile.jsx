@@ -26,7 +26,14 @@ export const meta = () => {
 export async function loader({context}) {
   context.customerAccount.handleAuthStatus();
 
-  return {};
+  return data(
+    {},
+    {
+      headers: {
+        'Cache-Control': 'private, max-age=300, stale-while-revalidate=600',
+      },
+    },
+  );
 }
 
 /**

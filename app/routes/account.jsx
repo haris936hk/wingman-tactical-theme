@@ -30,9 +30,13 @@ export async function loader({context}) {
     },
   }).then(({data, errors}) => {
     if (errors?.length || !data?.customer) {
-      throw new Error('Customer not found');
+      console.error('Failed to load customer:', errors);
+      return null; // Don't throw - return null to allow error handling in UI
     }
     return data.customer;
+  }).catch((error) => {
+    console.error('Failed to load customer:', error);
+    return null;
   });
 
   // Return immediately with the promise - don't block rendering
@@ -68,8 +72,36 @@ export default function AccountLayout() {
               </div>
             }
           >
-            <Await resolve={customer}>
-              {(resolvedCustomer) => <Outlet context={{customer: resolvedCustomer}} />}
+            <Await
+              resolve={customer}
+              errorElement={
+                <div className="text-center py-12">
+                  <div className="text-white bg-red-900/20 border border-red-500/30 rounded-lg p-6 max-w-md mx-auto">
+                    <svg className="w-12 h-12 text-[#FF0000] mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                    <h2 className="text-xl font-bold text-white mb-2">Failed to Load Account</h2>
+                    <p className="text-gray-300 mb-4">We couldn't load your account information. Please try refreshing the page.</p>
+                  </div>
+                </div>
+              }
+            >
+              {(resolvedCustomer) => {
+                if (!resolvedCustomer) {
+                  return (
+                    <div className="text-center py-12">
+                      <div className="text-white bg-red-900/20 border border-red-500/30 rounded-lg p-6 max-w-md mx-auto">
+                        <svg className="w-12 h-12 text-[#FF0000] mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                        <h2 className="text-xl font-bold text-white mb-2">Customer Not Found</h2>
+                        <p className="text-gray-300">Your account information could not be loaded. Please try logging in again.</p>
+                      </div>
+                    </div>
+                  );
+                }
+                return <Outlet context={{customer: resolvedCustomer}} />;
+              }}
             </Await>
           </Suspense>
         </div>
