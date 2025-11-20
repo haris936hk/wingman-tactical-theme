@@ -5,7 +5,7 @@ import {redirect} from 'react-router';
  * @param {Route.LoaderArgs}
  */
 export async function loader({context}) {
-  context.customerAccount.handleAuthStatus();
+  await context.customerAccount.handleAuthStatus();
 
   return redirect('/account');
 }

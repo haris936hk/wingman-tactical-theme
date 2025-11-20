@@ -23,6 +23,10 @@ export function shouldRevalidate({formMethod}) {
 export async function loader({context}) {
   const {customerAccount} = context;
 
+  // Check authentication status and redirect if not logged in
+  // This will redirect to login if the user is not authenticated
+  await customerAccount.handleAuthStatus();
+
   // Use Promise instead of await to defer the query
   const customerPromise = customerAccount.query(CUSTOMER_DETAILS_QUERY, {
     variables: {
@@ -75,13 +79,23 @@ export default function AccountLayout() {
             <Await
               resolve={customer}
               errorElement={
-                <div className="text-center py-12">
-                  <div className="text-white bg-red-900/20 border border-red-500/30 rounded-lg p-6 max-w-md mx-auto">
-                    <svg className="w-12 h-12 text-[#FF0000] mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="flex items-center justify-center py-8 sm:py-12 px-4">
+                  <div className="w-full max-w-md sm:max-w-lg bg-red-900/20 border-2 border-red-500/30 rounded-lg p-6 sm:p-8 text-center">
+                    <svg className="w-16 h-16 sm:w-20 sm:h-20 text-[#FF0000] mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                     </svg>
-                    <h2 className="text-xl font-bold text-white mb-2">Failed to Load Account</h2>
-                    <p className="text-gray-300 mb-4">We couldn't load your account information. Please try refreshing the page.</p>
+                    <h2 className="text-xl sm:text-2xl font-bold text-white mb-3 uppercase" style={{fontFamily: 'var(--font-family-shock)'}}>
+                      Failed to Load Account
+                    </h2>
+                    <p className="text-sm sm:text-base text-gray-300 mb-6">
+                      We couldn't load your account information. Please try refreshing the page.
+                    </p>
+                    <button
+                      onClick={() => window.location.reload()}
+                      className="px-6 py-3 bg-[#FF0000] hover:bg-[#CC0000] text-white font-bold uppercase rounded-lg transition-colors shadow-[0_0_15px_rgba(255,0,0,0.6)] min-h-[44px]"
+                    >
+                      Refresh Page
+                    </button>
                   </div>
                 </div>
               }
@@ -89,13 +103,23 @@ export default function AccountLayout() {
               {(resolvedCustomer) => {
                 if (!resolvedCustomer) {
                   return (
-                    <div className="text-center py-12">
-                      <div className="text-white bg-red-900/20 border border-red-500/30 rounded-lg p-6 max-w-md mx-auto">
-                        <svg className="w-12 h-12 text-[#FF0000] mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="flex items-center justify-center py-8 sm:py-12 px-4">
+                      <div className="w-full max-w-md sm:max-w-lg bg-red-900/20 border-2 border-red-500/30 rounded-lg p-6 sm:p-8 text-center">
+                        <svg className="w-16 h-16 sm:w-20 sm:h-20 text-[#FF0000] mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                         </svg>
-                        <h2 className="text-xl font-bold text-white mb-2">Customer Not Found</h2>
-                        <p className="text-gray-300">Your account information could not be loaded. Please try logging in again.</p>
+                        <h2 className="text-xl sm:text-2xl font-bold text-white mb-3 uppercase" style={{fontFamily: 'var(--font-family-shock)'}}>
+                          Customer Not Found
+                        </h2>
+                        <p className="text-sm sm:text-base text-gray-300 mb-6">
+                          Your account information could not be loaded. Please try logging in again.
+                        </p>
+                        <a
+                          href="/account/login"
+                          className="inline-block px-6 py-3 bg-[#FF0000] hover:bg-[#CC0000] text-white font-bold uppercase rounded-lg transition-colors shadow-[0_0_15px_rgba(255,0,0,0.6)] min-h-[44px]"
+                        >
+                          Login Again
+                        </a>
                       </div>
                     </div>
                   );
