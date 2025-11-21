@@ -1,5 +1,5 @@
 import {useEffect, useRef, useState} from 'react';
-import {Link} from 'react-router';
+import {Link, useNavigate} from 'react-router';
 import {Image, Money} from '@shopify/hydrogen';
 
 /**
@@ -16,6 +16,7 @@ export function SearchAutocomplete({
 }) {
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const dropdownRef = useRef(null);
+  const navigate = useNavigate();
 
   const allItems = [
     ...recentSearches.map((term) => ({type: 'recent', value: term})),
@@ -43,7 +44,8 @@ export function SearchAutocomplete({
           if (selectedIndex >= 0 && allItems[selectedIndex]) {
             const item = allItems[selectedIndex];
             if (item.type === 'product') {
-              window.location.href = `/products/${item.value.handle}`;
+              navigate(`/products/${item.value.handle}`);
+              onClose?.();
             } else if (item.type === 'recent') {
               onSearchSelect?.(item.value);
             }
@@ -57,7 +59,7 @@ export function SearchAutocomplete({
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, selectedIndex, allItems, onSearchSelect, onClose]);
+  }, [isOpen, selectedIndex, allItems, onSearchSelect, onClose, navigate]);
 
   // Click outside to close
   useEffect(() => {

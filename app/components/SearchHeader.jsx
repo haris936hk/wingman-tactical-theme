@@ -1,3 +1,4 @@
+import {Link} from 'react-router';
 import {SortDropdown} from '~/components/SortDropdown';
 
 /**
@@ -15,9 +16,9 @@ export function SearchHeader({
     <div className="space-y-4 mb-8">
       {/* Breadcrumb */}
       <nav className="flex items-center gap-2 text-sm text-gray-400" aria-label="Breadcrumb">
-        <a href="/" className="hover:text-white transition-colors">
+        <Link to="/" className="hover:text-white transition-colors">
           Home
-        </a>
+        </Link>
         <span>/</span>
         <span className="text-white">Search</span>
         {searchTerm && (

@@ -17,23 +17,4 @@ if (!window.location.origin.includes('webcache.googleusercontent.com')) {
       </StrictMode>,
     );
   });
-
-  // Register service worker for offline support and caching
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker
-        .register('/sw.js')
-        .then((registration) => {
-          console.log('Service Worker registered:', registration.scope);
-
-          // Check for updates periodically
-          setInterval(() => {
-            registration.update();
-          }, 1000 * 60 * 60); // Check every hour
-        })
-        .catch((error) => {
-          console.log('Service Worker registration failed:', error);
-        });
-    });
-  }
 }
