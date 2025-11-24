@@ -16,7 +16,9 @@
       "Bash(node dist/server/index.js:*)",
       "Bash(copy \"banners\\VFA 151.webp\" \"public\\images\\clients\\vfa-151.webp\")",
       "Bash(copy \"banners\\VFA 129.webp\" \"public\\images\\clients\\vaq-129.webp\")",
-      "Bash(copy:*)"
+      "Bash(copy:*)",
+      "WebSearch",
+      "Bash(find:*)"
     ],
     "deny": [],
     "ask": []

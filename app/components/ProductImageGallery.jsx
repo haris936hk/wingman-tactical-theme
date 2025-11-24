@@ -58,28 +58,7 @@ export function ProductImageGallery({images, selectedVariantImage, productTitle}
     };
   }, [isFullscreen]);
 
-  // Preload all images on mount for instant fullscreen viewing
-  useEffect(() => {
-    if (allImages.length === 0) return;
-
-    // Use requestIdleCallback for low-priority preloading
-    const preloadAllImages = () => {
-      allImages.forEach((image) => {
-        if (image?.url) {
-          const img = new window.Image();
-          img.src = image.url;
-        }
-      });
-    };
-
-    if ('requestIdleCallback' in window) {
-      requestIdleCallback(preloadAllImages);
-    } else {
-      setTimeout(preloadAllImages, 100);
-    }
-  }, [allImages]);
-
-  // Preload adjacent images for faster navigation
+  // Preload adjacent images for faster navigation (more efficient than preloading all)
   useEffect(() => {
     if (allImages.length <= 1) return;
 
@@ -268,13 +247,6 @@ export function ProductImageGallery({images, selectedVariantImage, productTitle}
         {/* Fullscreen Button */}
         <button
           onClick={() => setIsFullscreen(true)}
-          onMouseEnter={() => {
-            // Preload current image when hovering fullscreen button
-            if (currentImage?.url) {
-              const img = new window.Image();
-              img.src = currentImage.url;
-            }
-          }}
           className="absolute bottom-4 right-4 z-20 bg-black/70 hover:bg-[#FF0000] text-white p-3 rounded-full transition-all duration-300 opacity-0 group-hover:opacity-100 hover:scale-110"
           aria-label="View fullscreen"
         >

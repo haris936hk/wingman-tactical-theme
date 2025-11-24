@@ -107,13 +107,10 @@ export function EnhancedCollectionCard({collection, index, productCount}) {
       <div className="relative p-6">
         {/* Collection Title */}
         <h3
-          className="text-xl font-bold uppercase text-white mb-3
+          className="text-xl font-bold uppercase text-[#FF0000] mb-3
             line-clamp-2 h-14
-            group-hover:text-[#FF0000] transition-colors duration-300"
-          style={{
-            fontFamily: 'var(--font-family-shock)',
-            textShadow: '0 0 10px rgba(255, 0, 0, 0.3)',
-          }}
+            transition-colors duration-300"
+          style={{fontFamily: 'var(--font-family-shock)'}}
         >
           {title}
         </h3>

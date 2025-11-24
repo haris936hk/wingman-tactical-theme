@@ -30,10 +30,8 @@ export function AddToCartButton({
             onClick={onClick}
             disabled={disabled ?? fetcher.state !== 'idle'}
             className="relative w-full px-8 py-4 font-bold uppercase tracking-wide text-white
-              overflow-hidden rounded-lg backdrop-blur-md
-              bg-gradient-to-r from-[#FF0000] via-gray-600 to-[#FF0000]
-              bg-[length:200%_100%]
-              motion-safe:animate-[gradient_3s_linear_infinite]
+              rounded-lg
+              bg-[#FF0000] hover:bg-[#CC0000]
               shadow-[0_0_20px_rgba(255,0,0,0.6)]
               hover:shadow-[0_0_30px_rgba(255,0,0,0.8)]
               motion-safe:hover:-translate-y-1

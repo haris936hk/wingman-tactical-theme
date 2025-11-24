@@ -57,7 +57,7 @@ async function loadCriticalData({context, params, request}) {
   const [{product}] = await Promise.all([
     storefront.query(PRODUCT_QUERY, {
       variables: {handle, selectedOptions: getSelectedProductOptions(request)},
-      cache: storefront.CacheShort(),
+      cache: storefront.CacheLong(), // Product data changes infrequently (1 hour cache)
     }),
     // Add other queries here, so that they are loaded in parallel
   ]);
@@ -96,7 +96,7 @@ function loadDeferredData({context, params}) {
       `,
       {
         variables: {handle},
-        cache: storefront.CacheShort(),
+        cache: storefront.CacheLong(), // Product ID is static (1 hour cache)
       },
     )
     .then((productIdQuery) => {
@@ -291,10 +291,10 @@ const PRODUCT_FRAGMENT = `#graphql
     description
     encodedVariantExistence
     encodedVariantAvailability
-    images(first: 10) {
+    images(first: 5) {
       nodes {
         id
-        url
+        url(transform: {maxWidth: 1200})
         altText
         width
         height
@@ -372,7 +372,7 @@ const PRODUCT_RECOMMENDATIONS_QUERY = `#graphql
       images(first: 1) {
         nodes {
           id
-          url
+          url(transform: {maxWidth: 400, maxHeight: 400})
           altText
           width
           height

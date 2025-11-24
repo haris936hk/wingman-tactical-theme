@@ -68,7 +68,7 @@ export default function Page() {
   return (
     <div className="page">
       <header>
-        <h1>{page.title}</h1>
+        <h1 className="text-3xl md:text-4xl font-bold uppercase text-white mb-6" style={{fontFamily: 'var(--font-family-shock)'}}>{page.title}</h1>
       </header>
       <main dangerouslySetInnerHTML={{__html: page.body}} />
     </div>

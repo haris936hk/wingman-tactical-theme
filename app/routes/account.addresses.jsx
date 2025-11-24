@@ -481,7 +481,7 @@ function ExistingAddresses({addresses, defaultAddress}) {
             {/* Address Display */}
             <div className="space-y-4">
               <div className="pr-24">
-                <h3 className="text-lg font-bold uppercase text-white mb-2">
+                <h3 className="text-lg font-bold uppercase text-white mb-2" style={{fontFamily: 'var(--font-family-shock)'}}>
                   {address.firstName} {address.lastName}
                 </h3>
                 <div className="text-gray-300 text-sm space-y-1">

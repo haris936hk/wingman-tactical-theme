@@ -28,11 +28,8 @@ export function AccountCard({
       {title && (
         <div className="px-6 py-4 border-b border-[#FF0000]/20 bg-black/30">
           <h3
-            className="text-lg font-bold uppercase text-white tracking-wide"
-            style={{
-              fontFamily: 'var(--font-family-shock)',
-              textShadow: '0 0 10px rgba(255, 0, 0, 0.4)',
-            }}
+            className="text-lg font-bold uppercase text-[#FF0000] tracking-wide"
+            style={{fontFamily: 'var(--font-family-shock)'}}
           >
             {title}
           </h3>

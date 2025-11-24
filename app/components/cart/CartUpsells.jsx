@@ -15,11 +15,8 @@ export function CartUpsells({products}) {
     <div className="border-t border-[#FF0000]/20 pt-6 pb-4">
       {/* Section Header */}
       <h3
-        className="text-lg font-bold uppercase text-white mb-4 tracking-wide px-4"
-        style={{
-          fontFamily: 'var(--font-family-shock)',
-          textShadow: '0 0 10px rgba(255, 0, 0, 0.6)',
-        }}
+        className="text-lg font-bold uppercase text-[#FF0000] mb-4 tracking-wide px-4"
+        style={{fontFamily: 'var(--font-family-shock)'}}
       >
         You Might Also Like
       </h3>

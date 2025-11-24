@@ -1,8 +1,9 @@
-import {Suspense, useState, useEffect, useCallback, useRef} from 'react';
-import {Await, NavLink, useAsyncValue} from 'react-router';
-import {useAnalytics, useOptimisticCart} from '@shopify/hydrogen';
-import {useAside} from '~/components/Aside';
-import {SearchForm} from '~/components/SearchForm';
+import { Suspense, useState, useEffect, useCallback, useRef } from 'react';
+import { Await, NavLink, useAsyncValue } from 'react-router';
+import { useAnalytics, useOptimisticCart } from '@shopify/hydrogen';
+import { useAside } from '~/components/Aside';
+import { SearchForm } from '~/components/SearchForm';
+import { PredictiveSearch } from '~/components/PredictiveSearch';
 import logoImage from '~/assets/logo.png';
 
 // Debounce utility for scroll performance
@@ -19,17 +20,17 @@ function useDebounce(callback, delay) {
 
 // Navigation menu configuration
 const NAVIGATION_MENU = [
-  {id: 'flight-suits', title: 'FLIGHT SUITS', url: '/collections/flight-suits'},
-  {id: 'flight-jackets', title: 'FLIGHT JACKETS', url: '/collections/flight-jackets'},
-  {id: 'flight-bag', title: 'FLIGHT BAG', url: '/collections/flight-bag'},
-  {id: 'aviation-gear', title: 'AVIATION GEAR', url: '/collections/aviation-gear'},
-  {id: 'apparels', title: 'APPARELS', url: '/collections/apparels'},
+  { id: 'flight-suits', title: 'FLIGHT SUITS', url: '/collections/flight-suits' },
+  { id: 'flight-jackets', title: 'FLIGHT JACKETS', url: '/collections/flight-jackets' },
+  { id: 'flight-bag', title: 'FLIGHT BAG', url: '/collections/flight-bag' },
+  { id: 'aviation-gear', title: 'AVIATION GEAR', url: '/collections/aviation-gear' },
+  { id: 'apparels', title: 'APPARELS', url: '/collections/apparels' },
 ];
 
 /**
  * @param {HeaderProps}
  */
-export function Header({isLoggedIn, cart}) {
+export function Header({ isLoggedIn, cart }) {
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
@@ -61,7 +62,7 @@ export function Header({isLoggedIn, cart}) {
     // Only run on client side
     if (typeof window === 'undefined') return;
 
-    window.addEventListener('scroll', debouncedScroll, {passive: true});
+    window.addEventListener('scroll', debouncedScroll, { passive: true });
     return () => window.removeEventListener('scroll', debouncedScroll);
   }, [debouncedScroll]);
 
@@ -86,13 +87,32 @@ export function Header({isLoggedIn, cart}) {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isSearchFocused]);
 
+  // Click outside handler for search
+  const searchContainerRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        isSearchFocused &&
+        searchContainerRef.current &&
+        !searchContainerRef.current.contains(event.target)
+      ) {
+        setIsSearchFocused(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isSearchFocused]);
+
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 bg-[#000000] text-white transition-all duration-300 ease-out motion-safe:transition-all ${
-        isVisible
-          ? 'motion-safe:translate-y-0 opacity-100'
-          : 'motion-safe:-translate-y-full opacity-0'
-      }`}
+      className={`fixed top-0 left-0 right-0 z-50 bg-[#000000] text-white transition-all duration-300 ease-out motion-safe:transition-all ${isVisible
+        ? 'motion-safe:translate-y-0 opacity-100'
+        : 'motion-safe:-translate-y-full opacity-0'
+        }`}
       role="banner"
     >
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
@@ -116,11 +136,10 @@ export function Header({isLoggedIn, cart}) {
 
           {/* Desktop Navigation Links - Center (Hidden when search is focused) */}
           <nav
-            className={`hidden lg:flex items-center justify-center gap-8 flex-1 mx-8 transition-all duration-300 ease-out ${
-              isSearchFocused
-                ? 'motion-safe:opacity-0 motion-safe:-translate-x-5 pointer-events-none'
-                : 'motion-safe:opacity-100 motion-safe:translate-x-0'
-            }`}
+            className={`hidden lg:flex items-center justify-center gap-8 flex-1 mx-8 transition-all duration-300 ease-out ${isSearchFocused
+              ? 'motion-safe:opacity-0 motion-safe:-translate-x-5 pointer-events-none'
+              : 'motion-safe:opacity-100 motion-safe:translate-x-0'
+              }`}
             role="navigation"
             aria-label="Main navigation"
             aria-hidden={isSearchFocused}
@@ -132,11 +151,11 @@ export function Header({isLoggedIn, cart}) {
 
           {/* Search Component - Expands on focus */}
           <div
-            className={`absolute left-0 right-0 top-1/2 -translate-y-1/2 transition-all duration-300 ease-out ${
-              isSearchFocused
-                ? 'lg:left-[180px] lg:right-[280px] z-20'
-                : 'lg:static lg:w-auto lg:translate-y-0 lg:mr-3 pointer-events-none lg:pointer-events-auto'
-            }`}
+            ref={searchContainerRef}
+            className={`absolute left-0 right-0 top-1/2 -translate-y-1/2 transition-all duration-300 ease-out ${isSearchFocused
+              ? 'lg:left-[180px] lg:right-[280px] z-20'
+              : 'lg:static lg:w-auto lg:translate-y-0 lg:mr-3 pointer-events-none lg:pointer-events-auto'
+              }`}
           >
             {/* Mobile Search Button */}
             <button
@@ -166,45 +185,12 @@ export function Header({isLoggedIn, cart}) {
                 </button>
               ) : (
                 // Expanded Search Form
-                <SearchForm action="/search" className="w-full">
-                  {({inputRef}) => {
-                    // Auto-focus the input when expanded
-                    if (inputRef.current && isSearchFocused) {
-                      setTimeout(() => inputRef.current?.focus(), 0);
-                    }
-
-                    return (
-                      <div className="relative" role="search">
-                        {/* Animated gradient border wrapper */}
-                        <div className="relative rounded-md p-[2px] bg-gradient-to-r from-[#FF0000] via-white to-[#FF0000] bg-[length:200%_100%] motion-safe:animate-[gradient_3s_linear_infinite] shadow-[0_0_20px_rgba(255,0,0,0.6)]">
-                          <div className="flex items-center bg-[#000000] rounded-md">
-                            {/* Search Icon - Left side */}
-                            <button
-                              type="submit"
-                              className="pl-4 pr-2 text-white hover:text-[#FF0000] transition-colors motion-safe:hover:scale-110 motion-safe:duration-200"
-                              aria-label="Submit search"
-                            >
-                              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                              </svg>
-                            </button>
-
-                            {/* Search Input */}
-                            <input
-                              ref={inputRef}
-                              type="search"
-                              name="q"
-                              placeholder="Search for products..."
-                              onBlur={handleSearchBlur}
-                              className="w-full py-3 pr-4 bg-transparent text-white placeholder-gray-400 focus:outline-none"
-                              aria-label="Search products"
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  }}
-                </SearchForm>
+                <div className="w-full relative">
+                  <PredictiveSearch
+                    className="w-full"
+                    onClose={() => setIsSearchFocused(false)}
+                  />
+                </div>
               )}
             </div>
           </div>
@@ -237,31 +223,10 @@ export function Header({isLoggedIn, cart}) {
             </button>
           </div>
           <div className="p-4 sm:p-6">
-            <SearchForm action="/search" className="w-full">
-              {({inputRef}) => (
-                <div className="relative" role="search">
-                  <div className="relative rounded-md p-[2px] bg-gradient-to-r from-[#FF0000] via-white to-[#FF0000] bg-[length:200%_100%] motion-safe:animate-[gradient_3s_linear_infinite]">
-                    <input
-                      ref={inputRef}
-                      type="search"
-                      name="q"
-                      placeholder="Search for products..."
-                      className="w-full pl-5 pr-12 py-3 sm:py-4 bg-[#000000] text-white placeholder-gray-400 rounded-md focus:outline-none text-base sm:text-lg"
-                      aria-label="Search products"
-                    />
-                    <button
-                      type="submit"
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-white hover:text-[#FF0000] transition-colors p-2 min-w-[44px] min-h-[44px] flex items-center justify-center"
-                      aria-label="Submit search"
-                    >
-                      <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                      </svg>
-                    </button>
-                  </div>
-                </div>
-              )}
-            </SearchForm>
+            <PredictiveSearch
+              className="w-full"
+              onClose={() => setIsSearchFocused(false)}
+            />
           </div>
         </div>
       )}
@@ -273,7 +238,7 @@ export function Header({isLoggedIn, cart}) {
  * Mobile menu component for Aside
  */
 export function HeaderMenu() {
-  const {close} = useAside();
+  const { close } = useAside();
 
   // Mobile menu only (desktop navigation is now in main header)
   return (
@@ -296,16 +261,15 @@ export function HeaderMenu() {
 
 /**
  * Desktop navigation menu item with gradient text and animated underline
- * @param {{item: {id: string, title: string, url: string}}}
- */
-function DesktopMenuItem({item}) {
+ * @param {{ item: { id: string, title: string, url: string } }}
+                */
+function DesktopMenuItem({ item }) {
   return (
     <NavLink
       prefetch="intent"
       to={item.url}
-      className={({isActive}) =>
-        `relative text-sm font-medium uppercase tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-white to-white bg-[length:200%_100%] bg-left transition-all duration-500 hover:bg-right hover:from-white hover:to-[#FF0000] ${
-          isActive ? 'from-gray-300 to-gray-300' : ''
+      className={({ isActive }) =>
+        `relative text-sm font-medium uppercase tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-white to-white bg-[length:200%_100%] bg-left transition-all duration-500 hover:bg-right hover:from-white hover:to-[#FF0000] ${isActive ? 'from-gray-300 to-gray-300' : ''
         } after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[2px] after:bg-[#FF0000] after:transition-all after:duration-300 hover:after:w-full`
       }
     >
@@ -316,17 +280,16 @@ function DesktopMenuItem({item}) {
 
 /**
  * Mobile navigation menu item
- * @param {{item: {id: string, title: string, url: string}, onClick: () => void}}
- */
-function MobileMenuItem({item, onClick}) {
+ * @param {{ item: { id: string, title: string, url: string }, onClick: () => void}}
+                */
+function MobileMenuItem({ item, onClick }) {
   return (
     <NavLink
       onClick={onClick}
       prefetch="intent"
       to={item.url}
-      className={({isActive}) =>
-        `text-white hover:text-[#FF0000] transition-colors uppercase font-medium text-lg py-2 ${
-          isActive ? 'text-[#FF0000]' : ''
+      className={({ isActive }) =>
+        `text-white hover:text-[#FF0000] transition-colors uppercase font-medium text-lg py-2 ${isActive ? 'text-[#FF0000]' : ''
         }`
       }
     >
@@ -336,9 +299,9 @@ function MobileMenuItem({item, onClick}) {
 }
 
 /**
- * @param {Pick<HeaderProps, 'isLoggedIn' | 'cart'>}
- */
-function HeaderCtas({isLoggedIn, cart}) {
+ * @param {Pick < HeaderProps, 'isLoggedIn' | 'cart' >}
+                */
+function HeaderCtas({ isLoggedIn, cart }) {
   return (
     <div className="flex items-center gap-2 sm:gap-3">
       {/* Mobile Menu Toggle */}
@@ -381,7 +344,7 @@ function HeaderCtas({isLoggedIn, cart}) {
 }
 
 function HeaderMenuMobileToggle() {
-  const {open} = useAside();
+  const { open } = useAside();
   return (
     <button
       className="lg:hidden text-white hover:text-[#FF0000] transition-colors p-3 min-w-[44px] min-h-[44px] flex items-center justify-center"
@@ -396,11 +359,11 @@ function HeaderMenuMobileToggle() {
 }
 
 /**
- * @param {{count: number | null; cart: any}}
- */
-function CartBadge({count, cart}) {
-  const {open} = useAside();
-  const {publish, shop, cart: analyticsCart, prevCart} = useAnalytics();
+ * @param {{ count: number | null; cart: any }}
+                */
+function CartBadge({ count, cart }) {
+  const { open } = useAside();
+  const { publish, shop, cart: analyticsCart, prevCart } = useAnalytics();
 
   // Calculate total price
   const totalPrice = cart?.cost?.totalAmount
@@ -443,9 +406,9 @@ function CartBadge({count, cart}) {
 }
 
 /**
- * @param {Pick<HeaderProps, 'cart'>}
- */
-function CartToggle({cart}) {
+ * @param {Pick < HeaderProps, 'cart' >}
+                */
+function CartToggle({ cart }) {
   return (
     <Suspense fallback={<CartBadge count={null} cart={null} />}>
       <Await resolve={cart}>

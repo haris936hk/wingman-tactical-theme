@@ -1,4 +1,4 @@
-import {useState, useEffect, useCallback, useRef} from 'react';
+import {useState, useEffect, useCallback, useRef, memo} from 'react';
 import {ProductItem} from '~/components/ProductItem';
 
 // Debounce utility for performance optimization
@@ -13,7 +13,7 @@ function useDebounce(callback, delay) {
   );
 }
 
-export function ProductCarousel({products, showSaleBadge = false}) {
+export const ProductCarousel = memo(function ProductCarousel({products, showSaleBadge = false}) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [slidesToShow, setSlidesToShow] = useState(4);
   const [touchStart, setTouchStart] = useState(null);
@@ -191,4 +191,4 @@ export function ProductCarousel({products, showSaleBadge = false}) {
       </button>
     </div>
   );
-}
+});

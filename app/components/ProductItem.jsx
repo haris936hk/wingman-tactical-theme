@@ -1,3 +1,4 @@
+import {memo} from 'react';
 import {Link} from 'react-router';
 import {Image, Money, CartForm} from '@shopify/hydrogen';
 import {useVariantUrl} from '~/lib/variants';
@@ -13,9 +14,10 @@ import {useAside} from './Aside';
  *   loading?: 'eager' | 'lazy';
  *   showSaleBadge?: boolean;
  *   index?: number;
+ *   fetchpriority?: 'high' | 'low' | 'auto';
  * }}
  */
-export function ProductItem({product, loading, showSaleBadge = false, index = 0}) {
+export const ProductItem = memo(function ProductItem({product, loading, showSaleBadge = false, index = 0, fetchpriority}) {
   const variantUrl = useVariantUrl(product.handle);
   const image = product.featuredImage;
   const {open} = useAside();
@@ -23,7 +25,7 @@ export function ProductItem({product, loading, showSaleBadge = false, index = 0}
 
   return (
     <div
-      className="bg-white border border-gray-200 rounded-lg shadow-sm group will-change-transform motion-safe:transition-all motion-safe:duration-200 motion-safe:ease-out hover:scale-[1.03] hover:-translate-y-2 hover:shadow-[0_0_25px_rgba(255,0,0,0.6)] opacity-0 translate-y-4 motion-safe:animate-[fadeSlideUp_300ms_ease-out_forwards]"
+      className="bg-white border border-gray-200 rounded-lg shadow-sm group will-change-transform motion-safe:transition-all motion-safe:duration-200 motion-safe:ease-out hover:scale-[1.03] hover:-translate-y-2 hover:shadow-lg opacity-0 translate-y-4 motion-safe:animate-[fadeSlideUp_300ms_ease-out_forwards]"
       style={{animationDelay: `${index * 50}ms`}}
     >
       <Link
@@ -54,6 +56,7 @@ export function ProductItem({product, loading, showSaleBadge = false, index = 0}
               aspectRatio="4/3"
               data={image}
               loading={loading}
+              fetchpriority={fetchpriority}
               sizes="(min-width: 1024px) 25vw, (min-width: 768px) 33vw, 50vw"
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             />
@@ -112,7 +115,7 @@ export function ProductItem({product, loading, showSaleBadge = false, index = 0}
       </Link>
     </div>
   );
-}
+});
 
 /** @typedef {import('storefrontapi.generated').ProductItemFragment} ProductItemFragment */
 /** @typedef {import('storefrontapi.generated').CollectionItemFragment} CollectionItemFragment */

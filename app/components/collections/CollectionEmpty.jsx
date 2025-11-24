@@ -65,11 +65,8 @@ export function CollectionEmpty({type, onClearFilters}) {
 
       {/* Title */}
       <h2
-        className="text-3xl lg:text-4xl font-bold uppercase text-white mb-4"
-        style={{
-          fontFamily: 'var(--font-family-shock)',
-          textShadow: '0 0 15px rgba(255, 0, 0, 0.6)',
-        }}
+        className="text-3xl lg:text-4xl font-bold uppercase text-[#FF0000] mb-4"
+        style={{fontFamily: 'var(--font-family-shock)'}}
       >
         {title}
       </h2>
@@ -84,15 +81,8 @@ export function CollectionEmpty({type, onClearFilters}) {
         <button
           onClick={onClearFilters}
           className="px-8 py-4 font-bold uppercase tracking-wide text-white
-            rounded-lg overflow-hidden backdrop-blur-md
-            bg-gradient-to-r from-[#FF0000] via-gray-600 to-[#FF0000]
-            bg-[length:200%_100%]
-            motion-safe:animate-[gradient_3s_linear_infinite]
-            shadow-[0_0_20px_rgba(255,0,0,0.6)]
-            hover:shadow-[0_0_30px_rgba(255,0,0,0.8)]
-            motion-safe:hover:-translate-y-1
+            rounded-lg bg-[#FF0000] hover:bg-[#CC0000]
             transition-all duration-300
-            border border-white/20
             focus:outline-none focus:ring-2 focus:ring-[#FF0000] focus:ring-offset-2
             focus:ring-offset-black"
         >
@@ -102,15 +92,8 @@ export function CollectionEmpty({type, onClearFilters}) {
         <Link
           to={cta.link}
           className="px-8 py-4 font-bold uppercase tracking-wide text-white
-            rounded-lg overflow-hidden backdrop-blur-md
-            bg-gradient-to-r from-[#FF0000] via-gray-600 to-[#FF0000]
-            bg-[length:200%_100%]
-            motion-safe:animate-[gradient_3s_linear_infinite]
-            shadow-[0_0_20px_rgba(255,0,0,0.6)]
-            hover:shadow-[0_0_30px_rgba(255,0,0,0.8)]
-            motion-safe:hover:-translate-y-1
+            rounded-lg bg-[#FF0000] hover:bg-[#CC0000]
             transition-all duration-300
-            border border-white/20
             focus:outline-none focus:ring-2 focus:ring-[#FF0000] focus:ring-offset-2
             focus:ring-offset-black
             inline-block"

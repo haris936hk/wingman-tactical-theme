@@ -222,3 +222,69 @@ h1, h2, h3, h4, h5, h6 {
     transform: none;
   }
 }
+
+/* Cross-Browser Compatibility Fixes */
+
+/* Font Smoothing - macOS/iOS text rendering */
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Input Autofill Styling - Chrome/Edge yellow background fix */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px #000000 inset;
+  -webkit-text-fill-color: #FFFFFF;
+  border: 2px solid rgba(255, 0, 0, 0.3);
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Mobile Tap Highlight - Android Chrome */
+* {
+  -webkit-tap-highlight-color: rgba(255, 0, 0, 0.2);
+}
+
+/* Touch Callout - iOS long-press menu on images */
+img {
+  -webkit-touch-callout: none;
+}
+
+/* Backdrop Filter - Safari < 15 compatibility */
+.backdrop-blur-sm,
+.backdrop-blur-md,
+.backdrop-blur-lg,
+.backdrop-blur-xl,
+.backdrop-blur-2xl,
+.backdrop-blur-3xl {
+  -webkit-backdrop-filter: var(--tw-backdrop-blur, blur(0)) var(--tw-backdrop-brightness, brightness(1)) var(--tw-backdrop-contrast, contrast(1)) var(--tw-backdrop-grayscale, grayscale(0)) var(--tw-backdrop-hue-rotate, hue-rotate(0deg)) var(--tw-backdrop-invert, invert(0)) var(--tw-backdrop-opacity, opacity(1)) var(--tw-backdrop-saturate, saturate(1)) var(--tw-backdrop-sepia, sepia(0));
+  backdrop-filter: var(--tw-backdrop-blur, blur(0)) var(--tw-backdrop-brightness, brightness(1)) var(--tw-backdrop-contrast, contrast(1)) var(--tw-backdrop-grayscale, grayscale(0)) var(--tw-backdrop-hue-rotate, hue-rotate(0deg)) var(--tw-backdrop-invert, invert(0)) var(--tw-backdrop-opacity, opacity(1)) var(--tw-backdrop-saturate, saturate(1)) var(--tw-backdrop-sepia, sepia(0));
+}
+
+/* Custom Scrollbar - Wingman Tactical Style */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #000000;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #FF0000;
+}
+
+/* Firefox Scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) #000000;
+}

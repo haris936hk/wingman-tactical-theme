@@ -36,7 +36,7 @@ export const CART_QUERY_FRAGMENT = `#graphql
         title
         image {
           id
-          url
+          url(transform: {maxWidth: 200, maxHeight: 200})
           altText
           width
           height
@@ -87,7 +87,7 @@ export const CART_QUERY_FRAGMENT = `#graphql
         title
         image {
           id
-          url
+          url(transform: {maxWidth: 200, maxHeight: 200})
           altText
           width
           height
@@ -132,8 +132,6 @@ export const CART_QUERY_FRAGMENT = `#graphql
     lines(first: $numCartLines) {
       nodes {
         ...CartLine
-      }
-      nodes {
         ...CartLineComponent
       }
     }
@@ -252,7 +250,7 @@ export const RECOMMENDED_PRODUCTS_QUERY = `#graphql
           }
         }
         featuredImage {
-          url
+          url(transform: {maxWidth: 600})
           altText
           width
           height

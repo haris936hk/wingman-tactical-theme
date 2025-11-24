@@ -47,7 +47,7 @@ export function FilterSidebar({
       aria-label="Product filters"
     >
       <div className="sticky top-32 bg-black/50 backdrop-blur-sm border border-[#FF0000]/30 rounded-lg p-6 shadow-[0_0_30px_rgba(255,0,0,0.2)]">
-        <h2 className="text-xl font-bold uppercase text-white mb-6 flex items-center gap-2">
+        <h2 className="text-xl font-bold uppercase text-white mb-6 flex items-center gap-2" style={{fontFamily: 'var(--font-family-shock)'}}>
           <svg
             className="w-5 h-5 text-[#FF0000]"
             fill="none"

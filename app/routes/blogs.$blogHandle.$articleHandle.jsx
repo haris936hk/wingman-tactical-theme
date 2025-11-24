@@ -85,9 +85,9 @@ export default function Article() {
 
   return (
     <div className="article">
-      <h1>
+      <h1 className="text-3xl md:text-4xl font-bold uppercase text-white mb-4" style={{fontFamily: 'var(--font-family-shock)'}}>
         {title}
-        <div>
+        <div className="text-sm text-gray-400 font-normal normal-case mt-2">
           <time dateTime={article.publishedAt}>{publishedDate}</time> &middot;{' '}
           <address>{author?.name}</address>
         </div>
@@ -122,7 +122,7 @@ const ARTICLE_QUERY = `#graphql
         image {
           id
           altText
-          url
+          url(transform: {maxWidth: 1600})
           width
           height
         }

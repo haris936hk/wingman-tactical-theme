@@ -24,9 +24,9 @@ export default async function handleRequest(
     },
     imgSrc: [
       "'self'",
-      'data:',
       'https://cdn.shopify.com',
-      'https://via.placeholder.com',
+      // Removed 'data:' and 'https://via.placeholder.com' for security
+      // Add back 'data:' only if inline SVG/images are needed
     ],
   });
 

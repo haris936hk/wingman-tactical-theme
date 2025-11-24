@@ -1,35 +1,36 @@
-import {useState, useEffect} from 'react';
-import {useLoaderData, useNavigate, useSearchParams} from 'react-router';
-import {getPaginationVariables, Analytics} from '@shopify/hydrogen';
-import {SearchResults} from '~/components/SearchResults';
-import {FilterSidebar} from '~/components/FilterSidebar';
-import {MobileFilterDrawer} from '~/components/MobileFilterDrawer';
-import {ActiveFilters} from '~/components/ActiveFilters';
-import {SearchHeader} from '~/components/SearchHeader';
-import {NoResults} from '~/components/NoResults';
-import {getEmptyPredictiveSearchResult} from '~/lib/search';
+import { useState, useEffect } from 'react';
+import { useLoaderData, useNavigate, useSearchParams, Link, useRouteError, isRouteErrorResponse } from 'react-router';
+import { getPaginationVariables, Analytics } from '@shopify/hydrogen';
+import { SearchResults } from '~/components/SearchResults';
+import { FilterSidebar } from '~/components/FilterSidebar';
+import { MobileFilterDrawer } from '~/components/MobileFilterDrawer';
+import { ActiveFilters } from '~/components/ActiveFilters';
+import { SearchHeader } from '~/components/SearchHeader';
+import { NoResults } from '~/components/NoResults';
+import { getEmptyPredictiveSearchResult } from '~/lib/search';
+import { FILTER_DEFAULTS } from '~/lib/constants';
 
 /**
  * @type {Route.MetaFunction}
  */
-export const meta = ({data}) => {
+export const meta = ({ data }) => {
   const term = data?.term || '';
-  return [{title: term ? `Search: ${term} | Wingman Tactical` : 'Search | Wingman Tactical'}];
+  return [{ title: term ? `Search: ${term} | Wingman Tactical` : 'Search | Wingman Tactical' }];
 };
 
 /**
  * @param {Route.LoaderArgs}
  */
-export async function loader({request, context}) {
+export async function loader({ request, context }) {
   const url = new URL(request.url);
   const isPredictive = url.searchParams.has('predictive');
   const searchPromise = isPredictive
-    ? predictiveSearch({request, context})
-    : regularSearch({request, context});
+    ? predictiveSearch({ request, context })
+    : regularSearch({ request, context });
 
   searchPromise.catch((error) => {
     console.error(error);
-    return {term: '', result: null, error: error.message};
+    return { term: '', result: null, error: error.message };
   });
 
   return await searchPromise;
@@ -40,7 +41,7 @@ export async function loader({request, context}) {
  */
 export default function SearchPage() {
   /** @type {LoaderReturnData} */
-  const {type, term, result, error} = useLoaderData();
+  const { type, term, result, error } = useLoaderData();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
@@ -78,7 +79,7 @@ export default function SearchPage() {
     const sort = searchParams.get('sort') || 'relevance';
 
     setFilters({
-      price: priceMin && priceMax ? [Number(priceMin), Number(priceMax)] : [0, 500],
+      price: priceMin && priceMax ? [Number(priceMin), Number(priceMax)] : [FILTER_DEFAULTS.PRICE_MIN, FILTER_DEFAULTS.PRICE_MAX],
       type: types,
       vendor: vendors,
       available,
@@ -88,7 +89,7 @@ export default function SearchPage() {
 
   // Handle filter changes
   const handleFilterChange = (filterType, value) => {
-    const newFilters = {...filters, [filterType]: value};
+    const newFilters = { ...filters, [filterType]: value };
     setFilters(newFilters);
     updateURL(newFilters, sortValue);
   };
@@ -101,11 +102,11 @@ export default function SearchPage() {
 
   // Handle remove single filter
   const handleRemoveFilter = (filterId) => {
-    const newFilters = {...filters};
+    const newFilters = { ...filters };
     const [filterType, filterValue] = filterId.split(':');
 
     if (filterType === 'price') {
-      newFilters.price = [0, 500];
+      newFilters.price = [FILTER_DEFAULTS.PRICE_MIN, FILTER_DEFAULTS.PRICE_MAX];
     } else if (filterType === 'available') {
       newFilters.available = false;
     } else if (Array.isArray(newFilters[filterType])) {
@@ -119,7 +120,7 @@ export default function SearchPage() {
   // Handle clear all filters
   const handleClearAll = () => {
     const emptyFilters = {
-      price: [0, 500],
+      price: [FILTER_DEFAULTS.PRICE_MIN, FILTER_DEFAULTS.PRICE_MAX],
       type: [],
       vendor: [],
       available: false,
@@ -155,7 +156,7 @@ export default function SearchPage() {
       params.set('sort', newSort);
     }
 
-    navigate(`/search?${params.toString()}`, {replace: true, preventScrollReset: true});
+    navigate(`/search?${params.toString()}`, { replace: true, preventScrollReset: true });
   };
 
   // Build active filter chips
@@ -248,9 +249,6 @@ export default function SearchPage() {
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
-                  style={{
-                    filter: 'drop-shadow(0 0 10px rgba(255, 0, 0, 0.6))',
-                  }}
                 >
                   <path
                     strokeLinecap="round"
@@ -260,10 +258,9 @@ export default function SearchPage() {
                   />
                 </svg>
                 <h2
-                  className="text-2xl font-bold uppercase text-white mb-3"
+                  className="text-2xl font-bold uppercase text-[#FF0000] mb-3"
                   style={{
-                    fontFamily: 'var(--font-family-shock)',
-                    textShadow: '0 0 10px rgba(255, 0, 0, 0.6)',
+                    fontFamily: 'var(--font-family-shock)'
                   }}
                 >
                   Start Searching
@@ -305,7 +302,7 @@ export default function SearchPage() {
             {/* Search Results */}
             {term && hasResults && (
               <SearchResults result={result} term={term}>
-                {({products, term}) => (
+                {({ products, term }) => (
                   <SearchResults.Products products={products} term={term} />
                 )}
               </SearchResults>
@@ -329,7 +326,7 @@ export default function SearchPage() {
       />
 
       {/* Analytics */}
-      <Analytics.SearchView data={{searchTerm: term, searchResults: result}} />
+      <Analytics.SearchView data={{ searchTerm: term, searchResults: result }} />
     </div>
   );
 }
@@ -354,7 +351,7 @@ const SEARCH_PRODUCT_FRAGMENT = `#graphql
     ) {
       id
       image {
-        url
+        url(transform: {maxWidth: 400, maxHeight: 400})
         altText
         width
         height
@@ -449,7 +446,6 @@ export const SEARCH_QUERY = `#graphql
       query: $term,
       sortKey: RELEVANCE,
       types: [PRODUCT],
-      unavailableProducts: HIDE,
     ) {
       nodes {
         ...on Product {
@@ -470,15 +466,15 @@ export const SEARCH_QUERY = `#graphql
 /**
  * Regular search fetcher
  */
-async function regularSearch({request, context}) {
-  const {storefront} = context;
+async function regularSearch({ request, context }) {
+  const { storefront } = context;
   const url = new URL(request.url);
-  const variables = getPaginationVariables(request, {pageBy: 12});
+  const variables = getPaginationVariables(request, { pageBy: 12 });
   const term = String(url.searchParams.get('q') || '');
 
   // Search articles, pages, and products for the `q` term
-  const {errors, ...items} = await storefront.query(SEARCH_QUERY, {
-    variables: {...variables, term},
+  const { errors, ...items } = await storefront.query(SEARCH_QUERY, {
+    variables: { ...variables, term },
     cache: storefront.CacheShort(),
   });
 
@@ -487,15 +483,15 @@ async function regularSearch({request, context}) {
   }
 
   const total = Object.values(items).reduce(
-    (acc, {nodes}) => acc + nodes.length,
+    (acc, { nodes }) => acc + nodes.length,
     0,
   );
 
   const error = errors
-    ? errors.map(({message}) => message).join(', ')
+    ? errors.map(({ message }) => message).join(', ')
     : undefined;
 
-  return {type: 'regular', term, error, result: {total, items}};
+  return { type: 'regular', term, error, result: { total, items } };
 }
 
 /**
@@ -511,7 +507,7 @@ const PREDICTIVE_SEARCH_ARTICLE_FRAGMENT = `#graphql
       handle
     }
     image {
-      url
+      url(transform: {maxWidth: 200, maxHeight: 200})
       altText
       width
       height
@@ -527,7 +523,7 @@ const PREDICTIVE_SEARCH_COLLECTION_FRAGMENT = `#graphql
     title
     handle
     image {
-      url
+      url(transform: {maxWidth: 300, maxHeight: 300})
       altText
       width
       height
@@ -556,7 +552,7 @@ const PREDICTIVE_SEARCH_PRODUCT_FRAGMENT = `#graphql
     images(first: 1) {
       nodes {
         id
-        url
+        url(transform: {maxWidth: 200, maxHeight: 200})
         altText
         width
         height
@@ -623,16 +619,16 @@ const PREDICTIVE_SEARCH_QUERY = `#graphql
 /**
  * Predictive search fetcher
  */
-async function predictiveSearch({request, context}) {
-  const {storefront} = context;
+async function predictiveSearch({ request, context }) {
+  const { storefront } = context;
   const url = new URL(request.url);
   const term = String(url.searchParams.get('q') || '').trim();
   const limit = Number(url.searchParams.get('limit') || 10);
   const type = 'predictive';
 
-  if (!term) return {type, term, result: getEmptyPredictiveSearchResult()};
+  if (!term) return { type, term, result: getEmptyPredictiveSearchResult() };
 
-  const {predictiveSearch: items, errors} = await storefront.query(
+  const { predictiveSearch: items, errors } = await storefront.query(
     PREDICTIVE_SEARCH_QUERY,
     {
       variables: {
@@ -646,7 +642,7 @@ async function predictiveSearch({request, context}) {
 
   if (errors) {
     throw new Error(
-      `Shopify API errors: ${errors.map(({message}) => message).join(', ')}`,
+      `Shopify API errors: ${errors.map(({ message }) => message).join(', ')}`,
     );
   }
 
@@ -659,7 +655,46 @@ async function predictiveSearch({request, context}) {
     0,
   );
 
-  return {type, term, result: {items, total}};
+  return { type, term, result: { items, total } };
+}
+
+export function ErrorBoundary() {
+  const error = useRouteError();
+
+  if (isRouteErrorResponse(error)) {
+    return (
+      <div className="min-h-[50vh] flex items-center justify-center px-4">
+        <div className="text-center">
+          <h1 className="text-4xl font-bold mb-4">{error.status}</h1>
+          <p className="text-lg text-gray-400 mb-6">{error.statusText || 'Search Error'}</p>
+          {error.data && <p className="text-sm text-gray-500 mb-8">{error.data}</p>}
+          <Link
+            to="/"
+            className="inline-block bg-[#FF0000] text-white px-6 py-3 rounded-md hover:bg-red-700 transition-colors"
+          >
+            Return to Homepage
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-[50vh] flex items-center justify-center px-4">
+      <div className="text-center">
+        <h1 className="text-4xl font-bold mb-4">Search Error</h1>
+        <p className="text-lg text-gray-400 mb-8">
+          {error instanceof Error ? error.message : 'An unexpected error occurred during search'}
+        </p>
+        <Link
+          to="/"
+          className="inline-block bg-[#FF0000] text-white px-6 py-3 rounded-md hover:bg-red-700 transition-colors"
+        >
+          Return to Homepage
+        </Link>
+      </div>
+    </div>
+  );
 }
 
 /** @typedef {import('./+types/search').Route} Route */

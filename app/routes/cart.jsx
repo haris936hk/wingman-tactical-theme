@@ -1,4 +1,4 @@
-import {useLoaderData, data} from 'react-router';
+import {useLoaderData, data, Link, useRouteError, isRouteErrorResponse} from 'react-router';
 import {CartForm} from '@shopify/hydrogen';
 import {CartMain} from '~/components/CartMain';
 import {RECOMMENDED_PRODUCTS_QUERY} from '~/lib/fragments';
@@ -141,8 +141,47 @@ export default function Cart() {
 
   return (
     <div className="cart">
-      <h1>Cart</h1>
+      <h1 className="text-3xl md:text-4xl font-bold uppercase text-white mb-6" style={{fontFamily: 'var(--font-family-shock)'}}>Cart</h1>
       <CartMain layout="page" cart={cart} recommendedProducts={recommendedProducts} />
+    </div>
+  );
+}
+
+export function ErrorBoundary() {
+  const error = useRouteError();
+
+  if (isRouteErrorResponse(error)) {
+    return (
+      <div className="min-h-[50vh] flex items-center justify-center px-4">
+        <div className="text-center">
+          <h1 className="text-4xl font-bold mb-4" style={{fontFamily: 'var(--font-family-shock)'}}>{error.status}</h1>
+          <p className="text-lg text-gray-400 mb-6">{error.statusText || 'Cart Error'}</p>
+          {error.data && <p className="text-sm text-gray-500 mb-8">{error.data}</p>}
+          <Link
+            to="/"
+            className="inline-block bg-[#FF0000] text-white px-6 py-3 rounded-md hover:bg-red-700 transition-colors"
+          >
+            Continue Shopping
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-[50vh] flex items-center justify-center px-4">
+      <div className="text-center">
+        <h1 className="text-4xl font-bold mb-4" style={{fontFamily: 'var(--font-family-shock)'}}>Cart Error</h1>
+        <p className="text-lg text-gray-400 mb-8">
+          {error instanceof Error ? error.message : 'An unexpected error occurred with your cart'}
+        </p>
+        <Link
+          to="/"
+          className="inline-block bg-[#FF0000] text-white px-6 py-3 rounded-md hover:bg-red-700 transition-colors"
+        >
+          Continue Shopping
+        </Link>
+      </div>
     </div>
   );
 }

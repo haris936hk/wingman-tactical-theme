@@ -47,7 +47,7 @@ export async function loader({context}) {
                 }
               }
               featuredImage {
-                url
+                url(transform: {maxWidth: 600})
                 altText
                 width
                 height
@@ -65,7 +65,7 @@ export async function loader({context}) {
 
       const {nodes} = await storefront.query(productsQuery, {
         variables: {ids: wishlistIds},
-        cache: storefront.CacheLong(), // Increased from CacheShort
+        cache: storefront.CacheNone(), // User-specific data should not be cached
       });
 
       products = nodes.filter(Boolean);
@@ -81,7 +81,7 @@ export async function loader({context}) {
     {wishlistData: wishlistPromise},
     {
       headers: {
-        'Cache-Control': 'private, max-age=300, stale-while-revalidate=600', // Increased from 60
+        'Cache-Control': 'private, no-cache', // User-specific data should not be cached
       },
     },
   );
@@ -186,6 +186,7 @@ export default function AccountWishlist() {
               <h1
                 className="text-3xl sm:text-4xl font-bold uppercase text-white mb-3"
                 style={{
+                  fontFamily: 'var(--font-family-shock)',
                   textShadow: '0 0 15px rgba(255, 0, 0, 0.7)',
                 }}
               >
@@ -221,6 +222,7 @@ export default function AccountWishlist() {
               <h1
                 className="text-3xl sm:text-4xl font-bold uppercase text-white mb-3"
                 style={{
+                  fontFamily: 'var(--font-family-shock)',
                   textShadow: '0 0 15px rgba(255, 0, 0, 0.7)',
                 }}
               >
@@ -308,7 +310,7 @@ function WishlistProductCard({product}) {
       {/* Product Info */}
       <div className="p-4">
         <a href={variantUrl}>
-          <h3 className="text-white font-bold mb-2 line-clamp-2 hover:text-[#FF0000] transition-colors">
+          <h3 className="text-white font-bold mb-2 line-clamp-2 hover:text-[#FF0000] transition-colors" style={{fontFamily: 'var(--font-family-shock)'}}>
             {product.title}
           </h3>
         </a>

@@ -1,4 +1,4 @@
-import {useState, useEffect, useRef, useCallback} from 'react';
+import { useState, useEffect, useRef, useCallback, memo } from 'react';
 
 // Real squadron and client data from Social Proof document
 const clientsData = [
@@ -57,7 +57,7 @@ function useDebounce(callback, delay) {
   );
 }
 
-export function ClientCarousel() {
+export const ClientCarousel = memo(function ClientCarousel() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [slidesToShow, setSlidesToShow] = useState(4);
   const [touchStart, setTouchStart] = useState(null);
@@ -90,7 +90,7 @@ export function ClientCarousel() {
     if (typeof window === 'undefined') return;
 
     handleResize(); // Initial call
-    window.addEventListener('resize', debouncedResize, {passive: true});
+    window.addEventListener('resize', debouncedResize, { passive: true });
     return () => window.removeEventListener('resize', debouncedResize);
   }, [handleResize, debouncedResize]);
 
@@ -150,10 +150,10 @@ export function ClientCarousel() {
             <div
               key={client.id}
               className="flex-shrink-0 px-2 sm:px-3"
-              style={{width: `${100 / slidesToShow}%`}}
+              style={{ width: `${100 / slidesToShow}%` }}
             >
               <div
-                className="group bg-white rounded-xl overflow-hidden h-full flex flex-col shadow-md relative will-change-transform motion-safe:transition-transform motion-safe:duration-300 motion-safe:ease-out motion-safe:hover:scale-105 motion-reduce:hover:scale-100 focus-visible:outline-2 focus-visible:outline-[#FF0000] focus-visible:outline-offset-2"
+                className="group bg-white rounded-xl overflow-hidden flex flex-col shadow-md relative will-change-transform motion-safe:transition-transform motion-safe:duration-300 motion-safe:ease-out motion-safe:hover:scale-105 motion-reduce:hover:scale-100 focus-visible:outline-2 focus-visible:outline-[#FF0000] focus-visible:outline-offset-2"
               >
                 {/* Optimized border effect - using box-shadow instead of complex gradient */}
                 <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-10 motion-reduce:hidden"
@@ -181,13 +181,14 @@ export function ClientCarousel() {
                 </div>
 
                 {/* Content */}
-                <div className="p-4 sm:p-6 text-center flex-1 flex flex-col bg-gradient-to-b from-white to-gray-50 relative">
+                <div className="px-4 pt-4 pb-3 sm:px-6 sm:pt-6 sm:pb-4 text-center flex flex-col bg-gradient-to-b from-white to-gray-50 relative">
                   {/* Decorative line - only scale animation */}
-                  <div className="w-12 sm:w-16 h-1 bg-[#FF0000] mx-auto mb-3 sm:mb-4 motion-safe:scale-x-0 motion-safe:group-hover:scale-x-100 motion-safe:transition-transform motion-safe:duration-300 motion-safe:ease-out" />
+                  <div className="w-12 sm:w-16 h-1 bg-[#FF0000] mx-auto mb-2 sm:mb-3 motion-safe:scale-x-0 motion-safe:group-hover:scale-x-100 motion-safe:transition-transform motion-safe:duration-300 motion-safe:ease-out" />
 
                   <h3
-                    className="text-xl sm:text-2xl font-bold uppercase mb-3 sm:mb-4 text-[#1a1a1a]"
+                    className="text-xl sm:text-2xl font-bold uppercase mb-2 text-[#1a1a1a] leading-tight"
                     style={{
+                      fontFamily: 'var(--font-family-shock)',
                       textShadow: '0 2px 4px rgba(0,0,0,0.05)'
                     }}
                   >
@@ -205,7 +206,7 @@ export function ClientCarousel() {
 
         {/* Dots Navigation - moved inside container */}
         <div className="flex justify-center gap-2 sm:gap-3 mt-6 sm:mt-8">
-          {Array.from({length: maxIndex + 1}).map((_, index) => (
+          {Array.from({ length: maxIndex + 1 }).map((_, index) => (
             <button
               key={index}
               onClick={() => goToSlide(index)}
@@ -213,16 +214,15 @@ export function ClientCarousel() {
               aria-label={`Go to slide ${index + 1}`}
             >
               <span
-                className={`rounded-full transition-all duration-300 ${
-                  currentIndex === index
-                    ? 'bg-[#FF0000] w-6 sm:w-8 h-2 sm:h-2.5 shadow-lg'
-                    : 'bg-gray-300 hover:bg-gray-400 w-2 sm:w-2.5 h-2 sm:h-2.5 hover:scale-125'
-                }`}
+                className={`rounded-full transition-all duration-300 ${currentIndex === index
+                  ? 'bg-[#FF0000] w-6 sm:w-8 h-2 sm:h-2.5 shadow-lg'
+                  : 'bg-gray-300 hover:bg-gray-400 w-2 sm:w-2.5 h-2 sm:h-2.5 hover:scale-125'
+                  }`}
                 style={
                   currentIndex === index
                     ? {
-                        boxShadow: '0 2px 8px rgba(255, 0, 0, 0.5)',
-                      }
+                      boxShadow: '0 2px 8px rgba(255, 0, 0, 0.5)',
+                    }
                     : {}
                 }
               />
@@ -273,4 +273,4 @@ export function ClientCarousel() {
       </button>
     </div>
   );
-}
+});

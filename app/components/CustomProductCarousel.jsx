@@ -1,8 +1,8 @@
-import {useState, useEffect} from 'react';
+import {useState, useEffect, memo} from 'react';
 import {Link} from 'react-router';
 import aboutUsImg from '~/assets/aboutus.png';
 
-export function CustomProductCarousel({items, showCTA = false, onQuoteClick}) {
+export const CustomProductCarousel = memo(function CustomProductCarousel({items, showCTA = false, onQuoteClick}) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [slidesToShow, setSlidesToShow] = useState(4);
   const [touchStart, setTouchStart] = useState(null);
@@ -119,7 +119,7 @@ export function CustomProductCarousel({items, showCTA = false, onQuoteClick}) {
                 height="280"
               />
               <div className="absolute inset-0 flex flex-col items-center justify-center z-20 px-4 sm:px-6 md:px-8">
-                <h3 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold uppercase text-white mb-3 sm:mb-4 text-center leading-tight">
+                <h3 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold uppercase text-white mb-3 sm:mb-4 text-center leading-tight" style={{fontFamily: 'var(--font-family-shock)'}}>
                   GET A QUOTE FOR YOUR<br className="hidden sm:block" /> CUSTOM GEAR NOW!
                 </h3>
                 <button
@@ -176,10 +176,10 @@ export function CustomProductCarousel({items, showCTA = false, onQuoteClick}) {
       </button>
     </div>
   );
-}
+});
 
 // Simplified Custom Product Card - Only Image and Title
-function CustomProductCard({item, index}) {
+const CustomProductCard = memo(function CustomProductCard({item, index}) {
   return (
     <Link
       to={item.link || '/pages/quote'}
@@ -210,4 +210,4 @@ function CustomProductCard({item, index}) {
       </div>
     </Link>
   );
-}
+});

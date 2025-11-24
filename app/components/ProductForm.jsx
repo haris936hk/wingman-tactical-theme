@@ -44,7 +44,7 @@ export function ProductForm({productOptions, selectedVariant}) {
                   transition-all duration-300
                   ${
                     selected
-                      ? 'bg-[#FF0000] text-white border-[#FF0000] shadow-[0_0_15px_rgba(255,0,0,0.6)]'
+                      ? 'bg-[#FF0000] text-white border-[#FF0000] shadow-sm'
                       : 'bg-transparent text-white border-white/30 hover:border-[#FF0000]'
                   }
                   ${!available ? 'opacity-30 cursor-not-allowed' : ''}

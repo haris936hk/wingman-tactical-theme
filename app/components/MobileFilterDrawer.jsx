@@ -94,6 +94,7 @@ export function MobileFilterDrawer({
           <h2
             id="filter-drawer-title"
             className="text-xl font-bold uppercase text-white flex items-center gap-2"
+            style={{fontFamily: 'var(--font-family-shock)'}}
           >
             <svg
               className="w-5 h-5 text-[#FF0000]"
@@ -137,7 +138,7 @@ export function MobileFilterDrawer({
         <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
           {/* Price Range */}
           <div>
-            <h3 className="text-sm font-bold uppercase text-white mb-4 tracking-wide">
+            <h3 className="text-sm font-bold uppercase text-white mb-4 tracking-wide" style={{fontFamily: 'var(--font-family-shock)'}}>
               Price Range
             </h3>
             <PriceRangeSlider
@@ -151,7 +152,7 @@ export function MobileFilterDrawer({
           {/* Product Type */}
           {availableFilters.types?.length > 0 && (
             <div className="border-t border-white/10 pt-6">
-              <h3 className="text-sm font-bold uppercase text-white mb-4 tracking-wide">
+              <h3 className="text-sm font-bold uppercase text-white mb-4 tracking-wide" style={{fontFamily: 'var(--font-family-shock)'}}>
                 Product Type
               </h3>
               <div className="space-y-4">
@@ -181,7 +182,7 @@ export function MobileFilterDrawer({
 
           {/* Color */}
           <div className="border-t border-white/10 pt-6">
-            <h3 className="text-sm font-bold uppercase text-white mb-4 tracking-wide">
+            <h3 className="text-sm font-bold uppercase text-white mb-4 tracking-wide" style={{fontFamily: 'var(--font-family-shock)'}}>
               Color
             </h3>
             <div className="space-y-4">
@@ -210,7 +211,7 @@ export function MobileFilterDrawer({
 
           {/* Size */}
           <div className="border-t border-white/10 pt-6">
-            <h3 className="text-sm font-bold uppercase text-white mb-4 tracking-wide">
+            <h3 className="text-sm font-bold uppercase text-white mb-4 tracking-wide" style={{fontFamily: 'var(--font-family-shock)'}}>
               Size
             </h3>
             <div className="grid grid-cols-4 gap-2">
@@ -241,7 +242,7 @@ export function MobileFilterDrawer({
 
           {/* Availability */}
           <div className="border-t border-white/10 pt-6">
-            <h3 className="text-sm font-bold uppercase text-white mb-4 tracking-wide">
+            <h3 className="text-sm font-bold uppercase text-white mb-4 tracking-wide" style={{fontFamily: 'var(--font-family-shock)'}}>
               Availability
             </h3>
             <label className="flex items-center gap-3 cursor-pointer group min-h-[44px]">

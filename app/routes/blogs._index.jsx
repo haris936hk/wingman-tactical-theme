@@ -60,7 +60,7 @@ export default function Blogs() {
 
   return (
     <div className="blogs">
-      <h1>Blogs</h1>
+      <h1 className="text-3xl md:text-4xl font-bold uppercase text-white mb-6" style={{fontFamily: 'var(--font-family-shock)'}}>Blogs</h1>
       <div className="blogs-grid">
         <PaginatedResourceSection connection={blogs}>
           {({node: blog}) => (
@@ -70,7 +70,7 @@ export default function Blogs() {
               prefetch="intent"
               to={`/blogs/${blog.handle}`}
             >
-              <h2>{blog.title}</h2>
+              <h2 className="text-xl font-bold text-white" style={{fontFamily: 'var(--font-family-shock)'}}>{blog.title}</h2>
             </Link>
           )}
         </PaginatedResourceSection>

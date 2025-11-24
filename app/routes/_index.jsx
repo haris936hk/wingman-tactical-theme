@@ -1,13 +1,11 @@
-import {Await, useLoaderData, Link} from 'react-router';
-import {Suspense, lazy, useEffect, useRef, useState} from 'react';
-import {Image} from '@shopify/hydrogen';
-import {CountUpStat} from '~/components/CountUpStat';
-import {QuoteModal} from '~/components/QuoteModal';
+import { Await, useLoaderData, Link } from 'react-router';
+import { Suspense, lazy, useEffect, useRef, useState } from 'react';
+import { CountUpStat } from '~/components/CountUpStat';
+import { QuoteModal } from '~/components/QuoteModal';
 
-// Lazy load heavy components for better initial bundle size
-const ClientCarousel = lazy(() => import('~/components/ClientCarousel').then(m => ({default: m.ClientCarousel})));
-const ProductCarousel = lazy(() => import('~/components/ProductCarousel').then(m => ({default: m.ProductCarousel})));
-const CustomProductCarousel = lazy(() => import('~/components/CustomProductCarousel').then(m => ({default: m.CustomProductCarousel})));
+const ClientCarousel = lazy(() => import('~/components/ClientCarousel').then(m => ({ default: m.ClientCarousel })));
+const ProductCarousel = lazy(() => import('~/components/ProductCarousel').then(m => ({ default: m.ProductCarousel })));
+const CustomProductCarousel = lazy(() => import('~/components/CustomProductCarousel').then(m => ({ default: m.CustomProductCarousel })));
 
 // Import static images for cache busting
 import customTshirtsImg from '~/assets/customproducts/custom-tshirts.png';
@@ -23,7 +21,7 @@ import sellWithUsImg from '~/assets/sellwithus.png';
  * @type {Route.MetaFunction}
  */
 export const meta = () => {
-  return [{title: 'Hydrogen | Home'}];
+  return [{ title: 'Hydrogen | Home' }];
 };
 
 /**
@@ -36,7 +34,7 @@ export async function loader(args) {
   // Await the critical data required to render initial state of the page
   const criticalData = await loadCriticalData(args);
 
-  return {...deferredData, ...criticalData};
+  return { ...deferredData, ...criticalData };
 }
 
 /**
@@ -44,8 +42,8 @@ export async function loader(args) {
  * needed to render the page. If it's unavailable, the whole page should 400 or 500 error.
  * @param {Route.LoaderArgs}
  */
-async function loadCriticalData({context}) {
-  const [{collections}] = await Promise.all([
+async function loadCriticalData({ context }) {
+  const [{ collections }] = await Promise.all([
     context.storefront.query(FEATURED_COLLECTION_QUERY, {
       cache: context.storefront.CacheLong(),
     }),
@@ -63,10 +61,10 @@ async function loadCriticalData({context}) {
  * Make sure to not throw any errors here, as it will cause the page to 500.
  * @param {Route.LoaderArgs}
  */
-function loadDeferredData({context}) {
+function loadDeferredData({ context }) {
   const recommendedProducts = context.storefront
     .query(RECOMMENDED_PRODUCTS_QUERY, {
-      cache: context.storefront.CacheShort(),
+      cache: context.storefront.CacheLong(), // Static product recommendations (1 hour cache)
     })
     .catch((error) => {
       // Log query errors, but don't throw them so the page can still render
@@ -76,7 +74,7 @@ function loadDeferredData({context}) {
 
   const discountedProducts = context.storefront
     .query(DISCOUNTED_PRODUCTS_QUERY, {
-      cache: context.storefront.CacheShort(),
+      cache: context.storefront.CacheLong(), // Discounted products collection (1 hour cache)
     })
     .catch((error) => {
       // Log query errors, but don't throw them so the page can still render
@@ -150,7 +148,7 @@ function LazyVideo() {
   // Auto-play when video loads
   useEffect(() => {
     if (shouldLoad && videoRef.current && !isPlaying) {
-      videoRef.current.play().then(() => setIsPlaying(true)).catch(() => {});
+      videoRef.current.play().then(() => setIsPlaying(true)).catch(() => { });
     }
   }, [shouldLoad, isPlaying]);
 
@@ -189,7 +187,7 @@ function LazyVideo() {
 }
 
 /* Wingman Tactical Hero Section */
-function HeroSection({onQuoteClick}) {
+function HeroSection({ onQuoteClick }) {
   return (
     <section className="relative bg-[#000000] pt-[104px] pb-8 sm:pb-10 md:pb-12 lg:pb-16">
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6">
@@ -221,7 +219,7 @@ function HeroSection({onQuoteClick}) {
           {/* Video Side */}
           <div className="relative h-[300px] sm:h-[350px] md:h-[400px] lg:h-[500px]">
             {/* SVG animated border */}
-            <svg className="absolute inset-0 w-full h-full pointer-events-none motion-reduce:hidden" style={{zIndex: 10}}>
+            <svg className="absolute inset-0 w-full h-full pointer-events-none motion-reduce:hidden" style={{ zIndex: 10 }}>
               <rect
                 x="2"
                 y="2"
@@ -262,7 +260,7 @@ function SplitContentSection() {
         {/* Centered Stats Container */}
         <div className="relative max-w-4xl mx-auto">
           {/* SVG animated border */}
-          <svg className="absolute inset-0 w-full h-full pointer-events-none motion-reduce:hidden" style={{zIndex: 10}}>
+          <svg className="absolute inset-0 w-full h-full pointer-events-none motion-reduce:hidden" style={{ zIndex: 10 }}>
             <rect
               x="2"
               y="2"
@@ -287,12 +285,11 @@ function SplitContentSection() {
           </svg>
 
           {/* Stats Content */}
-          <div className="relative bg-black/50 backdrop-blur-sm rounded-lg border-2 border-[#FF0000]/30 p-6 sm:p-8 md:p-10 lg:p-12 shadow-[0_0_30px_rgba(255,0,0,0.3)]">
+          <div className="relative bg-black/50 backdrop-blur-sm rounded-lg border-2 border-[#FF0000]/30 p-6 sm:p-8 md:p-10 lg:p-12 shadow-md">
             <h2
-              className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold uppercase mb-6 sm:mb-8 text-center text-white"
+              className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold uppercase mb-6 sm:mb-8 text-center text-[#FF0000]"
               style={{
-                fontFamily: 'var(--font-family-shock)',
-                textShadow: '0 0 10px rgba(255, 0, 0, 0.8), 0 0 20px rgba(255, 0, 0, 0.6), 0 0 30px rgba(255, 0, 0, 0.4)'
+                fontFamily: 'var(--font-family-shock)'
               }}
             >
               CLIENTS SERVED ACROSS THE WORLD
@@ -303,7 +300,7 @@ function SplitContentSection() {
               <CountUpStat
                 icon={
                   <svg className="w-16 h-16" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/>
+                    <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z" />
                   </svg>
                 }
                 target={19}
@@ -317,7 +314,7 @@ function SplitContentSection() {
                   <div className="flex gap-1">
                     {[...Array(5)].map((_, i) => (
                       <svg key={i} className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
                       </svg>
                     ))}
                   </div>
@@ -331,7 +328,7 @@ function SplitContentSection() {
               <CountUpStat
                 icon={
                   <svg className="w-16 h-16" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/>
+                    <path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z" />
                   </svg>
                 }
                 target={30}
@@ -351,9 +348,8 @@ function ClientShowcaseSection() {
   return (
     <section className="py-8 sm:py-10 md:py-12 lg:py-16 bg-[#000000] border-t border-[#FF0000]">
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6">
-        <h2 className="text-2xl sm:text-3xl md:text-3xl lg:text-4xl xl:text-5xl font-bold uppercase text-center mb-2 text-white" style={{
-          fontFamily: 'var(--font-family-shock)',
-          textShadow: '0 0 10px rgba(255, 0, 0, 0.6)'
+        <h2 className="text-2xl sm:text-3xl md:text-3xl lg:text-4xl xl:text-5xl font-bold uppercase text-center mb-2 text-[#FF0000]" style={{
+          fontFamily: 'var(--font-family-shock)'
         }}>
           EXPLORE OUR ACROSS THE WORLD SERVED CLIENTS
         </h2>
@@ -376,13 +372,12 @@ function ClientShowcaseSection() {
 }
 
 /* Wingman Featured Section */
-function WingmanFeaturedSection({products}) {
+function WingmanFeaturedSection({ products }) {
   return (
     <section className="py-8 sm:py-10 md:py-12 lg:py-16 bg-[#000000] border-t border-[#FF0000]">
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6">
-        <h2 className="text-2xl sm:text-3xl md:text-3xl lg:text-4xl xl:text-5xl font-bold uppercase text-center mb-2 text-white" style={{
-          fontFamily: 'var(--font-family-shock)',
-          textShadow: '0 0 10px rgba(255, 0, 0, 0.6)'
+        <h2 className="text-2xl sm:text-3xl md:text-3xl lg:text-4xl xl:text-5xl font-bold uppercase text-center mb-2 text-[#FF0000]" style={{
+          fontFamily: 'var(--font-family-shock)'
         }}>
           WINGMAN FEATURED
         </h2>
@@ -411,13 +406,12 @@ function WingmanFeaturedSection({products}) {
 }
 
 /* Discounts & Offers Section */
-function DiscountsSection({products}) {
+function DiscountsSection({ products }) {
   return (
     <section className="py-8 sm:py-10 md:py-12 lg:py-16 bg-[#000000] border-t border-[#FF0000]">
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6">
-        <h2 className="text-2xl sm:text-3xl md:text-3xl lg:text-4xl xl:text-5xl font-bold uppercase text-center mb-2 text-white" style={{
-          fontFamily: 'var(--font-family-shock)',
-          textShadow: '0 0 10px rgba(255, 0, 0, 0.6)'
+        <h2 className="text-2xl sm:text-3xl md:text-3xl lg:text-4xl xl:text-5xl font-bold uppercase text-center mb-2 text-[#FF0000]" style={{
+          fontFamily: 'var(--font-family-shock)'
         }}>
           DISCOUNTS & OFFERS
         </h2>
@@ -446,7 +440,7 @@ function DiscountsSection({products}) {
 }
 
 /* Custom Products Section */
-function CustomProductsSection({onQuoteClick}) {
+function CustomProductsSection({ onQuoteClick }) {
   const customProducts = [
     {
       image: customTshirtsImg,
@@ -483,9 +477,8 @@ function CustomProductsSection({onQuoteClick}) {
   return (
     <section className="py-8 sm:py-10 md:py-12 lg:py-16 bg-[#000000] border-t border-[#FF0000]">
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6">
-        <h2 className="text-2xl sm:text-3xl md:text-3xl lg:text-4xl xl:text-5xl font-bold uppercase text-center mb-2 text-white" style={{
-          fontFamily: 'var(--font-family-shock)',
-          textShadow: '0 0 10px rgba(255, 0, 0, 0.6)'
+        <h2 className="text-2xl sm:text-3xl md:text-3xl lg:text-4xl xl:text-5xl font-bold uppercase text-center mb-2 text-[#FF0000]" style={{
+          fontFamily: 'var(--font-family-shock)'
         }}>
           CUSTOM PRODUCTS
         </h2>
@@ -516,16 +509,13 @@ function AboutSellSection() {
           {/* About Us Card */}
           <Link to="/pages/about" className="relative h-[300px] sm:h-[350px] md:h-[400px] lg:h-[450px] rounded-lg overflow-hidden group">
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-black/20 z-10" />
-            <Image
-              data={{
-                url: aboutUsImg,
-                altText: 'About Us - Quality Aviation Gear and Merchandise',
-                width: 800,
-                height: 400,
-              }}
+            <img
+              src={aboutUsImg}
+              alt="About Us - Quality Aviation Gear and Merchandise"
               className="w-full h-full object-cover motion-safe:transition-transform motion-safe:duration-300 motion-safe:group-hover:scale-105"
-              sizes="(min-width: 768px) 50vw, 100vw"
               loading="lazy"
+              width="800"
+              height="400"
             />
             <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 md:p-8 z-20">
               <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold uppercase text-white mb-2 sm:mb-3 md:mb-4" style={{ fontFamily: 'var(--font-family-shock)' }}>ABOUT US</h3>
@@ -536,16 +526,13 @@ function AboutSellSection() {
           {/* Sell With Us Card */}
           <Link to="/pages/sell" className="relative h-[300px] sm:h-[350px] md:h-[400px] lg:h-[450px] rounded-lg overflow-hidden group">
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-black/20 z-10" />
-            <Image
-              data={{
-                url: sellWithUsImg,
-                altText: 'Sell With Us - Partner with Wingman Tactical',
-                width: 800,
-                height: 400,
-              }}
+            <img
+              src={sellWithUsImg}
+              alt="Sell With Us - Partner with Wingman Tactical"
               className="w-full h-full object-cover motion-safe:transition-transform motion-safe:duration-300 motion-safe:group-hover:scale-105"
-              sizes="(min-width: 768px) 50vw, 100vw"
               loading="lazy"
+              width="800"
+              height="400"
             />
             <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 md:p-8 z-20">
               <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold uppercase text-white mb-2 sm:mb-3 md:mb-4" style={{ fontFamily: 'var(--font-family-shock)' }}>SELL WITH US</h3>
@@ -564,7 +551,7 @@ const FEATURED_COLLECTION_QUERY = `#graphql
     title
     image {
       id
-      url
+      url(transform: {maxWidth: 800, maxHeight: 600})
       altText
       width
       height
@@ -594,7 +581,7 @@ const RECOMMENDED_PRODUCTS_QUERY = `#graphql
     }
     featuredImage {
       id
-      url
+      url(transform: {maxWidth: 600})
       altText
       width
       height
@@ -633,7 +620,7 @@ const DISCOUNTED_PRODUCTS_QUERY = `#graphql
     }
     featuredImage {
       id
-      url
+      url(transform: {maxWidth: 600})
       altText
       width
       height
@@ -641,7 +628,7 @@ const DISCOUNTED_PRODUCTS_QUERY = `#graphql
   }
   query DiscountedProducts ($country: CountryCode, $language: LanguageCode)
     @inContext(country: $country, language: $language) {
-    products(first: 8, sortKey: UPDATED_AT, reverse: true) {
+    products(first: 4, sortKey: UPDATED_AT, reverse: true) {
       nodes {
         ...DiscountedProduct
       }

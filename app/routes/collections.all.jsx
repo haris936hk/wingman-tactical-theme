@@ -350,6 +350,7 @@ export default function AllProducts() {
                     key={product.id}
                     product={product}
                     loading={index < 8 ? 'eager' : undefined}
+                    fetchpriority={index < 4 ? 'high' : undefined}
                     index={index}
                   />
                 )}
@@ -390,7 +391,7 @@ const COLLECTION_ITEM_FRAGMENT = `#graphql
     featuredImage {
       id
       altText
-      url
+      url(transform: {maxWidth: 600})
       width
       height
     }

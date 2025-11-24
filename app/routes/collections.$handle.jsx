@@ -1,8 +1,9 @@
 import {useState, useEffect} from 'react';
-import {redirect, useLoaderData, useNavigate, useSearchParams} from 'react-router';
+import {redirect, useLoaderData, useNavigate, useSearchParams, Link, useRouteError, isRouteErrorResponse} from 'react-router';
 import {getPaginationVariables, Analytics} from '@shopify/hydrogen';
 import {PaginatedResourceSection} from '~/components/PaginatedResourceSection';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
+import {FILTER_DEFAULTS} from '~/lib/constants';
 import {ProductItem} from '~/components/ProductItem';
 import {CollectionHero} from '~/components/collections/CollectionHero';
 import {CollectionBreadcrumbs} from '~/components/collections/CollectionBreadcrumbs';
@@ -116,7 +117,7 @@ export default function Collection() {
     const view = searchParams.get('view') || '4';
 
     setFilters({
-      price: priceMin && priceMax ? [Number(priceMin), Number(priceMax)] : [0, 500],
+      price: priceMin && priceMax ? [Number(priceMin), Number(priceMax)] : [FILTER_DEFAULTS.PRICE_MIN, FILTER_DEFAULTS.PRICE_MAX],
       type: types,
       vendor: vendors,
       available,
@@ -150,7 +151,7 @@ export default function Collection() {
     const [filterType, filterValue] = filterId.split(':');
 
     if (filterType === 'price') {
-      newFilters.price = [0, 500];
+      newFilters.price = [FILTER_DEFAULTS.PRICE_MIN, FILTER_DEFAULTS.PRICE_MAX];
     } else if (filterType === 'available') {
       newFilters.available = false;
     } else if (Array.isArray(newFilters[filterType])) {
@@ -164,7 +165,7 @@ export default function Collection() {
   // Handle clear all filters
   const handleClearAll = () => {
     const emptyFilters = {
-      price: [0, 500],
+      price: [FILTER_DEFAULTS.PRICE_MIN, FILTER_DEFAULTS.PRICE_MAX],
       type: [],
       vendor: [],
       available: false,
@@ -317,6 +318,7 @@ export default function Collection() {
                     key={product.id}
                     product={product}
                     loading={index < 8 ? 'eager' : undefined}
+                    fetchpriority={index < 4 ? 'high' : undefined}
                     index={index}
                   />
                 )}
@@ -367,7 +369,7 @@ const PRODUCT_ITEM_FRAGMENT = `#graphql
     featuredImage {
       id
       altText
-      url
+      url(transform: {maxWidth: 600})
       width
       height
     }
@@ -401,7 +403,7 @@ const COLLECTION_QUERY = `#graphql
       description
       image {
         id
-        url
+        url(transform: {maxWidth: 1600, maxHeight: 600})
         altText
         width
         height
@@ -425,6 +427,47 @@ const COLLECTION_QUERY = `#graphql
     }
   }
 `;
+
+export function ErrorBoundary() {
+  const error = useRouteError();
+
+  if (isRouteErrorResponse(error)) {
+    return (
+      <div className="min-h-[50vh] flex items-center justify-center px-4">
+        <div className="text-center">
+          <h1 className="text-4xl font-bold mb-4" style={{fontFamily: 'var(--font-family-shock)'}}>{error.status}</h1>
+          <p className="text-lg text-gray-400 mb-6">
+            {error.status === 404 ? 'Collection Not Found' : error.statusText || 'Collection Error'}
+          </p>
+          {error.data && <p className="text-sm text-gray-500 mb-8">{error.data}</p>}
+          <Link
+            to="/collections/all"
+            className="inline-block bg-[#FF0000] text-white px-6 py-3 rounded-md hover:bg-red-700 transition-colors"
+          >
+            View All Products
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-[50vh] flex items-center justify-center px-4">
+      <div className="text-center">
+        <h1 className="text-4xl font-bold mb-4">Collection Error</h1>
+        <p className="text-lg text-gray-400 mb-8">
+          {error instanceof Error ? error.message : 'An unexpected error occurred loading this collection'}
+        </p>
+        <Link
+          to="/collections/all"
+          className="inline-block bg-[#FF0000] text-white px-6 py-3 rounded-md hover:bg-red-700 transition-colors"
+        >
+          View All Products
+        </Link>
+      </div>
+    </div>
+  );
+}
 
 /** @typedef {import('./+types/collections.$handle').Route} Route */
 /** @typedef {import('storefrontapi.generated').ProductItemFragment} ProductItemFragment */

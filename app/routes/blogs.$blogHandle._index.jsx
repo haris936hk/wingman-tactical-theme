@@ -73,7 +73,7 @@ export default function Blog() {
 
   return (
     <div className="blog">
-      <h1>{blog.title}</h1>
+      <h1 className="text-3xl md:text-4xl font-bold uppercase text-white mb-6" style={{fontFamily: 'var(--font-family-shock)'}}>{blog.title}</h1>
       <div className="grid gap-6 grid-cols-[repeat(auto-fit,minmax(355px,1fr))] mb-8">
         <PaginatedResourceSection connection={articles}>
           {({node: article, index}) => (
@@ -115,7 +115,7 @@ function ArticleItem({article, loading}) {
             />
           </div>
         )}
-        <h3>{article.title}</h3>
+        <h3 className="text-lg font-bold text-white mt-3" style={{fontFamily: 'var(--font-family-shock)'}}>{article.title}</h3>
         <small>{publishedAt}</small>
       </Link>
     </div>

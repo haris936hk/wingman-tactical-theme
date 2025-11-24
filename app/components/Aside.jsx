@@ -137,12 +137,12 @@ export function Aside({children, heading, type}) {
           duration-300 ease-out
 
           /* Desktop: Slide from right */
-          md:h-screen md:w-[min(var(--aside-width),100vw)]
+          md:h-[100vh] md:h-[100dvh] md:w-[min(var(--aside-width),100vw)]
           md:-right-[var(--aside-width)] md:top-0
           ${expanded ? 'md:-translate-x-[var(--aside-width)]' : 'md:translate-x-0'}
 
           /* Mobile: Slide from bottom */
-          max-md:w-full max-md:max-h-[85vh] max-md:rounded-t-2xl
+          max-md:w-full max-md:max-h-[85vh] max-md:max-h-[85dvh] max-md:rounded-t-2xl
           max-md:bottom-0 max-md:left-0
           ${expanded ? 'max-md:translate-y-0' : 'max-md:translate-y-full'}
         `}
@@ -153,11 +153,8 @@ export function Aside({children, heading, type}) {
             h-16 justify-between px-6 text-white bg-black/50"
         >
           <h3
-            className="m-0 text-lg font-bold uppercase tracking-wide"
-            style={{
-              fontFamily: 'var(--font-family-shock)',
-              textShadow: '0 0 10px rgba(255, 0, 0, 0.6)',
-            }}
+            className="m-0 text-lg font-bold uppercase tracking-wide text-[#FF0000]"
+            style={{fontFamily: 'var(--font-family-shock)'}}
           >
             {heading}
           </h3>
@@ -181,7 +178,7 @@ export function Aside({children, heading, type}) {
         </div>
 
         {/* Main content */}
-        <main className="overflow-y-auto max-h-[calc(100vh-4rem)] md:max-h-[calc(100vh-4rem)] max-md:max-h-[calc(85vh-5rem)]">
+        <main className="overflow-y-auto max-h-[calc(100vh-4rem)] max-h-[calc(100dvh-4rem)] md:max-h-[calc(100vh-4rem)] md:max-h-[calc(100dvh-4rem)] max-md:max-h-[calc(85vh-5rem)] max-md:max-h-[calc(85dvh-5rem)]">
           {children}
         </main>
       </aside>

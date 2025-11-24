@@ -75,7 +75,7 @@ function SearchAside() {
   const queriesDatalistId = useId();
   return (
     <Aside type="search" heading="SEARCH">
-      <div className="h-[calc(100vh-var(--header-height)-40px)] overflow-y-auto">
+      <div className="h-[calc(100vh-var(--header-height)-40px)] h-[calc(100dvh-var(--header-height)-40px)] overflow-y-auto">
         <br />
         <SearchFormPredictive>
           {({fetchResults, goToSearch, inputRef}) => (
