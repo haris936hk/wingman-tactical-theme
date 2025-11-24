@@ -35,6 +35,11 @@ export function Header({ isLoggedIn, cart }) {
   const [lastScrollY, setLastScrollY] = useState(0);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
 
+  // Toggle search handler
+  const toggleSearch = useCallback(() => {
+    setIsSearchFocused(prev => !prev);
+  }, []);
+
   // Memoized scroll handler
   const handleScroll = useCallback(() => {
     if (typeof window === 'undefined') return;

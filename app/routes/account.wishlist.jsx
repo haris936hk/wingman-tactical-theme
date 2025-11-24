@@ -1,16 +1,16 @@
-import {useLoaderData, useFetcher, Await} from 'react-router';
-import {data as remixData} from 'react-router';
-import {Suspense} from 'react';
-import {Image, Money} from '@shopify/hydrogen';
-import {CUSTOMER_WISHLIST_QUERY} from '~/graphql/customer-account/CustomerWishlistQuery';
-import {parseWishlistMetafield} from '~/lib/wishlist';
-import {LoadingSpinner} from '~/components/account/LoadingSpinner';
+import { useLoaderData, useFetcher, Await } from 'react-router';
+import { data as remixData } from 'react-router';
+import { Suspense } from 'react';
+import { Image, Money } from '@shopify/hydrogen';
+import { CUSTOMER_WISHLIST_QUERY } from '~/graphql/customer-account/CustomerWishlistQuery';
+import { parseWishlistMetafield } from '~/lib/wishlist';
+import { LoadingSpinner } from '~/components/account/LoadingSpinner';
 
 /**
  * @param {Route.LoaderArgs}
  */
-export async function loader({context}) {
-  const {customerAccount, storefront} = context;
+export async function loader({ context }) {
+  const { customerAccount, storefront } = context;
 
   // Defer wishlist query chain for faster initial render
   const wishlistPromise = customerAccount.query(
@@ -20,10 +20,10 @@ export async function loader({context}) {
         language: customerAccount.i18n.language,
       },
     },
-  ).then(async ({data: customerData, errors}) => {
+  ).then(async ({ data: customerData, errors }) => {
     if (errors?.length) {
       console.error('Error fetching wishlist:', errors);
-      return {products: [], wishlistIds: []};
+      return { products: [], wishlistIds: [] };
     }
 
     const wishlistIds = parseWishlistMetafield(
@@ -63,22 +63,22 @@ export async function loader({context}) {
         }
       `;
 
-      const {nodes} = await storefront.query(productsQuery, {
-        variables: {ids: wishlistIds},
+      const { nodes } = await storefront.query(productsQuery, {
+        variables: { ids: wishlistIds },
         cache: storefront.CacheNone(), // User-specific data should not be cached
       });
 
       products = nodes.filter(Boolean);
     }
 
-    return {products, wishlistIds};
+    return { products, wishlistIds };
   }).catch((error) => {
     console.error('Failed to load wishlist:', error);
-    return {products: [], wishlistIds: []};
+    return { products: [], wishlistIds: [] };
   });
 
   return remixData(
-    {wishlistData: wishlistPromise},
+    { wishlistData: wishlistPromise },
     {
       headers: {
         'Cache-Control': 'private, no-cache', // User-specific data should not be cached
@@ -90,17 +90,17 @@ export async function loader({context}) {
 /**
  * @param {Route.ActionArgs}
  */
-export async function action({request, context}) {
-  const {customerAccount} = context;
+export async function action({ request, context }) {
+  const { customerAccount } = context;
   const formData = await request.formData();
   const actionType = formData.get('action');
   const productId = formData.get('productId');
 
   // Get current wishlist
-  const {data: customerData} = await customerAccount.query(
+  const { data: customerData } = await customerAccount.query(
     CUSTOMER_WISHLIST_QUERY,
     {
-      variables: {language: customerAccount.i18n.language},
+      variables: { language: customerAccount.i18n.language },
     },
   );
 
@@ -117,7 +117,7 @@ export async function action({request, context}) {
 
   // Update customer metafield
   const UPDATE_MUTATION = `#graphql
-    mutation customerUpdate($input: CustomerInput!) {
+    mutation customerWishlistUpdate($input: CustomerUpdateInput!) {
       customerUpdate(input: $input) {
         customer {
           id
@@ -130,7 +130,7 @@ export async function action({request, context}) {
     }
   `;
 
-  const {data, errors} = await customerAccount.mutate(UPDATE_MUTATION, {
+  const { data, errors } = await customerAccount.mutate(UPDATE_MUTATION, {
     variables: {
       input: {
         metafields: [
@@ -149,14 +149,14 @@ export async function action({request, context}) {
       'Error updating wishlist:',
       errors || data.customerUpdate.userErrors,
     );
-    return remixData({success: false}, {status: 400});
+    return remixData({ success: false }, { status: 400 });
   }
 
-  return remixData({success: true});
+  return remixData({ success: true });
 }
 
 export default function AccountWishlist() {
-  const {wishlistData} = useLoaderData();
+  const { wishlistData } = useLoaderData();
 
   return (
     <Suspense
@@ -198,7 +198,7 @@ export default function AccountWishlist() {
                 <svg className="w-16 h-16 sm:w-20 sm:h-20 text-[#FF0000] mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                 </svg>
-                <h2 className="text-xl sm:text-2xl font-bold text-white mb-3 uppercase" style={{fontFamily: 'var(--font-family-shock)'}}>
+                <h2 className="text-xl sm:text-2xl font-bold text-white mb-3 uppercase" style={{ fontFamily: 'var(--font-family-shock)' }}>
                   Failed to Load Wishlist
                 </h2>
                 <p className="text-sm sm:text-base text-gray-300 mb-6">
@@ -215,7 +215,7 @@ export default function AccountWishlist() {
           </div>
         }
       >
-        {({products}) => (
+        {({ products }) => (
           <div className="space-y-6">
             {/* Header */}
             <div className="text-center py-8">
@@ -278,7 +278,7 @@ export default function AccountWishlist() {
   );
 }
 
-function WishlistProductCard({product}) {
+function WishlistProductCard({ product }) {
   const fetcher = useFetcher();
   const variantUrl = `/products/${product.handle}`;
   const isRemoving =
@@ -287,8 +287,8 @@ function WishlistProductCard({product}) {
 
   const handleRemove = () => {
     fetcher.submit(
-      {action: 'remove', productId: product.id},
-      {method: 'POST'},
+      { action: 'remove', productId: product.id },
+      { method: 'POST' },
     );
   };
 
@@ -310,7 +310,7 @@ function WishlistProductCard({product}) {
       {/* Product Info */}
       <div className="p-4">
         <a href={variantUrl}>
-          <h3 className="text-white font-bold mb-2 line-clamp-2 hover:text-[#FF0000] transition-colors" style={{fontFamily: 'var(--font-family-shock)'}}>
+          <h3 className="text-white font-bold mb-2 line-clamp-2 hover:text-[#FF0000] transition-colors" style={{ fontFamily: 'var(--font-family-shock)' }}>
             {product.title}
           </h3>
         </a>

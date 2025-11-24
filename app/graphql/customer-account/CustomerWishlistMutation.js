@@ -1,6 +1,6 @@
 // Mutation to update customer's wishlist metafield
 export const UPDATE_CUSTOMER_WISHLIST_MUTATION = `#graphql
-  mutation customerUpdate($input: CustomerInput!) {
+  mutation customerWishlistMutation($input: CustomerUpdateInput!) {
     customerUpdate(input: $input) {
       customer {
         id

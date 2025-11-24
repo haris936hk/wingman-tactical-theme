@@ -3,29 +3,29 @@
  * Called when user logs in to merge guest wishlist items
  */
 
-import {parseWishlistMetafield, mergeWishlists} from '~/lib/wishlist';
-import {CUSTOMER_WISHLIST_QUERY} from '~/graphql/customer-account/CustomerWishlistQuery';
+import { parseWishlistMetafield, mergeWishlists } from '~/lib/wishlist';
+import { CUSTOMER_WISHLIST_QUERY } from '~/graphql/customer-account/CustomerWishlistQuery';
 
-export async function action({request, context}) {
-  const {customerAccount} = context;
+export async function action({ request, context }) {
+  const { customerAccount } = context;
 
   // Check if user is logged in
   if (!(await customerAccount.isLoggedIn())) {
-    return Response.json({error: 'Not authenticated'}, {status: 401});
+    return Response.json({ error: 'Not authenticated' }, { status: 401 });
   }
 
-  const {localWishlist} = await request.json();
+  const { localWishlist } = await request.json();
 
   if (!Array.isArray(localWishlist) || localWishlist.length === 0) {
-    return Response.json({success: true, message: 'No local items to sync'});
+    return Response.json({ success: true, message: 'No local items to sync' });
   }
 
   try {
     // Get current server wishlist
-    const {data: customerData} = await customerAccount.query(
+    const { data: customerData } = await customerAccount.query(
       CUSTOMER_WISHLIST_QUERY,
       {
-        variables: {language: customerAccount.i18n.language},
+        variables: { language: customerAccount.i18n.language },
       },
     );
 
@@ -47,7 +47,7 @@ export async function action({request, context}) {
 
     // Update customer metafield
     const UPDATE_MUTATION = `#graphql
-      mutation customerUpdate($input: CustomerInput!) {
+      mutation customerWishlistUpdate($input: CustomerInput!) {
         customerUpdate(input: $input) {
           customer {
             id
@@ -60,7 +60,7 @@ export async function action({request, context}) {
       }
     `;
 
-    const {data, errors} = await customerAccount.mutate(UPDATE_MUTATION, {
+    const { data, errors } = await customerAccount.mutate(UPDATE_MUTATION, {
       variables: {
         input: {
           metafields: [
@@ -80,8 +80,8 @@ export async function action({request, context}) {
         errors || data.customerUpdate.userErrors,
       );
       return Response.json(
-        {error: 'Failed to sync wishlist'},
-        {status: 500},
+        { error: 'Failed to sync wishlist' },
+        { status: 500 },
       );
     }
 
@@ -95,6 +95,6 @@ export async function action({request, context}) {
     });
   } catch (error) {
     console.error('Error in wishlist sync:', error);
-    return Response.json({error: 'Failed to sync wishlist'}, {status: 500});
+    return Response.json({ error: 'Failed to sync wishlist' }, { status: 500 });
   }
 }

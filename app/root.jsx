@@ -182,7 +182,7 @@ export function Layout({ children }) {
         <Meta />
         <Links />
       </head>
-      <body>
+      <body suppressHydrationWarning>
         {children}
         <ScrollRestoration nonce={nonce} />
         <Scripts nonce={nonce} />
