@@ -73,3 +73,12 @@ export function parseWishlistMetafield(metafieldValue) {
 export function isInWishlist(productId, wishlist) {
   return Array.isArray(wishlist) && wishlist.includes(productId);
 }
+
+/**
+ * Merge two wishlist arrays (server and local)
+ * Returns a unique list of product IDs
+ */
+export function mergeWishlists(serverWishlist = [], localWishlist = []) {
+  const merged = new Set([...(serverWishlist || []), ...(localWishlist || [])]);
+  return Array.from(merged);
+}
